@@ -1,0 +1,27 @@
+package com.yishuifengxiao.common.crawler.extractor;
+
+
+import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
+import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
+import com.yishuifengxiao.common.crawler.extractor.content.SimpleContentExtractor;
+import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
+import com.yishuifengxiao.common.crawler.extractor.links.impl.SimpleLinkExtractor;
+
+
+/**
+ * @author yishui
+ * @version 1.0.0
+ * @date 2019-11-6
+ */
+public class ExtractorFactory extends AbstractExtractorFactory {
+
+    @Override
+    public LinkExtractor getLinkExtractor(String regex) {
+        return new SimpleLinkExtractor(regex);
+    }
+
+    @Override
+    public ContentExtractor getContentExtractor(ContentExtractRule contentRule) {
+        return new SimpleContentExtractor(contentRule);
+    }
+}
