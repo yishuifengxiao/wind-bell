@@ -111,4 +111,22 @@ crawler = Crawler.create(crawlerData)
                  .setTaskScheduler(redisTaskScheduler)
                  .setPipeline(dataPipeline);
 ```
-<br/><br/><br/>
+<br/>
+ **效果演示** 
+
+1. 配置基本信息
+![配置基本信息](https://images.gitee.com/uploads/images/2019/1202/155351_d2adfab6_400404.png "配置基本信息.png")
+
+2. 配置链接爬取信息
+![配置链接爬取信息](https://images.gitee.com/uploads/images/2019/1202/155432_8ab363a8_400404.png "配置链接爬取信息.png")
+
+3. 配置站点信息
+![配置站点信息](https://images.gitee.com/uploads/images/2019/1202/155457_d4bf6e93_400404.png "配置站点信息.png")
+
+4. 内容页配置
+![内容页配置](https://images.gitee.com/uploads/images/2019/1202/155524_c5e82fd9_400404.png "内容页配置.png")
+
+5. 属性提取配置
+![属性提取配置](https://images.gitee.com/uploads/images/2019/1202/155554_15b869ae_400404.png "属性提取配置.png")
+
+<br/><br/>
