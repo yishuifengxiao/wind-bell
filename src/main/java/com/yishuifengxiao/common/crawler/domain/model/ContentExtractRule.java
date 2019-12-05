@@ -55,7 +55,7 @@ public class ContentExtractRule  implements Serializable {
      * 需要提取的属性的描述
      */
     @ApiModelProperty("需要提取的属性的描述")
-    private String descr;
+    private String descp;
 
     /**
      * 属性提取规则
