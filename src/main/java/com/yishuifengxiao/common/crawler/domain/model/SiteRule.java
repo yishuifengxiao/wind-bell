@@ -67,7 +67,7 @@ public class SiteRule implements Serializable {
 	 * 请求的cookie，默认为空
 	 */
 	@ApiModelProperty("请求的cookie，默认为空")
-	private String cookies;
+	private String cookieValue;
 
 	/**
 	 * 请求失败时重新执行此请求的次数,默认为3
@@ -150,11 +150,11 @@ public class SiteRule implements Serializable {
 	 * 
 	 * @return Map<String, String> ，键为cookie的名字，值为cookie的值
 	 */
-	@ApiModelProperty(hidden=true)
+	@ApiModelProperty(hidden = true)
 	public Map<String, String> getCookiValues() {
 		Map<String, String> map = new WeakHashMap<String, String>();
-		if (StringUtils.isNotBlank(this.cookies)) {
-			String[] cookieStrs = StringUtils.splitByWholeSeparatorPreserveAllTokens(this.cookies, ";");
+		if (StringUtils.isNotBlank(this.cookieValue)) {
+			String[] cookieStrs = StringUtils.splitByWholeSeparatorPreserveAllTokens(this.cookieValue, ";");
 			for (String cookieStr : cookieStrs) {
 				if (StringUtils.contains(cookieStr, "=")) {
 					String[] data = StringUtils.splitByWholeSeparator(cookieStr, "=");
@@ -167,12 +167,12 @@ public class SiteRule implements Serializable {
 		return map;
 	}
 
-	/**
+	/**ss
 	 * 获取到全部的请求头信息
 	 * 
 	 * @return Map<String, String> ，键为请求头的名字，值为请求头的值
 	 */
-	@ApiModelProperty(hidden=true)
+	@ApiModelProperty(hidden = true)
 	public Map<String, String> getAllHeaders() {
 		Map<String, String> map = new WeakHashMap<String, String>();
 		if (null != this.headers) {
@@ -186,12 +186,13 @@ public class SiteRule implements Serializable {
 		}
 		return map;
 	}
-   
+
 	/**
 	 * 获取浏览器标识符
+	 * 
 	 * @return
 	 */
-	@ApiModelProperty(hidden=true)
+	@ApiModelProperty(hidden = true)
 	public String getAutoUserAgent() {
 		if (StringUtils.isNotBlank(this.userAgent)) {
 			return this.userAgent;
