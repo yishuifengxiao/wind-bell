@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 
 import io.swagger.annotations.ApiModel;
@@ -151,6 +152,7 @@ public class SiteRule implements Serializable {
 	 * @return Map<String, String> ，键为cookie的名字，值为cookie的值
 	 */
 	@ApiModelProperty(hidden = true)
+	@JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
 	public Map<String, String> getCookiValues() {
 		Map<String, String> map = new WeakHashMap<String, String>();
 		if (StringUtils.isNotBlank(this.cookieValue)) {
@@ -173,6 +175,7 @@ public class SiteRule implements Serializable {
 	 * @return Map<String, String> ，键为请求头的名字，值为请求头的值
 	 */
 	@ApiModelProperty(hidden = true)
+	@JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
 	public Map<String, String> getAllHeaders() {
 		Map<String, String> map = new WeakHashMap<String, String>();
 		if (null != this.headers) {
@@ -193,6 +196,7 @@ public class SiteRule implements Serializable {
 	 * @return
 	 */
 	@ApiModelProperty(hidden = true)
+	@JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
 	public String getAutoUserAgent() {
 		if (StringUtils.isNotBlank(this.userAgent)) {
 			return this.userAgent;
