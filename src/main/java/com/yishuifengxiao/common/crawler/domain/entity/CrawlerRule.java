@@ -50,13 +50,13 @@ public class CrawlerRule implements Serializable {
 	 * 每次请求的间隔时间，单位为秒，间隔时间为0到改值得两倍之间的一个随机数<br/>
 	 * 防止因频繁请求而导致服务器封杀
 	 */
-	@ApiModelProperty("每次请求的间隔时间，单位为秒,默认为20,请求间隔时间为0到改值得两倍之间的一个随机数")
-	private Integer interval=SiteConstant.REQUEST_INTERVAL_TIME;
+	@ApiModelProperty("每次请求的间隔时间，单位为秒,默认为10,请求间隔时间为0到该值得两倍之间的一个随机数")
+	protected Integer interval=SiteConstant.REQUEST_INTERVAL_TIME;
 	/**
 	 * 超时等待时间，单位为秒,默认为300,连续间隔多长时间后没有新的请求任务表明此任务已经结束
 	 */
 	@ApiModelProperty("超时等待时间，单位为秒,默认为300,连续间隔多长时间后没有新的请求任务表明此任务已经结束")
-	private Integer waitTime=SiteConstant.WAIT_TIME_FOR_CLOSE;
+	protected Integer waitTime=SiteConstant.WAIT_TIME_FOR_CLOSE;
 
 	/**
 	 * 爬虫线程数

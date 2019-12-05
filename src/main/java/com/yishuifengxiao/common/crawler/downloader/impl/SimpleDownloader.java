@@ -155,7 +155,7 @@ public class SimpleDownloader implements Downloader {
 	}
 
 	public SimpleDownloader(SiteRule siteRule) {
-		this.cookies = siteRule.getAllHeaders();
+		this.cookies = siteRule.getCookiValues();
 		this.siteRule = siteRule;
 	}
 

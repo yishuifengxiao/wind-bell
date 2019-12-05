@@ -69,7 +69,7 @@ public class HttpConfigBuilder {
 	public CookieStore buildCookie() {
 		CookieStore cookieStore = new BasicCookieStore();
 		if (siteRule.getCookies() != null) {
-			siteRule.getCookies().forEach((k, v) -> {
+			siteRule.getCookiValues().forEach((k, v) -> {
 				Cookie cookie = new BasicClientCookie2(k, v);
 				cookieStore.addCookie(cookie);
 			});
