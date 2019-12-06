@@ -1,10 +1,10 @@
 package com.yishuifengxiao.common.crawler.extractor.links.impl;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
+import com.yishuifengxiao.common.crawler.utils.RegexFactory;
 
 /**
  * 简单实现的链接提取器
@@ -20,7 +20,7 @@ public class SimpleLinkExtractor implements LinkExtractor {
 	@Override
 	public List<String> extract(List<String> links) {
 		// 放入下一步的链接
-		links = links.parallelStream().filter(t -> Pattern.matches(regex, t)).collect(Collectors.toList());
+		links = links.parallelStream().filter(t -> RegexFactory.match(regex, t)).collect(Collectors.toList());
 		return links;
 	}
 
