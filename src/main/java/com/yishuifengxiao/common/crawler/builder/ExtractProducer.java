@@ -13,7 +13,7 @@ import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
 import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
 import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
-import com.yishuifengxiao.common.crawler.link.StrategyChain;
+import com.yishuifengxiao.common.crawler.link.LinkConverterChain;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 
 /**
@@ -85,14 +85,14 @@ public class ExtractProducer {
 	 */
 	private LinkExtract createLinkExtract() {
 		// 获取一个链接处理器
-		StrategyChain strategyChain = new StrategyChain(this.crawlerRule.getDomain());
+		LinkConverterChain strategyChain = new LinkConverterChain(this.crawlerRule.getDomain());
 		// 获取所有的链接提取器
 		List<LinkExtractor> linkExtractors = extractorBuilder.buildLinkExtractor(this.crawlerRule.getLink());
 		// 构建一个链接解析适配器
-		LinkExtractProxy linkExtractApdater = new LinkExtractProxy(strategyChain, linkExtractors);
+		LinkExtractProxy linkExtractProxy = new LinkExtractProxy(strategyChain);
 		// 生成链接解析器
-		return new LinkExtractDecorator(this.crawlerRule.getDomain(), linkExtractApdater, this.scheduler,
-				this.linkExtract);
+		return new LinkExtractDecorator(this.crawlerRule.getDomain(), linkExtractProxy, this.scheduler,
+				this.linkExtract, linkExtractors);
 	}
 
 	public ExtractProducer(CrawlerRule crawlerRule, LinkExtract linkExtract, ContentExtract contentExtract,

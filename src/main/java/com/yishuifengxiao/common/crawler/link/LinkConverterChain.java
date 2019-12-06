@@ -15,11 +15,11 @@ import com.yishuifengxiao.common.crawler.link.chain.impl.RelativeLinkChain;
  * @version 1.0.0
  * @date 2019/11/20
  */
-public class StrategyChain {
+public class LinkConverterChain {
 
 	private AbstractLinkChain nextChain;
 
-	public StrategyChain(String domain) {
+	public LinkConverterChain(String domain) {
 		Assert.notNull(domain, "域名不能为空");
 		RelativeLinkChain relativechain = new RelativeLinkChain(null, domain);
 		AbsoluteLinkChain absolutechain = new AbsoluteLinkChain(relativechain, domain);
