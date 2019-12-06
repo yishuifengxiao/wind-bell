@@ -232,8 +232,8 @@ public class CrawlerProcessor extends Thread {
 	 * 唤醒所有等待的线程
 	 */
 	private void signalNewUrl() {
+		newUrlLock.lock();
 		try {
-			newUrlLock.lock();
 			newUrlCondition.signalAll();
 		} finally {
 			newUrlLock.unlock();
