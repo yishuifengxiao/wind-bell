@@ -16,7 +16,7 @@ import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
  */
 public class LinkUtils {
 
-	private final static Pattern pattern = Pattern.compile(RuleConstant.REGEX_DIMAIN);
+	private final static Pattern PATTERN = Pattern.compile(RuleConstant.REGEX_DIMAIN);
 
 	/**
 	 * 从url中提取出来域名
@@ -28,7 +28,7 @@ public class LinkUtils {
 		if (StringUtils.isBlank(url)) {
 			return null;
 		}
-		Matcher matcher = pattern.matcher(url);
+		Matcher matcher = PATTERN.matcher(url);
 		return matcher.find() ? matcher.group() : null;
 
 	}
