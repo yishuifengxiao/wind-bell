@@ -88,8 +88,8 @@ public class CrawlerRule implements Serializable {
 	private ContentRule content;
 
 	/**
-	 * 获取当前爬虫爬取的协议和域名信息
-	 * 
+	 * 获取当前爬虫爬取的协议和域名信息<br/>
+	 * 形式如 http://www.yishuifengxiao.com
 	 * @return 协议和域名
 	 */
 	@ApiModelProperty(hidden = true)

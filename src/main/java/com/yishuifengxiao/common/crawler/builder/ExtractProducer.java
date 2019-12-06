@@ -31,6 +31,11 @@ public class ExtractProducer {
 	 * 提取器构建者
 	 */
 	private ExtractorBuilder extractorBuilder = new SimpleExtractBuilder();
+
+	/**
+	 * 链接转换器
+	 */
+	private LinkConverterChain strategyChain = new LinkConverterChain();
 	/**
 	 * 当前爬虫配置
 	 */
@@ -84,8 +89,7 @@ public class ExtractProducer {
 	 * @return
 	 */
 	private LinkExtract createLinkExtract() {
-		// 获取一个链接处理器
-		LinkConverterChain strategyChain = new LinkConverterChain(this.crawlerRule.getDomain());
+
 		// 获取所有的链接提取器
 		List<LinkExtractor> linkExtractors = extractorBuilder.buildLinkExtractor(this.crawlerRule.getLink());
 		// 构建一个链接解析适配器

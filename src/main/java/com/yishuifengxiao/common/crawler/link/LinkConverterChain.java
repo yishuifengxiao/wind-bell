@@ -1,8 +1,6 @@
 package com.yishuifengxiao.common.crawler.link;
 
-import org.springframework.util.Assert;
-
-import com.yishuifengxiao.common.crawler.link.chain.AbstractLinkChain;
+import com.yishuifengxiao.common.crawler.link.chain.BaseLinkChain;
 import com.yishuifengxiao.common.crawler.link.chain.impl.AbsoluteLinkChain;
 import com.yishuifengxiao.common.crawler.link.chain.impl.HttpLinkChain;
 import com.yishuifengxiao.common.crawler.link.chain.impl.RelativeLinkChain;
@@ -17,13 +15,12 @@ import com.yishuifengxiao.common.crawler.link.chain.impl.RelativeLinkChain;
  */
 public class LinkConverterChain {
 
-	private AbstractLinkChain nextChain;
+	private BaseLinkChain nextChain;
 
-	public LinkConverterChain(String domain) {
-		Assert.notNull(domain, "域名不能为空");
-		RelativeLinkChain relativechain = new RelativeLinkChain(null, domain);
-		AbsoluteLinkChain absolutechain = new AbsoluteLinkChain(relativechain, domain);
-		HttpLinkChain httpLinkStrategy = new HttpLinkChain(absolutechain, domain);
+	public LinkConverterChain() {
+		RelativeLinkChain relativechain = new RelativeLinkChain(null);
+		AbsoluteLinkChain absolutechain = new AbsoluteLinkChain(relativechain);
+		HttpLinkChain httpLinkStrategy = new HttpLinkChain(absolutechain);
 		this.nextChain = httpLinkStrategy;
 	}
 

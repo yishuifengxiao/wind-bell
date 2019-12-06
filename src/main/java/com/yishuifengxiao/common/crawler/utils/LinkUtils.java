@@ -22,7 +22,7 @@ public class LinkUtils {
 	 * 从url中提取出来域名
 	 * 
 	 * @param url
-	 * @return
+	 * @return 返回协议和域名，形如 http://www.yishuifengxiao.com
 	 */
 	public static String extractDomain(String url) {
 		if (StringUtils.isBlank(url)) {
