@@ -17,6 +17,10 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  */
 public class LinkExtractDecorator implements LinkExtract {
 	/**
+	 * 网站的协议和域名
+	 */
+	private String domain;
+	/**
 	 * 链接解析器器适配器
 	 */
 	private LinkExtractApdater linkExtractApdater;
@@ -32,6 +36,9 @@ public class LinkExtractDecorator implements LinkExtract {
 		//@formatter:off 
 		// 调用实际处理类对信息进行处理
 		linkExtractApdater.extract(page);
+
+		
+		
 		//解析数据
 		if(this.linkExtract!=null) {
 			this.linkExtract.extract(page);
@@ -41,6 +48,7 @@ public class LinkExtractDecorator implements LinkExtract {
 		if(page.getLinks()!=null) {
 			//获取到所有提取到的链接
 			page.getLinks().parallelStream()
+			 .filter(t->StringUtils.startsWith(t, domain))
 			.filter(t -> StringUtils.isNotBlank(t))
 			.forEach(t->{
 				//将请求推送到调度器中
@@ -51,8 +59,9 @@ public class LinkExtractDecorator implements LinkExtract {
 		//@formatter:on  
 	}
 
-	public LinkExtractDecorator(LinkExtractApdater linkExtractApdater, Scheduler scheduler, LinkExtract linkExtract) {
-
+	public LinkExtractDecorator(String domain, LinkExtractApdater linkExtractApdater, Scheduler scheduler,
+			LinkExtract linkExtract) {
+		this.domain = domain;
 		this.linkExtractApdater = linkExtractApdater;
 		this.scheduler = scheduler;
 		this.linkExtract = linkExtract;

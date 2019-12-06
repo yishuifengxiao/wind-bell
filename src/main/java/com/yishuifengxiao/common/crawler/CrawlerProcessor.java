@@ -150,7 +150,6 @@ public class CrawlerProcessor extends Thread {
 			}
 			// 补全URL信息
 			page.setUrl(url);
-			page.setDomain(task.getCrawlerRule().getSite().getDomain());
 			processRequest(page);
 
 		} catch (Exception e) {

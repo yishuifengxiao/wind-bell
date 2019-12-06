@@ -39,9 +39,7 @@ public class LinkExtractApdater implements LinkExtract {
 	public synchronized void extract(Page page) {
 		// 提取出所有符合要求的超链接
 		List<String> links = this.extract(page.getUrl(), page.getRawTxt());
-		//必须在当前域名内
-		links=links.parallelStream().filter(t->StringUtils.contains(t, page.getDomain())).collect(Collectors.toList());
-		
+
 		// 将超链接放入目标里备用
 		page.setLinks(links);
 	}

@@ -41,7 +41,6 @@ import com.yishuifengxiao.common.crawler.scheduler.SimpleScheduler;
 import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
 import com.yishuifengxiao.common.crawler.task.InMemoryTaskScheduler;
 import com.yishuifengxiao.common.crawler.task.TaskScheduler;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
 /**
  * 爬虫对象
@@ -376,9 +375,7 @@ public class Crawler implements Task {
 		if (this.crawlerRule.getSite().getHeaders() == null) {
 			this.crawlerRule.getSite().setHeaders(new ArrayList<>());
 		}
-		if (StringUtils.isBlank(this.crawlerRule.getSite().getDomain())) {
-			this.crawlerRule.getSite().setDomain(LinkUtils.extractDomain(this.crawlerRule.getLink().getStartUrl()));
-		}
+
 		if (this.crawlerRule.getContent() == null) {
 			this.crawlerRule.setContent(new ContentRule());
 		}

@@ -42,11 +42,7 @@ public class SiteRule implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 4740150684464167910L;
-	/**
-	 * 请求的域名，默认从请求的起始链接中提起
-	 */
-	@ApiModelProperty(" 请求的域名，默认从请求的起始链接中提起")
-	private String domain;
+
 	/**
 	 * 浏览器标志，默认值为空，表示系统从众多内置标识符中随机选择一个
 	 */

@@ -21,10 +21,6 @@ public class Page {
 	 * 爬虫下载页面是的响应码
 	 */
 	private int code;
-	/**
-	 * 当前网站的域名
-	 */
-	private String domain;
 
 	/**
 	 * 对应页面的请求信息
@@ -177,14 +173,6 @@ public class Page {
 		return this.outData;
 	}
 
-	public String getDomain() {
-		return domain;
-	}
-
-	public Page setDomain(String domain) {
-		this.domain = domain;
-		return this;
-	}
 
 	public Page(String url) {
 		this.url = url;

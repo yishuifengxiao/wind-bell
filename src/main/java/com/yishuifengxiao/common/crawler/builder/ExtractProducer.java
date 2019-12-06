@@ -20,8 +20,8 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  * 解析器生成工具<br/>
  * 功能如下：<br/>
  * 1. 根据提取规则生成链接提取器和内容提取器<br/>
- * 2. 将提取器组合成相对应的解析器
- * 3. 解析下载完成的网页
+ * 2. 将提取器组合成相对应的解析器 3. 解析下载完成的网页
+ * 
  * @author yishui
  * @date 2019年11月25日
  * @version 1.0.0
@@ -85,13 +85,14 @@ public class ExtractProducer {
 	 */
 	private LinkExtract createLinkExtract() {
 		// 获取一个链接处理器
-		StrategyChain strategyChain = new StrategyChain(this.crawlerRule.getSite().getDomain());
+		StrategyChain strategyChain = new StrategyChain(this.crawlerRule.getDomain());
 		// 获取所有的链接提取器
 		List<LinkExtractor> linkExtractors = extractorBuilder.buildLinkExtractor(this.crawlerRule.getLink());
 		// 构建一个链接解析适配器
 		LinkExtractApdater linkExtractApdater = new LinkExtractApdater(strategyChain, linkExtractors);
 		// 生成链接解析器
-		return new LinkExtractDecorator(linkExtractApdater, this.scheduler, this.linkExtract);
+		return new LinkExtractDecorator(this.crawlerRule.getDomain(), linkExtractApdater, this.scheduler,
+				this.linkExtract);
 	}
 
 	public ExtractProducer(CrawlerRule crawlerRule, LinkExtract linkExtract, ContentExtract contentExtract,
