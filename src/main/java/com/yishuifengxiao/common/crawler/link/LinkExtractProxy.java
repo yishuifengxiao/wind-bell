@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  */
 @Slf4j
-public class LinkExtractApdater implements LinkExtract {
+public class LinkExtractProxy implements LinkExtract {
 
 	private StrategyChain strategyChain;
 
@@ -125,12 +125,12 @@ public class LinkExtractApdater implements LinkExtract {
 		//@formatter:on  
 	}
 
-	public LinkExtractApdater(StrategyChain strategyChain, List<LinkExtractor> linkExtractors) {
+	public LinkExtractProxy(StrategyChain strategyChain, List<LinkExtractor> linkExtractors) {
 		this.strategyChain = strategyChain;
 		this.linkExtractors = linkExtractors;
 	}
 
-	public LinkExtractApdater() {
+	public LinkExtractProxy() {
 
 	}
 

@@ -11,7 +11,7 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
-import com.yishuifengxiao.common.crawler.link.LinkExtractApdater;
+import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
 import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
 import com.yishuifengxiao.common.crawler.link.StrategyChain;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
@@ -89,7 +89,7 @@ public class ExtractProducer {
 		// 获取所有的链接提取器
 		List<LinkExtractor> linkExtractors = extractorBuilder.buildLinkExtractor(this.crawlerRule.getLink());
 		// 构建一个链接解析适配器
-		LinkExtractApdater linkExtractApdater = new LinkExtractApdater(strategyChain, linkExtractors);
+		LinkExtractProxy linkExtractApdater = new LinkExtractProxy(strategyChain, linkExtractors);
 		// 生成链接解析器
 		return new LinkExtractDecorator(this.crawlerRule.getDomain(), linkExtractApdater, this.scheduler,
 				this.linkExtract);

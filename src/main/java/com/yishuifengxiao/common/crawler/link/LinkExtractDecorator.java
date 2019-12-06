@@ -23,7 +23,7 @@ public class LinkExtractDecorator implements LinkExtract {
 	/**
 	 * 链接解析器器适配器
 	 */
-	private LinkExtractApdater linkExtractApdater;
+	private LinkExtractProxy linkExtractApdater;
 	/**
 	 * 资源调度器
 	 */
@@ -59,7 +59,7 @@ public class LinkExtractDecorator implements LinkExtract {
 		//@formatter:on  
 	}
 
-	public LinkExtractDecorator(String domain, LinkExtractApdater linkExtractApdater, Scheduler scheduler,
+	public LinkExtractDecorator(String domain, LinkExtractProxy linkExtractApdater, Scheduler scheduler,
 			LinkExtract linkExtract) {
 		this.domain = domain;
 		this.linkExtractApdater = linkExtractApdater;
@@ -71,11 +71,11 @@ public class LinkExtractDecorator implements LinkExtract {
 
 	}
 
-	public LinkExtractApdater getLinkExtractApdater() {
+	public LinkExtractProxy getLinkExtractApdater() {
 		return linkExtractApdater;
 	}
 
-	public void setLinkExtractApdater(LinkExtractApdater linkExtractApdater) {
+	public void setLinkExtractApdater(LinkExtractProxy linkExtractApdater) {
 		this.linkExtractApdater = linkExtractApdater;
 	}
 
