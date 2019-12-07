@@ -133,7 +133,7 @@ crawler = Crawler.create(crawlerData)
 
 >   配置爬虫的名字、使用的线程数量和超时停止时间
 
-![配置基本信息](https://images.gitee.com/uploads/images/2019/1202/155351_d2adfab6_400404.png "配置基本信息.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2019/1207/221953_91be5498_400404.png "配置基本信息.png")
 
 2. 配置链接爬取信息
 
