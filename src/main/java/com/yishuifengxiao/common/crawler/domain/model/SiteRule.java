@@ -46,13 +46,13 @@ public class SiteRule implements Serializable {
 	/**
 	 * 浏览器标志，默认值为空，表示系统从众多内置标识符中随机选择一个
 	 */
-	@ApiModelProperty("浏览器标志，默认为谷歌78.0")
+	@ApiModelProperty("浏览器标志，默认值为空，表示系统从众多内置标识符中随机选择一个")
 	private String userAgent;
 
 	/**
 	 * 用于指明当前流量的来源参考页面，默认为空，表示系统设置为当前请求的网页值
 	 */
-	@ApiModelProperty("用于指明当前流量的来源参考页面")
+	@ApiModelProperty("用于指明当前流量的来源参考页面，默认为空，表示系统设置为当前请求的网页值")
 	private String referrer;
 
 	/**

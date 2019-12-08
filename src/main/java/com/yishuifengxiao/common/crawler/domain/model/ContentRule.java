@@ -39,10 +39,10 @@ public class ContentRule implements Serializable {
     private String extractUrl;
 
     /**
-     * 爬虫内容爬取的配置
+     * 爬虫内容提取项
      */
-    @ApiModelProperty("爬虫内容爬取的配置")
-    @NotEmpty(message="请至少配置一个内容提取规则")
+    @ApiModelProperty(" 爬虫内容提取项的配置")
+    @NotEmpty(message="请至少配置一个内容提取项")
     @Valid
     private List<ContentExtractRule> contents;
 

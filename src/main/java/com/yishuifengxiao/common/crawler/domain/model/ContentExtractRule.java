@@ -23,7 +23,7 @@ import java.util.List;
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "具体的内容提取规则")
+@ApiModel(value = "内容提取项")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -40,21 +40,21 @@ public class ContentExtractRule  implements Serializable {
 	/**
      * 需要提取的属性的名字
      */
-    @ApiModelProperty("名字")
-    @NotBlank(message = "需要提取的属性的名字不能为空")
+    @ApiModelProperty("内容提取项名字")
+    @NotBlank(message = "内容提取项的名字不能为空")
     private String name;
 
     /**
      * 需要提取的属性的编码
      */
-    @ApiModelProperty("需要提取的属性的编码")
-    @NotBlank(message = "需要提取的属性的编码不能为空")
-    @Pattern(regexp = "^[A-Za-z0-9]+$", message = "需要提取的属性的编码必须是数字或字母")
+    @ApiModelProperty("内容提取项代码")
+    @NotBlank(message = "内容提取项代码不能为空")
+    @Pattern(regexp = "^[A-Za-z0-9]+$", message = "内容提取项代码必须是数字或字母")
     private String filedName;
     /**
      * 需要提取的属性的描述
      */
-    @ApiModelProperty("需要提取的属性的描述")
+    @ApiModelProperty("内容提取项的描述")
     private String descp;
 
     /**
