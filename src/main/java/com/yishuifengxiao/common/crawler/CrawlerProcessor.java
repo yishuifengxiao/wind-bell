@@ -4,6 +4,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -38,11 +39,11 @@ public class CrawlerProcessor extends Thread {
 	/**
 	 * 抓取的链接总数量
 	 */
-	private AtomicInteger pageCount = new AtomicInteger(0);
+	private AtomicLong pageCount = new AtomicLong(0);
 	/**
 	 * 已经爬取的页面的数量
 	 */
-	private AtomicInteger extractedCount = new AtomicInteger(0);
+	private AtomicLong extractedCount = new AtomicLong(0);
 
 	private ReentrantLock newUrlLock = new ReentrantLock();
 
@@ -264,7 +265,7 @@ public class CrawlerProcessor extends Thread {
 	 * 
 	 * @return
 	 */
-	protected int getAllTaskCount() {
+	protected long getAllTaskCount() {
 		return pageCount.get();
 	}
 
@@ -273,7 +274,7 @@ public class CrawlerProcessor extends Thread {
 	 * 
 	 * @return
 	 */
-	protected int getExtractedTaskCount() {
+	protected long getExtractedTaskCount() {
 		return extractedCount.get();
 	}
 

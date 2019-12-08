@@ -486,7 +486,7 @@ public class Crawler implements Task {
 	 * 
 	 * @return
 	 */
-	public int getAllTaskCount() {
+	public long getAllTaskCount() {
 		return this.processor.getAllTaskCount();
 	}
 
@@ -495,7 +495,7 @@ public class Crawler implements Task {
 	 * 
 	 * @return
 	 */
-	public int getExtractedTaskCount() {
+	public long getExtractedTaskCount() {
 		return this.processor.getExtractedTaskCount();
 	}
 
