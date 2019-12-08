@@ -10,7 +10,7 @@ import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
  * @date 2019年11月28日
  * @version 1.0.0
  */
-public class RedisTaskScheduler implements TaskScheduler {
+public class RedisTaskManager implements TaskManager {
 	private String name;
 	private RedisTemplate<String, Object> redisTemplate;
 
@@ -46,7 +46,7 @@ public class RedisTaskScheduler implements TaskScheduler {
 		this.name = name;
 	}
 
-	public RedisTaskScheduler(String name, RedisTemplate<String, Object> redisTemplate) {
+	public RedisTaskManager(String name, RedisTemplate<String, Object> redisTemplate) {
 		this.name = name;
 		this.redisTemplate = redisTemplate;
 	}

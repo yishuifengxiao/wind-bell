@@ -5,7 +5,7 @@ package com.yishuifengxiao.common.crawler.task;
  * @date 2019年11月28日
  * @version 1.0.0
  */
-public interface TaskScheduler {
+public interface TaskManager {
 	/**
 	 * 接收所有的超链接并存储起来
 	 * 

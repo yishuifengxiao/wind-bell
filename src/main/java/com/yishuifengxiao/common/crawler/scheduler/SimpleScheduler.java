@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.yishuifengxiao.common.crawler.cache.RequestCache;
 import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
 import com.yishuifengxiao.common.crawler.pipeline.Pipeline;
-import com.yishuifengxiao.common.crawler.task.TaskScheduler;
+import com.yishuifengxiao.common.crawler.task.TaskManager;
 
 /**
  * 简单资源调度器
@@ -28,16 +28,16 @@ public class SimpleScheduler implements Scheduler {
 	/**
 	 * 任务管理器
 	 */
-	protected TaskScheduler taskScheduler;
+	protected TaskManager taskManager;
 
 	@Override
 	public void push(String... urls) {
 		if (urls != null) {
 			Arrays.asList(urls).parallelStream().filter(t -> t != null).forEach(t -> {
 				if (isSave(t)) {
-					this.taskScheduler.push(t);
+					this.taskManager.push(t);
 					// 存储在历史记录集之中
-					this.requestCache.lookHistoryAndCache(this.taskScheduler.getName(),t);
+					this.requestCache.lookHistoryAndCache(this.taskManager.getName(),t);
 				}
 
 			});
@@ -57,7 +57,7 @@ public class SimpleScheduler implements Scheduler {
 			return false;
 		}
 		// 在历史链接记录集不存在时才处理
-		return !requestCache.extisHistory(this.taskScheduler.getName(),url);
+		return !requestCache.extisHistory(this.taskManager.getName(),url);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class SimpleScheduler implements Scheduler {
 	@Override
 	public void recieve(ResultData resultData) {
 		// 保存抓取记录
-		this.requestCache.lookExtractedAndCache(this.taskScheduler.getName(),resultData.getUrl());
+		this.requestCache.lookExtractedAndCache(this.taskManager.getName(),resultData.getUrl());
 		// 输出数据
 		this.pipeline.recieve(resultData);
 	}
@@ -77,21 +77,21 @@ public class SimpleScheduler implements Scheduler {
 	@Override
 	public boolean needExtract(String url) {
 		// 只有在已经解析的库里不存在此资源时才需要解析
-		return !this.requestCache.extisExtracted(this.taskScheduler.getName(),url);
+		return !this.requestCache.extisExtracted(this.taskManager.getName(),url);
 	}
 
 
-	public SimpleScheduler(RequestCache requestCache, Pipeline pipeline, TaskScheduler taskScheduler) {
+	public SimpleScheduler(RequestCache requestCache, Pipeline pipeline, TaskManager taskManager) {
 
 		this.requestCache = requestCache;
 		this.pipeline = pipeline;
-		this.taskScheduler = taskScheduler;
+		this.taskManager = taskManager;
 	}
 
 	@Override
 	public String poll() {
 
-		return this.taskScheduler.poll();
+		return this.taskManager.poll();
 	}
 
 }

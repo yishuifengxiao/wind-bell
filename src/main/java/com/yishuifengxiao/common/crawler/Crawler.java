@@ -39,8 +39,8 @@ import com.yishuifengxiao.common.crawler.pipeline.SimplePipeline;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 import com.yishuifengxiao.common.crawler.scheduler.SimpleScheduler;
 import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
-import com.yishuifengxiao.common.crawler.task.InMemoryTaskScheduler;
-import com.yishuifengxiao.common.crawler.task.TaskScheduler;
+import com.yishuifengxiao.common.crawler.task.InMemoryTaskManager;
+import com.yishuifengxiao.common.crawler.task.TaskManager;
 
 /**
  * 爬虫对象
@@ -108,7 +108,7 @@ public class Crawler implements Task {
 	/**
 	 * 任务管理器，负责进行任务管理
 	 */
-	protected TaskScheduler taskScheduler;
+	protected TaskManager taskScheduler;
 	/**
 	 * 爬虫监听器
 	 */
@@ -330,7 +330,7 @@ public class Crawler implements Task {
 		}
 
 		if (this.taskScheduler == null) {
-			this.taskScheduler = new InMemoryTaskScheduler();
+			this.taskScheduler = new InMemoryTaskManager();
 		}
 
 		if (this.scheduler == null) {
@@ -477,11 +477,11 @@ public class Crawler implements Task {
 		return this;
 	}
 
-	public TaskScheduler getTaskScheduler() {
+	public TaskManager getTaskScheduler() {
 		return taskScheduler;
 	}
 
-	public Crawler setTaskScheduler(TaskScheduler taskScheduler) {
+	public Crawler setTaskScheduler(TaskManager taskScheduler) {
 		this.taskScheduler = taskScheduler;
 		return this;
 	}

@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @date 2019年11月28日
  * @version 1.0.0
  */
-public class InMemoryTaskScheduler implements TaskScheduler {
+public class InMemoryTaskManager implements TaskManager {
 
 	private Queue<String> queue = new ConcurrentLinkedQueue<>();
 
