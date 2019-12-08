@@ -167,3 +167,7 @@ crawler = Crawler.create(crawlerData)
 ![属性提取配置](https://images.gitee.com/uploads/images/2019/1202/155554_15b869ae_400404.png "属性提取配置.png")
 
 <br/><br/>
+
+ **相关资源链接** 
+
+ **文档地址** :[https://gitee.com/zhiyubujian/wind-bell/wikis/pages](https://gitee.com/zhiyubujian/wind-bell/wikis/pages)
