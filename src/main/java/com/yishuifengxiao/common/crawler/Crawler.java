@@ -108,7 +108,7 @@ public class Crawler implements Task {
 	/**
 	 * 任务管理器，负责进行任务管理
 	 */
-	protected TaskManager taskScheduler;
+	protected TaskManager taskManager;
 	/**
 	 * 爬虫监听器
 	 */
@@ -329,12 +329,12 @@ public class Crawler implements Task {
 			this.requestCache = new InMemoryRequestCache();
 		}
 
-		if (this.taskScheduler == null) {
-			this.taskScheduler = new InMemoryTaskManager();
+		if (this.taskManager == null) {
+			this.taskManager = new InMemoryTaskManager();
 		}
 
 		if (this.scheduler == null) {
-			this.scheduler = new SimpleScheduler(this.requestCache, this.pipeline, this.taskScheduler);
+			this.scheduler = new SimpleScheduler(this.requestCache, this.pipeline, this.taskManager);
 		}
 
 		this.producer = new ExtractProducer(this.crawlerRule, this.linkExtract, this.contentExtract, this.scheduler);
@@ -408,11 +408,6 @@ public class Crawler implements Task {
 		return scheduler;
 	}
 
-	public Crawler setScheduler(Scheduler scheduler) {
-		this.scheduler = scheduler;
-		return this;
-	}
-
 	@Override
 	public CrawlerListener getCrawlerListener() {
 		return crawlerListener;
@@ -477,12 +472,12 @@ public class Crawler implements Task {
 		return this;
 	}
 
-	public TaskManager getTaskScheduler() {
-		return taskScheduler;
+	public TaskManager getTaskManager() {
+		return taskManager;
 	}
 
-	public Crawler setTaskScheduler(TaskManager taskScheduler) {
-		this.taskScheduler = taskScheduler;
+	public Crawler setTaskManager(TaskManager taskManager) {
+		this.taskManager = taskManager;
 		return this;
 	}
 
