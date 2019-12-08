@@ -32,7 +32,7 @@
 
  **风铃虫原理** 
 
-![输入图片说明](https://images.gitee.com/uploads/images/2019/1208/114442_44449814_400404.png "原理图.png")
+![风铃虫原理](https://images.gitee.com/uploads/images/2019/1208/213313_eb03a944_400404.png "原理图.png")
 
 其中的链接解析器是由一系列的链接提取器组合而成，目前链接提取器主要是支持正则提取。
 
