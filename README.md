@@ -168,6 +168,12 @@ crawler = Crawler.create(crawlerData)
 
 <br/><br/>
 
+6. 属性提取测试
+
+提前检验提取项的配置是否正确，提取出来的数据是否符合预期目标
+
+![属性提取测试](https://images.gitee.com/uploads/images/2019/1209/163652_596bab35_400404.png "提取测试.png")
+
  **相关资源链接** 
 
  **文档地址** :[https://gitee.com/zhiyubujian/wind-bell/wikis/pages](https://gitee.com/zhiyubujian/wind-bell/wikis/pages)
