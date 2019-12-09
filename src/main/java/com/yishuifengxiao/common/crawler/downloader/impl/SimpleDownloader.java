@@ -48,7 +48,6 @@ public class SimpleDownloader implements Downloader {
 		Page page = new Page(url);
 		Response response = null;
 		try {
-			log.debug("Trying to download the page {}", url);
 			response = execute(url);
 			log.debug("Download page successfully ,the page is {}", url);
 			// 替换cookie信息
