@@ -1,9 +1,10 @@
 package com.yishuifengxiao.common.crawler.cache;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 
 /**
  * 基于redis实现的资源缓存器
@@ -13,56 +14,55 @@ import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
  * @version 1.0.0
  */
 public class RedisRequestCache implements RequestCache {
+
 	private RedisTemplate<String, Object> redisTemplate;
 
 	@Override
-	public synchronized boolean extisHistory(String taskName, String url) {
-		return this.history(taskName).isMember(url);
-	}
+	public boolean lookAndCache(String cacheName, String value) {
 
-	@Override
-	public synchronized boolean lookHistoryAndCache(String taskName, String url) {
-		boolean extis = this.extisHistory(taskName, url);
-		this.history(taskName).add(url);
+		boolean extis = this.exist(cacheName, value);
+		this.save(cacheName, value);
 		return extis;
 	}
 
-	/**
-	 * 获取到历史任务操作队列
-	 * 
-	 * @param name
-	 */
-	private BoundSetOperations<String, Object> history(String taskName) {
-		return this.redisTemplate.boundSetOps(CrawlerConstant.REQUEST_HOSTORY + taskName);
+	@Override
+	public boolean exist(String cacheName, String value) {
+
+		return this.getOps(cacheName).isMember(value);
 	}
 
 	@Override
-	public synchronized boolean extisExtracted(String taskName, String url) {
-		return this.extracted(taskName).isMember(url);
+	public void remove(String cacheName) {
+		this.getOps(cacheName).expire(1L, TimeUnit.MILLISECONDS);
+
 	}
 
 	@Override
-	public synchronized boolean lookExtractedAndCache(String taskName, String url) {
-		boolean extis = this.extisExtracted(taskName, url);
-		this.extracted(taskName).add(url);
-		return extis;
+	public long getCount(String cacheName) {
+
+		return this.getOps(cacheName).size();
 	}
 
-	/**
-	 * 获取到已完成任务操作队列
-	 * 
-	 * @param name
-	 */
-	private BoundSetOperations<String, Object> extracted(String taskName) {
-		return this.redisTemplate.boundSetOps(CrawlerConstant.HAS_CRAWLERED + taskName);
+	@Override
+	public void save(String cacheName, String value) {
+
+		this.getOps(cacheName).add(value);
+	}
+
+	private BoundSetOperations<String, Object> getOps(String cacheName) {
+		if (StringUtils.isNotEmpty(cacheName)) {
+			throw new IllegalArgumentException("缓存集合的名字不能为空");
+		}
+		return this.redisTemplate.boundSetOps(cacheName);
 	}
 
 	public RedisTemplate<String, Object> getRedisTemplate() {
 		return redisTemplate;
 	}
 
-	public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+	public RedisRequestCache setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
+		return this;
 	}
 
 	public RedisRequestCache(RedisTemplate<String, Object> redisTemplate) {

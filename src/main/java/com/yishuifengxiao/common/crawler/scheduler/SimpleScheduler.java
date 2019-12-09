@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.cache.RequestCache;
+import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
 import com.yishuifengxiao.common.crawler.pipeline.Pipeline;
 import com.yishuifengxiao.common.crawler.task.TaskManager;
@@ -37,7 +38,7 @@ public class SimpleScheduler implements Scheduler {
 				if (this.needStore(t)) {
 					this.taskManager.push(t);
 					// 存储在历史记录集之中
-					this.requestCache.lookHistoryAndCache(this.taskManager.getName(), t);
+					this.requestCache.lookAndCache(this.taskManager.getName(), t);
 				}
 
 			});
@@ -57,7 +58,7 @@ public class SimpleScheduler implements Scheduler {
 			return false;
 		}
 		// 在历史链接记录集不存在时才处理
-		return !requestCache.extisHistory(this.taskManager.getName(), url);
+		return !requestCache.lookAndCache(CrawlerConstant.REQUEST_HOSTORY+this.taskManager.getName(), url);
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class SimpleScheduler implements Scheduler {
 	@Override
 	public void recieve(ResultData resultData) {
 		// 保存抓取记录
-		this.requestCache.lookExtractedAndCache(this.taskManager.getName(), resultData.getUrl());
+		this.requestCache.lookAndCache(CrawlerConstant.HAS_CRAWLERED+this.taskManager.getName(), resultData.getUrl());
 		// 输出数据
 		this.pipeline.recieve(resultData);
 	}
@@ -77,7 +78,7 @@ public class SimpleScheduler implements Scheduler {
 	@Override
 	public boolean needExtract(String url) {
 		// 只有在已经解析的库里不存在此资源时才需要解析
-		return !this.requestCache.extisExtracted(this.taskManager.getName(), url);
+		return !this.requestCache.lookAndCache(CrawlerConstant.HAS_CRAWLERED+this.taskManager.getName(), url);
 	}
 
 	public SimpleScheduler(RequestCache requestCache, Pipeline pipeline, TaskManager taskManager) {
