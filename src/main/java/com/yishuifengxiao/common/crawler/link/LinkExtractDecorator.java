@@ -2,13 +2,10 @@ package com.yishuifengxiao.common.crawler.link;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
+import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 
 /**
@@ -22,10 +19,7 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  * @version 1.0.0
  */
 public class LinkExtractDecorator implements LinkExtract {
-	/**
-	 * 一级域名
-	 */
-	private String topLevelDomain;
+
 	/**
 	 * 链接提取器代理器
 	 */
@@ -36,7 +30,13 @@ public class LinkExtractDecorator implements LinkExtract {
 	private Scheduler scheduler;
 
 	private LinkExtract linkExtract;
-
+	/**
+	 * 链接转换器,将提取的链接统一转成网络地址形式
+	 */
+	private LinkConverter linkConverter;
+    /**
+     * 链接提取器
+     */
 	private List<LinkExtractor> linkExtractors;
 
 	@Override
@@ -50,7 +50,7 @@ public class LinkExtractDecorator implements LinkExtract {
 			this.linkExtract.extract(page);
 		}
 		//对提取出来的链接进行过滤
-		List<String> urls=	this.matchTopLevelDomain(page.getLinks());
+		List<String> urls=	this.linkConverter.format(page.getUrl(),page.getLinks());
 		urls=this.fliter(urls);
 		//推送数据
 		urls.parallelStream().forEach(t->{
@@ -58,25 +58,6 @@ public class LinkExtractDecorator implements LinkExtract {
 			scheduler.push(t);
 		});
 		//@formatter:on  
-	}
-
-	/**
-	 * 提取的链接必须在爬虫实例对应的一级域名之内
-	 * 
-	 * @param urls
-	 * @return
-	 */
-	private List<String> matchTopLevelDomain(List<String> urls) {
-		if (urls != null) {
-			// 提取的链接必须在域名之内
-			Set<String> links = urls.parallelStream().filter(t -> StringUtils.containsIgnoreCase(t, topLevelDomain))
-					.collect(Collectors.toSet());
-			if (links != null) {
-				return new ArrayList<>(links);
-			}
-		}
-
-		return new ArrayList<>();
 	}
 
 	/**
@@ -101,12 +82,12 @@ public class LinkExtractDecorator implements LinkExtract {
 		return list;
 	}
 
-	public LinkExtractDecorator(String topLevelDomain, LinkExtract linkExtractProxy, Scheduler scheduler,
-			LinkExtract linkExtract, List<LinkExtractor> linkExtractors) {
-		this.topLevelDomain = topLevelDomain;
+	public LinkExtractDecorator(LinkExtract linkExtractProxy, Scheduler scheduler, LinkExtract linkExtract,
+			LinkConverter linkConverter, List<LinkExtractor> linkExtractors) {
 		this.linkExtractProxy = linkExtractProxy;
 		this.scheduler = scheduler;
 		this.linkExtract = linkExtract;
+		this.linkConverter = linkConverter;
 		this.linkExtractors = linkExtractors;
 	}
 
