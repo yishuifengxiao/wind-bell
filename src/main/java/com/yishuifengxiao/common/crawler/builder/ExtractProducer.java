@@ -8,6 +8,7 @@ import com.yishuifengxiao.common.crawler.content.decorator.SimpleContentExtractD
 import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
+import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
@@ -75,6 +76,23 @@ public class ExtractProducer {
 
 		// 抽取内容
 		contentExtract.extract(page);
+        //输出数据
+		this.output(page);
+	}
+
+	/**
+	 * 输出数据
+	 * 
+	 * @param page
+	 */
+	private void output(Page page) {
+		if (page != null && !page.isSkip()) {
+			ResultData resultData = new ResultData();
+			resultData.setData(page.getAllResultItem()).setUrl(page.getUrl());
+			// 输出数据
+			this.scheduler.recieve(resultData);
+		}
+
 	}
 
 	/**

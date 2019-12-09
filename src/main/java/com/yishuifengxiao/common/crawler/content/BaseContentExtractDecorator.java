@@ -46,7 +46,7 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 			return;
 		}
 		// 判断是否符合解析规则
-		boolean match = this.matchContentExtractRule(this.contentExtractRules,page.getUrl());
+		boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
 		// 是否需要解析
 		boolean needExtract = this.scheduler.needExtract(page.getUrl());
 		log.debug(
@@ -57,34 +57,18 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 		if (match && needExtract) {
 			// 开始真正的内容解析操作
 			this.contentExtract.extract(page);
-			// 输出数据
-			this.output(page);
 		}
 
 	}
 
 	/**
 	 * 是否符合内容页解析规则
+	 * 
 	 * @param contentExtractRules 内容页规则
-	 * @param url 需要提取的目标页面的地址
+	 * @param url                 需要提取的目标页面的地址
 	 * @return
 	 */
-	protected abstract boolean matchContentExtractRule(String contentExtractRules,String url);
-
-	/**
-	 * 输出数据
-	 * 
-	 * @param page
-	 */
-	private void output(Page page) {
-		if (page != null && !page.isSkip()) {
-			ResultData resultData = new ResultData();
-			resultData.setData(page.getAllResultItem()).setUrl(page.getUrl());
-			// 输出数据
-			this.scheduler.recieve(resultData);
-		}
-
-	}
+	protected abstract boolean matchContentExtractRule(String contentExtractRules, String url);
 
 	public BaseContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract, Scheduler scheduler) {
 		this.contentExtractRules = contentExtractRules;
