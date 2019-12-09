@@ -21,12 +21,12 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  */
 @Slf4j
-public abstract class ContentExtractDecorator implements ContentExtract {
+public abstract class BaseContentExtractDecorator implements ContentExtract {
 
 	/**
 	 * 内容页url的规则，只有满足此规则的网页才会被解析
 	 */
-	protected String filterUrls;
+	protected String contentExtractRules;
 
 	/**
 	 * 爬虫处理器，负责解析下载后的网页内容
@@ -46,26 +46,30 @@ public abstract class ContentExtractDecorator implements ContentExtract {
 			return;
 		}
 		// 判断是否符合解析规则
-		boolean match = matchContentRule(page.getUrl());
-		log.debug("Does the page [{}] need to parse the matching result is {}", page.getUrl(), match);
+		boolean match = this.matchContentExtractRule(this.contentExtractRules,page.getUrl());
+		// 是否需要解析
+		boolean needExtract = this.scheduler.needExtract(page.getUrl());
+		log.debug(
+				"Whether the page [{}] matches the content page parsing result is {}, whether it needs to parse the result is {}",
+				page.getUrl(), match, needExtract);
 
 		// 二次判断此网页是否被解析过
-		if (match && this.scheduler.needExtract(page.getUrl())) {
+		if (match && needExtract) {
 			// 开始真正的内容解析操作
-			contentExtract.extract(page);
+			this.contentExtract.extract(page);
 			// 输出数据
-			output(page);
+			this.output(page);
 		}
 
 	}
 
 	/**
 	 * 是否符合内容页解析规则
-	 * 
-	 * @param url
+	 * @param contentExtractRules 内容页规则
+	 * @param url 需要提取的目标页面的地址
 	 * @return
 	 */
-	protected abstract boolean matchContentRule(String url);
+	protected abstract boolean matchContentExtractRule(String contentExtractRules,String url);
 
 	/**
 	 * 输出数据
@@ -82,8 +86,8 @@ public abstract class ContentExtractDecorator implements ContentExtract {
 
 	}
 
-	public ContentExtractDecorator(String filterUrls, ContentExtract contentExtract, Scheduler scheduler) {
-		this.filterUrls = filterUrls;
+	public BaseContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract, Scheduler scheduler) {
+		this.contentExtractRules = contentExtractRules;
 		this.contentExtract = contentExtract;
 		this.scheduler = scheduler;
 	}

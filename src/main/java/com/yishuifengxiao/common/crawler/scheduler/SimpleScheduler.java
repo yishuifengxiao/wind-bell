@@ -34,10 +34,10 @@ public class SimpleScheduler implements Scheduler {
 	public void push(String... urls) {
 		if (urls != null) {
 			Arrays.asList(urls).parallelStream().filter(t -> t != null).forEach(t -> {
-				if (isSave(t)) {
+				if (this.needStore(t)) {
 					this.taskManager.push(t);
 					// 存储在历史记录集之中
-					this.requestCache.lookHistoryAndCache(this.taskManager.getName(),t);
+					this.requestCache.lookHistoryAndCache(this.taskManager.getName(), t);
 				}
 
 			});
@@ -52,12 +52,12 @@ public class SimpleScheduler implements Scheduler {
 	 * @param url
 	 * @return
 	 */
-	private boolean isSave(String url) {
+	private boolean needStore(String url) {
 		if (StringUtils.isBlank(url)) {
 			return false;
 		}
 		// 在历史链接记录集不存在时才处理
-		return !requestCache.extisHistory(this.taskManager.getName(),url);
+		return !requestCache.extisHistory(this.taskManager.getName(), url);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class SimpleScheduler implements Scheduler {
 	@Override
 	public void recieve(ResultData resultData) {
 		// 保存抓取记录
-		this.requestCache.lookExtractedAndCache(this.taskManager.getName(),resultData.getUrl());
+		this.requestCache.lookExtractedAndCache(this.taskManager.getName(), resultData.getUrl());
 		// 输出数据
 		this.pipeline.recieve(resultData);
 	}
@@ -77,9 +77,8 @@ public class SimpleScheduler implements Scheduler {
 	@Override
 	public boolean needExtract(String url) {
 		// 只有在已经解析的库里不存在此资源时才需要解析
-		return !this.requestCache.extisExtracted(this.taskManager.getName(),url);
+		return !this.requestCache.extisExtracted(this.taskManager.getName(), url);
 	}
-
 
 	public SimpleScheduler(RequestCache requestCache, Pipeline pipeline, TaskManager taskManager) {
 

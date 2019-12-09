@@ -6,7 +6,6 @@ import java.util.List;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
-import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 
 /**
  * 简单链接解析器<br/>
@@ -24,19 +23,15 @@ public class LinkExtractDecorator implements LinkExtract {
 	 * 链接提取器代理器
 	 */
 	private LinkExtract linkExtractProxy;
-	/**
-	 * 资源调度器
-	 */
-	private Scheduler scheduler;
 
 	private LinkExtract linkExtract;
 	/**
 	 * 链接转换器,将提取的链接统一转成网络地址形式
 	 */
 	private LinkConverter linkConverter;
-    /**
-     * 链接提取器
-     */
+	/**
+	 * 链接提取器
+	 */
 	private List<LinkExtractor> linkExtractors;
 
 	@Override
@@ -49,14 +44,11 @@ public class LinkExtractDecorator implements LinkExtract {
 		if(this.linkExtract!=null) {
 			this.linkExtract.extract(page);
 		}
-		//对提取出来的链接进行过滤
+		//对提取出来的链接进行格式化，统一转化成网络地址形式
 		List<String> urls=	this.linkConverter.format(page.getUrl(),page.getLinks());
+		//将提取出来的链接根据链接提取规则过滤
 		urls=this.fliter(urls);
-		//推送数据
-		urls.parallelStream().forEach(t->{
-			//将请求推送到调度器中
-			scheduler.push(t);
-		});
+		page.setLinks(urls);
 		//@formatter:on  
 	}
 
@@ -76,27 +68,17 @@ public class LinkExtractDecorator implements LinkExtract {
 					list.addAll(links);
 				}
 			}
-	
 		
 		//@formatter:on  
 		return list;
 	}
 
-	public LinkExtractDecorator(LinkExtract linkExtractProxy, Scheduler scheduler, LinkExtract linkExtract,
-			LinkConverter linkConverter, List<LinkExtractor> linkExtractors) {
+	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, LinkConverter linkConverter,
+			List<LinkExtractor> linkExtractors) {
 		this.linkExtractProxy = linkExtractProxy;
-		this.scheduler = scheduler;
 		this.linkExtract = linkExtract;
 		this.linkConverter = linkConverter;
 		this.linkExtractors = linkExtractors;
-	}
-
-	public Scheduler getScheduler() {
-		return scheduler;
-	}
-
-	public void setScheduler(Scheduler scheduler) {
-		this.scheduler = scheduler;
 	}
 
 }

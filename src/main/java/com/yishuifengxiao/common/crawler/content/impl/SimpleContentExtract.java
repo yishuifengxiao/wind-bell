@@ -37,7 +37,8 @@ public class SimpleContentExtract implements ContentExtract {
 	 */
 	private Map<String, Object> extractContent(String rawText) {
 		Map<String, Object> map = new WeakHashMap<>();
-		contentExtractors.parallelStream().forEach(t -> {
+		// 调用内容抽取器进行抽取
+		contentExtractors.parallelStream().filter(t -> t != null).forEach(t -> {
 			map.put(t.getName(), t.extract(rawText));
 		});
 

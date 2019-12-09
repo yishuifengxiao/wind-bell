@@ -64,7 +64,16 @@ public class ExtractProducer {
 	public void extract(final Page page) {
 		LinkExtract linkExtract = this.createLinkExtract();
 		ContentExtract contentExtract = this.createContentExtract();
+		// 抽取链接
 		linkExtract.extract(page);
+		if (page.getLinks() != null) {
+			// 将提取出来的推送到资源调度器
+			page.getLinks().parallelStream().filter(t -> t != null).forEach(t -> {
+				scheduler.push(t);
+			});
+		}
+
+		// 抽取内容
 		contentExtract.extract(page);
 	}
 
@@ -99,8 +108,7 @@ public class ExtractProducer {
 		// 链接转换器
 		LinkConverter linkConverter = new SimpleLinkConverter(strategyChain, this.crawlerRule.getTopLevelDomain());
 		// 生成链接解析器
-		return new LinkExtractDecorator(linkExtractProxy, this.scheduler, this.linkExtract, linkConverter,
-				linkExtractors);
+		return new LinkExtractDecorator(linkExtractProxy, this.linkExtract, linkConverter, linkExtractors);
 	}
 
 	public ExtractProducer(CrawlerRule crawlerRule, LinkExtract linkExtract, ContentExtract contentExtract,

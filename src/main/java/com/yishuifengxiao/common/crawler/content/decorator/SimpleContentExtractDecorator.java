@@ -3,7 +3,7 @@ package com.yishuifengxiao.common.crawler.content.decorator;
 import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
-import com.yishuifengxiao.common.crawler.content.ContentExtractDecorator;
+import com.yishuifengxiao.common.crawler.content.BaseContentExtractDecorator;
 import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 import com.yishuifengxiao.common.crawler.utils.RegexFactory;
@@ -16,7 +16,7 @@ import com.yishuifengxiao.common.crawler.utils.RegexFactory;
  * @date 2019年11月26日
  * @version 1.0.0
  */
-public class SimpleContentExtractDecorator extends ContentExtractDecorator {
+public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
 
 	public SimpleContentExtractDecorator(String filterUrls, ContentExtract contentExtract, Scheduler scheduler) {
 		super(filterUrls, contentExtract, scheduler);
@@ -29,15 +29,24 @@ public class SimpleContentExtractDecorator extends ContentExtractDecorator {
 	 * @return 需要提取则返回为true，否则为false
 	 */
 	@Override
-	public boolean matchContentRule(String url) {
-		if (StringUtils.isBlank(filterUrls)
-				|| StringUtils.equalsAnyIgnoreCase(url, RuleConstant.REGEX_MATCH_ALL, RuleConstant.ANT_MATCH_ALL)) {
+	public boolean matchContentExtractRule(String contentExtractRules, String url) {
+		if (StringUtils.isBlank(contentExtractRules)) {
 			return true;
 		}
-		String[] urls = StringUtils.splitByWholeSeparatorPreserveAllTokens(filterUrls, ",");
+		// 判断表达式是否符合选取所有
+		if (this.matchAll(contentExtractRules)) {
+			return true;
+		}
+
+		String[] urls = StringUtils.splitByWholeSeparatorPreserveAllTokens(contentExtractRules, ",");
 		for (String str : urls) {
+			// 判断表达式是否符合选取所有
+			if (this.matchAll(str)) {
+				return true;
+			}
+
 			// 判断当前网页是否符合内容提取页的提取提取规则
-			if (match(str, url)) {
+			if (RegexFactory.match(str, url)) {
 				return true;
 
 			}
@@ -52,11 +61,11 @@ public class SimpleContentExtractDecorator extends ContentExtractDecorator {
 	 * @param url     url
 	 * @return
 	 */
-	private boolean match(String pattern, String url) {
+	private boolean matchAll(String pattern) {
 		if (StringUtils.equalsAnyIgnoreCase(pattern, RuleConstant.ANT_MATCH_ALL, RuleConstant.REGEX_MATCH_ALL)) {
 			return true;
 		}
-		return RegexFactory.match(pattern, url);
+		return false;
 	}
 
 }
