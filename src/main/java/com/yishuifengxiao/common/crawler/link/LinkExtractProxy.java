@@ -84,6 +84,7 @@ public class LinkExtractProxy implements LinkExtract {
 		return urls.parallelStream()
 				.filter(t -> StringUtils.isNotBlank(t))
 				.map(t -> linkConverterChain.handle(currentUrl, t))
+				.filter(t->t!=null)
 				.collect(Collectors.toList());
 		//@formatter:on  
 	}
@@ -91,7 +92,5 @@ public class LinkExtractProxy implements LinkExtract {
 	public LinkExtractProxy(LinkConverterChain linkConverterChain) {
 		this.linkConverterChain = linkConverterChain;
 	}
-
-	
 
 }

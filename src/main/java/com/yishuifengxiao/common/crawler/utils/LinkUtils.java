@@ -33,4 +33,18 @@ public class LinkUtils {
 
 	}
 
+	/**
+	 * 判断是否符合网络请求的地址形式
+	 * 
+	 * @param url 需要判断的url
+	 * @return 符合要求为true,否则为false
+	 */
+	public static boolean matchHttpRequest(String url) {
+		if (StringUtils.isBlank(url)) {
+			return false;
+		}
+		Matcher matcher = PATTERN.matcher(url);
+		return matcher.matches();
+	}
+
 }

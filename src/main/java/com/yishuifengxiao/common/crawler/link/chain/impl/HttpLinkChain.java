@@ -1,9 +1,7 @@
 package com.yishuifengxiao.common.crawler.link.chain.impl;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.link.chain.BaseLinkChain;
+import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
 /**
  * 网络地址链接处理器
@@ -20,7 +18,7 @@ public class HttpLinkChain extends BaseLinkChain {
 
 	@Override
 	protected String doHandle(String currentUrl, String url) {
-		if (StringUtils.startsWith(url, RuleConstant.NETWORK_ADDR_LINK)) {
+		if (LinkUtils.matchHttpRequest(url)) {
 			return url;
 		}
 		return null;

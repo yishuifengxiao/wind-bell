@@ -23,7 +23,7 @@ public class AbsoluteLinkChain extends BaseLinkChain {
 	protected String doHandle(String currentUrl, String url) {
 		if (StringUtils.startsWith(url, RuleConstant.ABSOLUTE_ADDR_LINK)) {
 
-			return new StringBuffer(LinkUtils.extractDomain(url)).append(url).toString();
+			return new StringBuffer(LinkUtils.extractDomain(currentUrl)).append(url).toString();
 		}
 		return null;
 	}
