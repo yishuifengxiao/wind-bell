@@ -26,7 +26,7 @@ public class NotLinkChain extends BaseLinkChain {
 		if (StringUtils.isBlank(url)) {
 			return null;
 		}
-		if (StringUtils.startsWith(url.toLowerCase(), RuleConstant.NOT_LINK)) {
+		if (StringUtils.contains(url.toLowerCase(), RuleConstant.NOT_LINK)) {
 			return null;
 		}
 		return this.next != null ? this.next.handle(currentPath, url) : null;
