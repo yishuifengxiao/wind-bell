@@ -44,7 +44,7 @@ public class LinkUtils {
 			return false;
 		}
 		Matcher matcher = PATTERN.matcher(url);
-		return matcher.matches();
+		return matcher.find();
 	}
 
 }

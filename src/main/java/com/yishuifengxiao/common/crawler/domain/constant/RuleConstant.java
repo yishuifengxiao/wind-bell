@@ -38,7 +38,7 @@ public final class RuleConstant {
 	/**
 	 * a标签中非link的表达式
 	 */
-	public final static String NOT_LINK="javascript:void";
+	public final static String NOT_LINK="javascript";
 	
 	/**
 	 * 提取域名的正则表达式
