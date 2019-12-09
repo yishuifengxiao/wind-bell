@@ -3,11 +3,9 @@ package com.yishuifengxiao.common.crawler.extractor.links.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
-import com.yishuifengxiao.common.crawler.utils.RegexFactory;
+import com.yishuifengxiao.common.crawler.macther.PathMatcher;
+import com.yishuifengxiao.common.crawler.macther.impl.SimplePathMatcher;
 
 /**
  * 简单实现的链接提取器
@@ -17,16 +15,19 @@ import com.yishuifengxiao.common.crawler.utils.RegexFactory;
  * @date 2019-11-5
  */
 public class SimpleLinkExtractor implements LinkExtractor {
+	
+    /**
+     * 路径匹配工具
+     */
+	private PathMatcher pathMatcher = new SimplePathMatcher();
 
 	private String regex;
 
 	@Override
 	public List<String> extract(List<String> links) {
-		if (StringUtils.equalsIgnoreCase(regex, RuleConstant.ANT_MATCH_ALL)) {
-			return links.parallelStream().filter(t -> StringUtils.isNotBlank(t)).collect(Collectors.toList());
-		}
+	
 		// 放入下一步的链接
-		links = links.parallelStream().filter(t -> RegexFactory.match(regex, t)).collect(Collectors.toList());
+		links = links.parallelStream().filter(t -> pathMatcher.match(regex, t)).collect(Collectors.toList());
 		return links;
 	}
 

@@ -3,7 +3,6 @@ package com.yishuifengxiao.common.crawler.content;
 import org.apache.http.HttpStatus;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
-import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,23 +39,20 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	@Override
 	public void extract(Page page) {
 
-		if (page == null || page.getCode() != HttpStatus.SC_OK) {
-			// 该网页不需要重新解析
-			scheduler.recieve(new ResultData(page.getUrl(), false));
-			return;
-		}
-		// 判断是否符合解析规则
-		boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
-		// 是否需要解析
-		boolean needExtract = this.scheduler.needExtract(page.getUrl());
-		log.debug(
-				"Whether the page [{}] matches the content page parsing result is {}, whether it needs to parse the result is {}",
-				page.getUrl(), match, needExtract);
+		if (null != page && HttpStatus.SC_OK == page.getCode()) {
+			// 判断是否符合解析规则
+			boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
+			// 是否需要解析
+			boolean needExtract = this.scheduler.needExtract(page.getUrl());
+			log.debug(
+					"Whether the page [{}] matches the content page parsing result is {}, whether it needs to parse the result is {}",
+					page.getUrl(), match, needExtract);
 
-		// 二次判断此网页是否被解析过
-		if (match && needExtract) {
-			// 开始真正的内容解析操作
-			this.contentExtract.extract(page);
+			// 二次判断此网页是否被解析过
+			if (match && needExtract) {
+				// 开始真正的内容解析操作
+				this.contentExtract.extract(page);
+			}
 		}
 
 	}

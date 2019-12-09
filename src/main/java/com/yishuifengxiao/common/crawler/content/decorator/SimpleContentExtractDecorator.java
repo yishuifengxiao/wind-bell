@@ -2,11 +2,11 @@ package com.yishuifengxiao.common.crawler.content.decorator;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.content.BaseContentExtractDecorator;
-import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
+import com.yishuifengxiao.common.crawler.content.ContentExtract;
+import com.yishuifengxiao.common.crawler.macther.PathMatcher;
+import com.yishuifengxiao.common.crawler.macther.impl.SimplePathMatcher;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
-import com.yishuifengxiao.common.crawler.utils.RegexFactory;
 
 /**
  * 默认的内容提取器装饰器<br/>
@@ -17,6 +17,10 @@ import com.yishuifengxiao.common.crawler.utils.RegexFactory;
  * @version 1.0.0
  */
 public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
+    /**
+     * 路径匹配工具
+     */
+	private PathMatcher pathMatcher = new SimplePathMatcher();
 
 	public SimpleContentExtractDecorator(String filterUrls, ContentExtract contentExtract, Scheduler scheduler) {
 		super(filterUrls, contentExtract, scheduler);
@@ -34,36 +38,17 @@ public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
 			return true;
 		}
 		// 判断表达式是否符合选取所有
-		if (this.matchAll(contentExtractRules)) {
+		if (this.pathMatcher.match(contentExtractRules, url)) {
 			return true;
 		}
 
 		String[] urls = StringUtils.splitByWholeSeparatorPreserveAllTokens(contentExtractRules, ",");
 		for (String str : urls) {
 			// 判断表达式是否符合选取所有
-			if (this.matchAll(str)) {
+			if (this.pathMatcher.match(str, url)) {
 				return true;
 			}
 
-			// 判断当前网页是否符合内容提取页的提取提取规则
-			if (RegexFactory.match(str, url)) {
-				return true;
-
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * 根据正则判断是否匹配
-	 *
-	 * @param pattern 正则
-	 * @param url     url
-	 * @return
-	 */
-	private boolean matchAll(String pattern) {
-		if (StringUtils.equalsAnyIgnoreCase(pattern, RuleConstant.ANT_MATCH_ALL, RuleConstant.REGEX_MATCH_ALL)) {
-			return true;
 		}
 		return false;
 	}
