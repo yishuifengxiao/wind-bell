@@ -16,11 +16,11 @@ public abstract class BaseLinkChain {
 	/**
 	 * 处理链接
 	 * 
-	 * @param currentUrl 当前正在解析的网页的地址
+	 * @param path 当前正在解析的网页的地址
 	 * @param url        当前网页中提取出来的需要处理的网页地址
 	 * @return
 	 */
-	public abstract String handle(String currentPath, String url);
+	public abstract String handle(String path, String url);
 
 
 	public BaseLinkChain(BaseLinkChain next) {
