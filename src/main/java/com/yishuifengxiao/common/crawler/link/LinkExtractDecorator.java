@@ -2,6 +2,7 @@ package com.yishuifengxiao.common.crawler.link;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,13 +50,33 @@ public class LinkExtractDecorator implements LinkExtract {
 			this.linkExtract.extract(page);
 		}
 		//对提取出来的链接进行过滤
-		List<String> urls=	this.fliter(page.getLinks());
+		List<String> urls=	this.matchTopLevelDomain(page.getLinks());
+		urls=this.fliter(urls);
 		//推送数据
 		urls.parallelStream().forEach(t->{
 			//将请求推送到调度器中
 			scheduler.push(t);
 		});
 		//@formatter:on  
+	}
+
+	/**
+	 * 提取的链接必须在爬虫实例对应的一级域名之内
+	 * 
+	 * @param urls
+	 * @return
+	 */
+	private List<String> matchTopLevelDomain(List<String> urls) {
+		if (urls != null) {
+			// 提取的链接必须在域名之内
+			Set<String> links = urls.parallelStream().filter(t -> StringUtils.containsIgnoreCase(t, topLevelDomain))
+					.collect(Collectors.toSet());
+			if (links != null) {
+				return new ArrayList<>(links);
+			}
+		}
+
+		return new ArrayList<>();
 	}
 
 	/**
@@ -67,17 +88,14 @@ public class LinkExtractDecorator implements LinkExtract {
 	private List<String> fliter(List<String> urls) {
 		//@formatter:off 
 		final List<String> list = new ArrayList<>();
-		if(urls!=null) {
-			//提取的链接必须在域名之内
-			urls=urls.parallelStream().filter(t->StringUtils.containsIgnoreCase(t, topLevelDomain)).collect(Collectors.toList());
-			
+		
 			for(LinkExtractor linkExtractor:linkExtractors) {
-				urls=linkExtractor.extract(urls);
-				if(urls!=null) {
-					list.addAll(urls);
+			List<String> links=linkExtractor.extract(urls);
+				if(links!=null) {
+					list.addAll(links);
 				}
 			}
-		}
+	
 		
 		//@formatter:on  
 		return list;
