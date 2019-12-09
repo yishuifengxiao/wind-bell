@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
  * 链接解析器器适配器 <br/>
  * 功能如下：<br/>
  * 1. 主要负责从原始网页文本中解析出所有的链接<br/>
- * 2. 将链接转换成网络地址形式
  * 
  * @author yishui
  * @date 2019年11月26日

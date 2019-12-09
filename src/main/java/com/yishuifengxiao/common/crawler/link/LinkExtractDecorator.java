@@ -10,8 +10,8 @@ import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
 /**
  * 简单链接解析器<br/>
  * 功能如下：<br/>
- * 1 从网页的原始文本中解析出所有符合规则要求的链接<br/>
- * 2 将提取到的链接推送到资源调度器中<br/>
+ * 1 从网页的原始文本中统一转换成网络地址形式<br/>
+ * 2 从转换后的地址里提取出所有符合要求的链接
  * 
  * @author yishui
  * @date 2019年11月26日
