@@ -35,6 +35,10 @@ public final class RuleConstant {
 	 * 网络地址标志
 	 */
 	public final static String NETWORK_ADDR_LINK="http";
+	/**
+	 * a标签中非link的表达式
+	 */
+	public final static String NOT_LINK="javascript:void";
 	
 	/**
 	 * 提取域名的正则表达式

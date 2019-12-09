@@ -17,26 +17,23 @@ public class RelativeLinkChain extends BaseLinkChain {
 
 	public RelativeLinkChain(BaseLinkChain next) {
 		super(next);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
-	public String handle(String currentUrl, String url) {
+	public String handle(String currentPath, String url) {
 
-		return next == null ? null : next.handle(currentUrl, url);
-	}
-
-	@Override
-	protected String doHandle(String currentUrl, String url) {
 		if (!StringUtils.startsWithAny(url, RuleConstant.ABSOLUTE_ADDR_LINK, RuleConstant.NETWORK_ADDR_LINK)) {
+
 			// 不是网络地址和绝对地址
-			StringBuffer sb = new StringBuffer(currentUrl);
-			if (!StringUtils.endsWith(currentUrl, CrawlerConstant.LEFT_SALASH)) {
+			StringBuffer sb = new StringBuffer(currentPath);
+			if (!StringUtils.endsWith(currentPath, CrawlerConstant.LEFT_SALASH)) {
 				sb.append(CrawlerConstant.LEFT_SALASH);
 			}
 			return sb.append(url).toString();
+
 		}
-		return null;
+		return this.next != null ? this.next.handle(currentPath, url) : null;
 	}
 
 }

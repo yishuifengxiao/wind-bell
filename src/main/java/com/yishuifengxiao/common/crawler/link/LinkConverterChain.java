@@ -3,6 +3,7 @@ package com.yishuifengxiao.common.crawler.link;
 import com.yishuifengxiao.common.crawler.link.chain.BaseLinkChain;
 import com.yishuifengxiao.common.crawler.link.chain.impl.AbsoluteLinkChain;
 import com.yishuifengxiao.common.crawler.link.chain.impl.HttpLinkChain;
+import com.yishuifengxiao.common.crawler.link.chain.impl.NotLinkChain;
 import com.yishuifengxiao.common.crawler.link.chain.impl.RelativeLinkChain;
 
 /**
@@ -21,7 +22,8 @@ public class LinkConverterChain {
 		RelativeLinkChain relativechain = new RelativeLinkChain(null);
 		AbsoluteLinkChain absolutechain = new AbsoluteLinkChain(relativechain);
 		HttpLinkChain httpLinkStrategy = new HttpLinkChain(absolutechain);
-		this.nextChain = httpLinkStrategy;
+		NotLinkChain NotLinkChain = new NotLinkChain(httpLinkStrategy);
+		this.nextChain = NotLinkChain;
 	}
 
 	public String handle(String currentUrl, String url) {

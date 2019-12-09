@@ -17,11 +17,14 @@ public class HttpLinkChain extends BaseLinkChain {
 	}
 
 	@Override
-	protected String doHandle(String currentUrl, String url) {
+	public String handle(String currentPath, String url) {
+
 		if (LinkUtils.matchHttpRequest(url)) {
+			// 绝对地址
+
 			return url;
 		}
-		return null;
+		return this.next != null ? this.next.handle(currentPath, url) : null;
 	}
 
 }

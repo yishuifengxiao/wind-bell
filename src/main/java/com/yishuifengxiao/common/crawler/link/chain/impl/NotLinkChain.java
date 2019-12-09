@@ -1,31 +1,33 @@
+/**
+ * 
+ */
 package com.yishuifengxiao.common.crawler.link.chain.impl;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.link.chain.BaseLinkChain;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
 /**
- * 绝对地址链接处理器
+ * 对于抓取的不是链接的处理方式
  * 
  * @author yishui
+ * @date 2019年12月9日
  * @version 1.0.0
- * @date 2019/11/20
  */
-public class AbsoluteLinkChain extends BaseLinkChain {
+public class NotLinkChain extends BaseLinkChain {
 
-	public AbsoluteLinkChain(BaseLinkChain next) {
+	public NotLinkChain(BaseLinkChain next) {
 		super(next);
 	}
 
 	@Override
 	public String handle(String currentPath, String url) {
-
-		if (StringUtils.startsWith(url, RuleConstant.ABSOLUTE_ADDR_LINK)) {
-			// 绝对地址
-
-			return new StringBuffer(LinkUtils.extractDomain(currentPath)).append(url).toString();
+		if (StringUtils.isBlank(url)) {
+			return null;
+		}
+		if (StringUtils.startsWith(url.toLowerCase(), RuleConstant.NOT_LINK)) {
+			return null;
 		}
 		return this.next != null ? this.next.handle(currentPath, url) : null;
 	}
