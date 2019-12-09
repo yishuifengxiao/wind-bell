@@ -15,20 +15,27 @@ import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
  * @version 1.0.0
  */
 public class LinkUtils {
-
-	private final static Pattern PATTERN = Pattern.compile(RuleConstant.REGEX_DIMAIN);
+	/**
+	 * 判断是否符合形如 http://www.yishuifengxiao.com 的正则表达式
+	 */
+	private final static Pattern PATTERN_PROTOCOL_AND_HOST = Pattern.compile(RuleConstant.REGEX_PROTOCOL_AND_HOST);
 
 	/**
-	 * 从url中提取出来域名
+	 * 判断是否符合形如 www.yishuifengxiao.com 的正则表达式
+	 */
+	private final static Pattern PATTERN_DOMAIN = Pattern.compile(RuleConstant.REGEX_DOMAIN);
+
+	/**
+	 * 从url中提取出来协议和域名
 	 * 
 	 * @param url
 	 * @return 返回协议和域名，形如 http://www.yishuifengxiao.com
 	 */
-	public static String extractDomain(String url) {
+	public static String extractProtocolAndHost(String url) {
 		if (StringUtils.isBlank(url)) {
 			return null;
 		}
-		Matcher matcher = PATTERN.matcher(url);
+		Matcher matcher = PATTERN_PROTOCOL_AND_HOST.matcher(url);
 		return matcher.find() ? matcher.group() : null;
 
 	}
@@ -43,8 +50,49 @@ public class LinkUtils {
 		if (StringUtils.isBlank(url)) {
 			return false;
 		}
-		Matcher matcher = PATTERN.matcher(url);
+		Matcher matcher = PATTERN_PROTOCOL_AND_HOST.matcher(url);
 		return matcher.find();
+	}
+
+	/**
+	 * 从url中提取出来域名
+	 * 
+	 * @param url
+	 * @return 返回协议和域名，形如 www.yishuifengxiao.com
+	 */
+	public static String extractDomain(String url) {
+		if (StringUtils.isBlank(url)) {
+			return null;
+		}
+		Matcher matcher = PATTERN_DOMAIN.matcher(url);
+		return matcher.find() ? matcher.group() : null;
+	}
+
+	/**
+	 * 从url中提取出来域名
+	 * 
+	 * @param url
+	 * @return 返回协议和域名，形如 www.yishuifengxiao.com
+	 */
+	public static String extractTopLevelDomain(String url) {
+		if (StringUtils.isBlank(url)) {
+			return null;
+		}
+		Matcher matcher = PATTERN_DOMAIN.matcher(url);
+		if (matcher.find()) {
+			String domain = matcher.group();
+			int lastOrdinal = StringUtils.lastOrdinalIndexOf(domain, ".", 2);
+			if (lastOrdinal != -1) {
+				return StringUtils.substring(domain, lastOrdinal+1);
+			}
+		}
+
+		return null;
+	}
+	
+	public static void main(String[] args) {
+		String str="https://c.runoob.com/front-end/854";
+		System.out.println(extractTopLevelDomain(str));;
 	}
 
 }

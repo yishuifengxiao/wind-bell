@@ -22,9 +22,9 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  */
 public class LinkExtractDecorator implements LinkExtract {
 	/**
-	 * 网站的协议和域名
+	 * 一级域名
 	 */
-	private String domain;
+	private String topLevelDomain;
 	/**
 	 * 链接提取器代理器
 	 */
@@ -69,7 +69,7 @@ public class LinkExtractDecorator implements LinkExtract {
 		final List<String> list = new ArrayList<>();
 		if(urls!=null) {
 			//提取的链接必须在域名之内
-			urls=urls.parallelStream().filter(t->StringUtils.startsWithIgnoreCase(t, domain)).collect(Collectors.toList());
+			urls=urls.parallelStream().filter(t->StringUtils.containsIgnoreCase(t, topLevelDomain)).collect(Collectors.toList());
 			
 			for(LinkExtractor linkExtractor:linkExtractors) {
 				urls=linkExtractor.extract(urls);
@@ -83,9 +83,9 @@ public class LinkExtractDecorator implements LinkExtract {
 		return list;
 	}
 
-	public LinkExtractDecorator(String domain, LinkExtract linkExtractProxy, Scheduler scheduler,
+	public LinkExtractDecorator(String topLevelDomain, LinkExtract linkExtractProxy, Scheduler scheduler,
 			LinkExtract linkExtract, List<LinkExtractor> linkExtractors) {
-		this.domain = domain;
+		this.topLevelDomain = topLevelDomain;
 		this.linkExtractProxy = linkExtractProxy;
 		this.scheduler = scheduler;
 		this.linkExtract = linkExtract;

@@ -88,17 +88,18 @@ public class CrawlerRule implements Serializable {
 	private ContentRule content;
 
 	/**
-	 * 获取当前爬虫爬取的协议和域名信息<br/>
-	 * 形式如 http://www.yishuifengxiao.com
-	 * @return 协议和域名
+	 * 获取当前爬虫爬取的一级域名<br/>
+	 * 形式如 yishuifengxiao.com
+	 * 
+	 * @return 一级域名
 	 */
 	@ApiModelProperty(hidden = true)
 	@JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
-	public String getDomain() {
+	public String getTopLevelDomain() {
 		if (link == null) {
 			throw new IllegalArgumentException("链接提取规则不能为空");
 		}
-		String domain = LinkUtils.extractDomain(link.getStartUrl());
+		String domain = LinkUtils.extractTopLevelDomain(link.getStartUrl());
 		return domain;
 	}
 

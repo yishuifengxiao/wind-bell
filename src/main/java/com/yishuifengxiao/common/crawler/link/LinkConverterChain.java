@@ -22,8 +22,8 @@ public class LinkConverterChain {
 		RelativeLinkChain relativechain = new RelativeLinkChain(null);
 		AbsoluteLinkChain absolutechain = new AbsoluteLinkChain(relativechain);
 		HttpLinkChain httpLinkStrategy = new HttpLinkChain(absolutechain);
-		NotLinkChain NotLinkChain = new NotLinkChain(httpLinkStrategy);
-		this.nextChain = NotLinkChain;
+		NotLinkChain notLinkChain = new NotLinkChain(httpLinkStrategy);
+		this.nextChain = notLinkChain;
 	}
 
 	public String handle(String currentUrl, String url) {

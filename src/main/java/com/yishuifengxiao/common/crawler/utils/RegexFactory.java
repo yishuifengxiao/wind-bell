@@ -55,6 +55,19 @@ public class RegexFactory {
 	}
 
 	/**
+	 * 判断内容是否包正则表达式标识的内容
+	 * 
+	 * @param regex
+	 * @param content
+	 * @return
+	 */
+	public static boolean find(String regex, String content) {
+		Pattern pattern = pattern(regex);
+		Matcher matcher = pattern.matcher(content);
+		return matcher.find();
+	}
+
+	/**
 	 * 根据正则表达式从内容中提取出一组匹配的内容
 	 * 
 	 * @param regex   正则表达式

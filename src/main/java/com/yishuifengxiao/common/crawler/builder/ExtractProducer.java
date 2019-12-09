@@ -95,7 +95,7 @@ public class ExtractProducer {
 		// 构建一个链接解析适配器
 		LinkExtractProxy linkExtractProxy = new LinkExtractProxy(strategyChain);
 		// 生成链接解析器
-		return new LinkExtractDecorator(this.crawlerRule.getDomain(), linkExtractProxy, this.scheduler,
+		return new LinkExtractDecorator(this.crawlerRule.getTopLevelDomain(), linkExtractProxy, this.scheduler,
 				this.linkExtract, linkExtractors);
 	}
 

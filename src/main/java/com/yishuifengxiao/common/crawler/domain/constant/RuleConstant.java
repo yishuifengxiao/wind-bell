@@ -41,8 +41,13 @@ public final class RuleConstant {
 	public final static String NOT_LINK="javascript";
 	
 	/**
-	 * 提取域名的正则表达式
+	 * 提取协议和域名
 	 */
-	public final static String REGEX_DIMAIN="http[s]?://[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
+	public final static String REGEX_PROTOCOL_AND_HOST="http[s]?://[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
+	
+	/**
+	 * 提取域名
+	 */
+	public final static String REGEX_DOMAIN="[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
 
 }

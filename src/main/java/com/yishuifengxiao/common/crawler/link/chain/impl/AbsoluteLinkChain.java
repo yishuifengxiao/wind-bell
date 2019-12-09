@@ -25,7 +25,7 @@ public class AbsoluteLinkChain extends BaseLinkChain {
 		if (StringUtils.startsWith(url, RuleConstant.ABSOLUTE_ADDR_LINK)) {
 			// 绝对地址
 
-			return new StringBuffer(LinkUtils.extractDomain(currentPath)).append(url).toString();
+			return new StringBuffer(LinkUtils.extractProtocolAndHost(currentPath)).append(url).toString();
 		}
 		return this.next != null ? this.next.handle(currentPath, url) : null;
 	}
