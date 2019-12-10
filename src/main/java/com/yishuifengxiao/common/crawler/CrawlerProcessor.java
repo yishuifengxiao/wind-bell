@@ -36,11 +36,11 @@ public class CrawlerProcessor extends Thread {
 
 	private final static Logger log = LoggerFactory.getLogger(CrawlerProcessor.class);
 	/**
-	 * 记录请求新页面请求总共请求时间
+	 * 未获得新的请求任务的连续总时间
 	 */
 	protected AtomicInteger stat = new AtomicInteger(0);
 	/**
-	 * 抓取的链接总数量
+	 * 已成功提取信息的页面的数据
 	 */
 	private AtomicLong pageCount = new AtomicLong(0);
 	/**
