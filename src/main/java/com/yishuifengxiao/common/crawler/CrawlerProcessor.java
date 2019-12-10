@@ -20,6 +20,7 @@ import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.pool.SimpleThreadFactory;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
  * 爬虫处理器<br/>
@@ -146,7 +147,7 @@ public class CrawlerProcessor extends Thread {
 			// 下载下载后的page信息里包含request信息
 			page = this.downloader.down(url);
 			if (page == null) {
-				throw new Exception(
+				throw new ServiceException(
 						new StringBuffer("Web page (").append(url).append(" ) download results are empty").toString());
 			}
 			// 补全URL信息

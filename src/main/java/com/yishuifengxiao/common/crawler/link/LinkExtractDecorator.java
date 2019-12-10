@@ -6,6 +6,7 @@ import java.util.List;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
  * 简单链接解析器<br/>
@@ -35,7 +36,7 @@ public class LinkExtractDecorator implements LinkExtract {
 	private List<LinkExtractor> linkExtractors;
 
 	@Override
-	public void extract(Page page) {
+	public void extract(Page page) throws ServiceException{
 		//@formatter:off 
 		// 调用实际处理类对信息进行处理
 		linkExtractProxy.extract(page);

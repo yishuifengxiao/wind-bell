@@ -12,6 +12,7 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.eunm.Rule;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFactory;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +31,7 @@ public class LinkExtractProxy implements LinkExtract {
 	private Strategy strategy = StrategyFactory.get(Rule.XPATH);
 
 	@Override
-	public synchronized void extract(Page page) {
+	public synchronized void extract(Page page) throws ServiceException{
 
 		// 先提取出所有的链接
 		List<String> urls = this.extractAllLinks(page.getRawTxt());

@@ -7,12 +7,10 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -87,20 +85,6 @@ public class CrawlerRule implements Serializable {
 	@Valid
 	private ContentRule content;
 
-	/**
-	 * 获取当前爬虫爬取的一级域名<br/>
-	 * 形式如 yishuifengxiao.com
-	 * 
-	 * @return 一级域名
-	 */
-	@ApiModelProperty(hidden = true)
-	@JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
-	public String getTopLevelDomain() {
-		if (link == null) {
-			throw new IllegalArgumentException("链接提取规则不能为空");
-		}
-		String domain = LinkUtils.extractTopLevelDomain(link.getStartUrl());
-		return domain;
-	}
+
 
 }

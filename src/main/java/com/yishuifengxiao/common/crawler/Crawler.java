@@ -27,6 +27,7 @@ import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
 import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
+import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.downloader.impl.SimpleDownloader;
@@ -268,8 +269,19 @@ public class Crawler implements Task {
 	 * @param contentExtractRule 内容提取规则
 	 * @return
 	 */
-	public final static SimulatorData test(String url, SiteRule siteRule, ContentExtractRule contentExtractRule) {
+	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentExtractRule contentExtractRule) {
 		return new SimpleSimulator().extract(url, siteRule, contentExtractRule);
+	}
+
+	/**
+	 * 测试链接提取规则
+	 * 
+	 * @param siteRule 站点规则
+	 * @param linkRule 链接提取规则
+	 * @return
+	 */
+	public final static SimulatorData testLink(SiteRule siteRule, LinkRule linkRule) {
+		return new SimpleSimulator().link(siteRule, linkRule);
 	}
 
 	/**

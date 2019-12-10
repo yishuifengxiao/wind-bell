@@ -1,23 +1,15 @@
 package com.yishuifengxiao.common.crawler.builder;
 
-import java.util.List;
-
 import com.yishuifengxiao.common.crawler.builder.impl.SimpleExtractBuilder;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
-import com.yishuifengxiao.common.crawler.content.decorator.SimpleContentExtractDecorator;
-import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
-import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
-import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
-import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
-import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
-import com.yishuifengxiao.common.crawler.link.converter.impl.SimpleLinkConverter;
-import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
-import com.yishuifengxiao.common.crawler.link.LinkConverterChain;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 解析器生成工具<br/>
@@ -29,16 +21,10 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  * @date 2019年11月25日
  * @version 1.0.0
  */
+@Slf4j
 public class ExtractProducer {
-	/**
-	 * 提取器构建者
-	 */
-	private ExtractorBuilder extractorBuilder = new SimpleExtractBuilder();
 
-	/**
-	 * 链接转换器
-	 */
-	private LinkConverterChain strategyChain = new LinkConverterChain();
+	private ExtractBuilder extractBuilder = new SimpleExtractBuilder();
 	/**
 	 * 当前爬虫配置
 	 */
@@ -62,22 +48,48 @@ public class ExtractProducer {
 	 * 
 	 * @param page
 	 */
-	public void extract(final Page page) {
-		LinkExtract linkExtract = this.createLinkExtract();
-		ContentExtract contentExtract = this.createContentExtract();
+	public void extract(final Page page) throws ServiceException {
+		this.invoke();
 		// 抽取链接
-		linkExtract.extract(page);
+		this.linkExtract.extract(page);
+		// 存储链接
+		this.storeLink(page);
+		// 初步判断内容是否需要被解析
+		boolean needExtract = this.scheduler.needExtract(page.getUrl());
+
+		log.debug("Does the web page [{}] need to be parsed as {}", page.getUrl(), needExtract);
+
+		if (needExtract) {
+			// 抽取内容
+			this.contentExtract.extract(page);
+			// 输出数据
+			this.output(page);
+		}
+
+	}
+
+	/**
+	 * 将提取的链接推送到资源调度器
+	 * 
+	 * @param page
+	 */
+	private void storeLink(final Page page) {
 		if (page.getLinks() != null) {
 			// 将提取出来的推送到资源调度器
 			page.getLinks().parallelStream().filter(t -> t != null).forEach(t -> {
 				scheduler.push(t);
 			});
 		}
+	}
 
-		// 抽取内容
-		contentExtract.extract(page);
-        //输出数据
-		this.output(page);
+	/**
+	 * 处理解析器
+	 */
+	private void invoke() {
+		// 生成链接解析器
+		this.linkExtract = extractBuilder.createLinkExtract(this.crawlerRule.getLink(), this.linkExtract);
+		// 生成内容解析器
+		this.contentExtract = extractBuilder.createContentExtract(this.crawlerRule.getContent(), this.contentExtract);
 	}
 
 	/**
@@ -93,40 +105,6 @@ public class ExtractProducer {
 			this.scheduler.recieve(resultData);
 		}
 
-	}
-
-	/**
-	 * 构建出内容解析器
-	 * 
-	 * @return
-	 */
-	private ContentExtract createContentExtract() {
-		// 获取到所有的内容抽取器
-		List<ContentExtractor> contentExtractors = extractorBuilder
-				.buildAllContentExtractor(this.crawlerRule.getContent());
-		// 构建一个内容解析器
-		ContentExtract contentExtract = this.contentExtract != null ? this.contentExtract
-				: new SimpleContentExtract(contentExtractors);
-		// 构建一个内容解析装饰器
-		return new SimpleContentExtractDecorator(this.crawlerRule.getContent().getExtractUrl(), contentExtract,
-				this.scheduler);
-	}
-
-	/**
-	 * 构建链接解析器
-	 * 
-	 * @return
-	 */
-	private LinkExtract createLinkExtract() {
-
-		// 获取所有的链接提取器
-		List<LinkExtractor> linkExtractors = extractorBuilder.buildLinkExtractor(this.crawlerRule.getLink());
-		// 构建一个链接解析适配器
-		LinkExtractProxy linkExtractProxy = new LinkExtractProxy();
-		// 链接转换器
-		LinkConverter linkConverter = new SimpleLinkConverter(strategyChain, this.crawlerRule.getTopLevelDomain());
-		// 生成链接解析器
-		return new LinkExtractDecorator(linkExtractProxy, this.linkExtract, linkConverter, linkExtractors);
 	}
 
 	public ExtractProducer(CrawlerRule crawlerRule, LinkExtract linkExtract, ContentExtract contentExtract,

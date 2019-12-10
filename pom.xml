@@ -61,6 +61,7 @@
 		<swagger.v3.version>1.5.22</swagger.v3.version>
 		<fastjson.version>1.2.62</fastjson.version>
 		<jsoup.version>1.10.3</jsoup.version>
+		<common-tool.version>2.0.2</common-tool.version>
 	</properties>
 
 	<dependencies>
@@ -72,17 +73,23 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.yishuifengxiao.common</groupId>
+			<artifactId>common-tool</artifactId>
+			<version>${common-tool.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>us.codecraft</groupId>
 			<artifactId>xsoup</artifactId>
 			<version>${xsoup.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>${jsoup.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>

@@ -7,6 +7,7 @@ import java.util.WeakHashMap;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
  * 默认实现的简单内容解析器<br/>
@@ -22,7 +23,7 @@ public class SimpleContentExtract implements ContentExtract {
 	private List<ContentExtractor> contentExtractors;
 
 	@Override
-	public void extract(Page page) {
+	public void extract(Page page) throws ServiceException{
 		// 提取出所有属性数据
 		Map<String, Object> data = this.extractContent(page.getRawTxt());
 		// 设置输出数据

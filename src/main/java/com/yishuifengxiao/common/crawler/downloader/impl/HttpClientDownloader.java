@@ -13,6 +13,7 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.http.HttpClient;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +32,7 @@ public class HttpClientDownloader implements Downloader {
 	private HttpClient httpClient;
 
 	@Override
-	public Page down(String url) {
+	public Page down(String url) throws ServiceException {
 
 		Page page = new Page(url);
 

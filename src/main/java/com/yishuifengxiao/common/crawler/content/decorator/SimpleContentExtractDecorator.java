@@ -6,7 +6,6 @@ import com.yishuifengxiao.common.crawler.content.BaseContentExtractDecorator;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.macther.PathMatcher;
 import com.yishuifengxiao.common.crawler.macther.impl.SimplePathMatcher;
-import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 
 /**
  * 默认的内容提取器装饰器<br/>
@@ -17,13 +16,13 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  * @version 1.0.0
  */
 public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
-    /**
-     * 路径匹配工具
-     */
+	/**
+	 * 路径匹配工具
+	 */
 	private PathMatcher pathMatcher = new SimplePathMatcher();
 
-	public SimpleContentExtractDecorator(String filterUrls, ContentExtract contentExtract, Scheduler scheduler) {
-		super(filterUrls, contentExtract, scheduler);
+	public SimpleContentExtractDecorator(String filterUrls, ContentExtract contentExtract) {
+		super(filterUrls, contentExtract);
 	}
 
 	/**

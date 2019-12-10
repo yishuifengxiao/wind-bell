@@ -24,6 +24,7 @@ import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +45,7 @@ public class SimpleDownloader implements Downloader {
 	private Map<String, String> cookies = null;
 
 	@Override
-	public Page down(String url) {
+	public Page down(String url) throws ServiceException{
 		Page page = new Page(url);
 		Response response = null;
 		try {

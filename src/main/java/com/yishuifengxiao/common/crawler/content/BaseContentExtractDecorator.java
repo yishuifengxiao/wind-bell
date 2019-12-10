@@ -3,7 +3,7 @@ package com.yishuifengxiao.common.crawler.content;
 import org.apache.http.HttpStatus;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
-import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
+import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,28 +31,17 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	 * 爬虫处理器，负责解析下载后的网页内容
 	 */
 	protected ContentExtract contentExtract;
-	/**
-	 * 资源 调度器，负责资源的调度工作
-	 */
-	protected Scheduler scheduler;
 
 	@Override
-	public void extract(Page page) {
+	public void extract(Page page) throws ServiceException{
 
 		if (null != page && HttpStatus.SC_OK == page.getCode()) {
 			// 判断是否符合解析规则
 			boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
-			log.debug("Whether the page [{}] matches the content page parsing result is {}", page.getUrl(), match);
+			log.debug("Whether the web page [{}] matches the content page parsing rule is {}", page.getUrl(), match);
 			if (match) {
-				// 是否需要解析,判断该网页是否已被解析过
-				boolean needExtract = this.scheduler.needExtract(page.getUrl());
-				log.debug("Whether the page [{}]  needs to parse the result is {}", page.getUrl(), needExtract);
-
-				// 二次判断此网页是否被解析过
-				if (needExtract) {
-					// 开始真正的内容解析操作
-					this.contentExtract.extract(page);
-				}
+				// 开始真正的内容解析操作
+				this.contentExtract.extract(page);
 			}
 
 		}
@@ -68,10 +57,9 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	 */
 	protected abstract boolean matchContentExtractRule(String contentExtractRules, String url);
 
-	public BaseContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract, Scheduler scheduler) {
+	public BaseContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract) {
 		this.contentExtractRules = contentExtractRules;
 		this.contentExtract = contentExtract;
-		this.scheduler = scheduler;
 	}
 
 }
