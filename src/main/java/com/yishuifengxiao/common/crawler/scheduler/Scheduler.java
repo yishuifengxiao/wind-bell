@@ -1,15 +1,12 @@
 package com.yishuifengxiao.common.crawler.scheduler;
 
-import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
-
 /**
  * 资源调度器<br/>
  * 负责资源的调度管理工作<br/>
  * 功能如下：<br/>
- * 1. 接收所有未过滤的链接并存储起来<br/>
+ * 1. 接收所有未过滤的链接<br/>
  * 2. 从资源池中获取一个链接<br/>
- * 3. 判断资源是否需要解析<br/>
- * 4. 接收解析出来的资源
+ * 3. 将接收的资源过滤后放入资源缓存器<br/>
  * 
  * @author yishui
  * @date 2019年11月26日
@@ -31,17 +28,10 @@ public interface Scheduler {
 	String poll();
 
 	/**
-	 * 判断此资源是否需要解析
+	 * 任务管理器的名字
 	 * 
-	 * @param url
 	 * @return
 	 */
-	boolean needExtract(String url);
+	String getName();
 
-	/**
-	 * 接收解析出来的数据
-	 * 
-	 * @param resultData
-	 */
-	void recieve(ResultData resultData);
 }

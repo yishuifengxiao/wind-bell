@@ -8,10 +8,6 @@ package com.yishuifengxiao.common.crawler.domain.constant;
  * @version 1.0.0
  */
 public final class CrawlerConstant {
-	/**
-	 * 已经下载完成的URL的集合
-	 */
-	public final static String HAS_DOWN = "HAS_DOWN_";
 
 	/**
 	 * 已经解析过的URL的集合

@@ -38,10 +38,9 @@ import com.yishuifengxiao.common.crawler.monitor.StatuObserver;
 import com.yishuifengxiao.common.crawler.pipeline.Pipeline;
 import com.yishuifengxiao.common.crawler.pipeline.SimplePipeline;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
-import com.yishuifengxiao.common.crawler.scheduler.SimpleScheduler;
+import com.yishuifengxiao.common.crawler.scheduler.SchedulerDecorator;
+import com.yishuifengxiao.common.crawler.scheduler.impl.SimpleScheduler;
 import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
-import com.yishuifengxiao.common.crawler.task.InMemoryTaskManager;
-import com.yishuifengxiao.common.crawler.task.TaskManager;
 
 /**
  * 爬虫对象
@@ -95,17 +94,13 @@ public class Crawler implements Task {
 	 */
 	private ContentExtract contentExtract;
 	/**
-	 * 解析内容输出
+	 * 内容输出
 	 */
 	private Pipeline pipeline;
 	/**
 	 * 请求缓存器，负责缓存所有需要抓取的网页的URL(包括历史记录)和已经爬取的url集合
 	 */
 	private RequestCache requestCache;
-	/**
-	 * 任务管理器，负责进行任务管理
-	 */
-	private TaskManager taskManager;
 	/**
 	 * 爬虫监听器
 	 */
@@ -337,13 +332,9 @@ public class Crawler implements Task {
 			this.requestCache = new InMemoryRequestCache();
 		}
 
-		if (this.taskManager == null) {
-			this.taskManager = new InMemoryTaskManager();
-		}
-
-		if (this.scheduler == null) {
-			this.scheduler = new SimpleScheduler(this.requestCache, this.pipeline, this.taskManager);
-		}
+		// 资源调度器
+		this.scheduler = new SchedulerDecorator(this.requestCache,
+				this.scheduler == null ? new SimpleScheduler() : this.scheduler);
 
 		// 注入起始链接
 		this.scheduler.push(
@@ -351,7 +342,7 @@ public class Crawler implements Task {
 
 		if (this.processor == null) {
 			this.processor = new CrawlerProcessor(this, this.downloader, this.scheduler, this.threadPool,
-					this.linkExtract, this.contentExtract);
+					this.linkExtract, this.contentExtract, this.pipeline);
 		}
 		if (this.statuObserver == null) {
 			// 添加一个爬虫状态观察者
@@ -404,6 +395,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setCrawlerRule(CrawlerRule crawlerRule) {
+		Assert.notNull(crawlerRule, "配置规则不能为空");
 		this.crawlerRule = crawlerRule;
 		return this;
 	}
@@ -413,6 +405,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setDownloader(Downloader downloader) {
+		Assert.notNull(downloader, "下载器不能为空");
 		this.downloader = downloader;
 		return this;
 	}
@@ -427,6 +420,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setCrawlerListener(CrawlerListener crawlerListener) {
+		Assert.notNull(crawlerListener, "事件监听器不能为空");
 		this.crawlerListener = crawlerListener;
 		return this;
 	}
@@ -436,6 +430,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setLinkExtract(LinkExtract linkExtract) {
+		Assert.notNull(linkExtract, "链接解析器不能为空");
 		this.linkExtract = linkExtract;
 		return this;
 	}
@@ -445,6 +440,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setContentExtract(ContentExtract contentExtract) {
+		Assert.notNull(contentExtract, "内容解析器不能为空");
 		this.contentExtract = contentExtract;
 		return this;
 	}
@@ -454,6 +450,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setPipeline(Pipeline pipeline) {
+		Assert.notNull(pipeline, "信息输出器不能为空");
 		this.pipeline = pipeline;
 		return this;
 	}
@@ -463,6 +460,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setThreadPool(ThreadPoolExecutor threadPool) {
+		Assert.notNull(threadPool, "ThreadPoolExecutor不能为空");
 		this.threadPool = threadPool;
 		return this;
 	}
@@ -472,6 +470,7 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setRequestCache(RequestCache requestCache) {
+		Assert.notNull(requestCache, "资源缓存器不能为空");
 		this.requestCache = requestCache;
 		return this;
 	}
@@ -481,16 +480,8 @@ public class Crawler implements Task {
 	}
 
 	public Crawler setStatuObserver(StatuObserver statuObserver) {
+		Assert.notNull(statuObserver, "状态观察者不能为空");
 		this.statuObserver = statuObserver;
-		return this;
-	}
-
-	public TaskManager getTaskManager() {
-		return taskManager;
-	}
-
-	public Crawler setTaskManager(TaskManager taskManager) {
-		this.taskManager = taskManager;
 		return this;
 	}
 

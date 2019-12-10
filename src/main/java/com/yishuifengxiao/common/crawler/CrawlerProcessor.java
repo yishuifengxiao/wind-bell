@@ -13,12 +13,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yishuifengxiao.common.crawler.builder.ExtractProducer;
+import com.yishuifengxiao.common.crawler.builder.ExtractBuilder;
+import com.yishuifengxiao.common.crawler.builder.impl.SimpleExtractBuilder;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
+import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
+import com.yishuifengxiao.common.crawler.pipeline.Pipeline;
 import com.yishuifengxiao.common.crawler.pool.SimpleThreadFactory;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
@@ -35,6 +38,11 @@ import com.yishuifengxiao.common.tool.exception.ServiceException;
 public class CrawlerProcessor extends Thread {
 
 	private final static Logger log = LoggerFactory.getLogger(CrawlerProcessor.class);
+
+	/**
+	 * 解析器生成器
+	 */
+	private ExtractBuilder extractBuilder = new SimpleExtractBuilder();
 	/**
 	 * 未获得新的请求任务的连续总时间
 	 */
@@ -66,11 +74,6 @@ public class CrawlerProcessor extends Thread {
 	 * 调度器，负责存取将要抓取的请求
 	 */
 	private Scheduler scheduler;
-
-	/**
-	 * 解析工具
-	 */
-	private ExtractProducer producer;
 	/**
 	 * 执行任务的线程池
 	 */
@@ -85,8 +88,13 @@ public class CrawlerProcessor extends Thread {
 	 */
 	private ContentExtract contentExtract;
 
+	/**
+	 * 内容输出
+	 */
+	private Pipeline pipeline;
+
 	public CrawlerProcessor(Task task, Downloader downloader, Scheduler scheduler, ThreadPoolExecutor threadPool,
-			LinkExtract linkExtract, ContentExtract contentExtract) {
+			LinkExtract linkExtract, ContentExtract contentExtract, Pipeline pipeline) {
 
 		this.task = task;
 		this.downloader = downloader;
@@ -94,6 +102,7 @@ public class CrawlerProcessor extends Thread {
 		this.threadPool = threadPool;
 		this.linkExtract = linkExtract;
 		this.contentExtract = contentExtract;
+		this.pipeline = pipeline;
 		this.init();
 	}
 
@@ -101,8 +110,12 @@ public class CrawlerProcessor extends Thread {
 	 * 初始化组件信息
 	 */
 	private void init() {
-		this.producer = new ExtractProducer(this.task.getCrawlerRule(), this.linkExtract, this.contentExtract,
-				this.scheduler);
+		// 生成链接解析器
+		this.linkExtract = extractBuilder.createLinkExtract(this.task.getCrawlerRule().getLink(), this.linkExtract);
+		// 生成内容解析器
+		this.contentExtract = extractBuilder.createContentExtract(this.task.getCrawlerRule().getContent(),
+				this.contentExtract);
+		// 生成线程池
 		if (this.threadPool == null) {
 			this.threadPool = new ThreadPoolExecutor(this.task.getCrawlerRule().getThreadNum(),
 					this.task.getCrawlerRule().getThreadNum() * 2, 1000L, TimeUnit.SECONDS,
@@ -168,13 +181,18 @@ public class CrawlerProcessor extends Thread {
 				throw new ServiceException(
 						new StringBuffer("Web page (").append(url).append(" ) download results are empty").toString());
 			}
+
 			// 补全URL信息
 			page.setUrl(url);
-			processRequest(page);
+
+			if (this.task.getCrawlerListener() != null) {
+				this.task.getCrawlerListener().onDownSuccess(page);
+			}
+			processRequest(page, linkExtract, contentExtract, scheduler, pipeline);
 
 		} catch (Exception e) {
 			if (this.task.getCrawlerListener() != null) {
-				this.task.getCrawlerListener().onError(page, e);
+				this.task.getCrawlerListener().onDownError(page, e);
 			}
 
 			log.error("process request " + url + " error", e);
@@ -189,7 +207,8 @@ public class CrawlerProcessor extends Thread {
 	 * 
 	 * @param request
 	 */
-	private void processRequest(final Page page) {
+	private void processRequest(final Page page, final LinkExtract linkExtract, final ContentExtract contentExtract,
+			final Scheduler scheduler, final Pipeline pipeline) {
 
 		this.threadPool.execute(new Runnable() {
 			@Override
@@ -197,18 +216,19 @@ public class CrawlerProcessor extends Thread {
 				try {
 					LocalCrawler.put(task);
 					// 解析数据
-					producer.extract(page);
+					linkExtract.extract(page);
+					extracted(page);
 					// 增加抓取的链接总数量
 					pageCount.addAndGet(page.getLinks().size());
 					// 增加已爬取网页的数据
 					extractedCount.incrementAndGet();
 					// 爬取成功消息
 					if (task.getCrawlerListener() != null) {
-						task.getCrawlerListener().onSuccess(page);
+						task.getCrawlerListener().onExtractSuccess(page);
 					}
 				} catch (Exception e) {
 					if (task.getCrawlerListener() != null) {
-						task.getCrawlerListener().onError(page, e);
+						task.getCrawlerListener().onExtractError(page, e);
 					}
 					log.error("process request " + page + " error", e);
 				} finally {
@@ -217,6 +237,19 @@ public class CrawlerProcessor extends Thread {
 				}
 
 			}
+
+			private void extracted(final Page page) throws ServiceException {
+				// 存储链接
+				page.getLinks().parallelStream().forEach(scheduler::push);
+				// 抽取内容
+				contentExtract.extract(page);
+				// 输出数据
+				if (!page.isSkip()) {
+					// 输出数据
+					pipeline.recieve(new ResultData().setData(page.getAllResultItem()).setUrl(page.getUrl()));
+				}
+			}
+
 		});
 
 	}
