@@ -33,6 +33,7 @@ import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.downloader.impl.SimpleDownloader;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
 import com.yishuifengxiao.common.crawler.listener.CrawlerListener;
+import com.yishuifengxiao.common.crawler.listener.SimpleCrawlerListener;
 import com.yishuifengxiao.common.crawler.monitor.SimpleStatuObserver;
 import com.yishuifengxiao.common.crawler.monitor.StatuObserver;
 import com.yishuifengxiao.common.crawler.pipeline.Pipeline;
@@ -347,6 +348,10 @@ public class Crawler implements Task {
 		if (this.statuObserver == null) {
 			// 添加一个爬虫状态观察者
 			this.statuObserver = new SimpleStatuObserver();
+		}
+		
+		if(this.crawlerListener==null) {
+			this.crawlerListener=new SimpleCrawlerListener();
 		}
 	}
 

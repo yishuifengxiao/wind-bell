@@ -184,16 +184,14 @@ public class CrawlerProcessor extends Thread {
 
 			// 补全URL信息
 			page.setUrl(url);
+			// 下载成功
+			this.task.getCrawlerListener().onDownSuccess(page);
 
-			if (this.task.getCrawlerListener() != null) {
-				this.task.getCrawlerListener().onDownSuccess(page);
-			}
-			processRequest(page, linkExtract, contentExtract, scheduler, pipeline);
+			processRequest(page, linkExtract, contentExtract, scheduler, pipeline, task);
 
 		} catch (Exception e) {
-			if (this.task.getCrawlerListener() != null) {
-				this.task.getCrawlerListener().onDownError(page, e);
-			}
+			// 下载失败
+			this.task.getCrawlerListener().onDownError(page, e);
 
 			log.error("process request " + url + " error", e);
 		} finally {
@@ -208,7 +206,7 @@ public class CrawlerProcessor extends Thread {
 	 * @param request
 	 */
 	private void processRequest(final Page page, final LinkExtract linkExtract, final ContentExtract contentExtract,
-			final Scheduler scheduler, final Pipeline pipeline) {
+			final Scheduler scheduler, final Pipeline pipeline, final Task task) {
 
 		this.threadPool.execute(new Runnable() {
 			@Override
@@ -222,14 +220,11 @@ public class CrawlerProcessor extends Thread {
 					pageCount.addAndGet(page.getLinks().size());
 					// 增加已爬取网页的数据
 					extractedCount.incrementAndGet();
-					// 爬取成功消息
-					if (task.getCrawlerListener() != null) {
-						task.getCrawlerListener().onExtractSuccess(page);
-					}
+					// 解析成功消息
+					task.getCrawlerListener().onExtractSuccess(page);
 				} catch (Exception e) {
-					if (task.getCrawlerListener() != null) {
-						task.getCrawlerListener().onExtractError(page, e);
-					}
+					// 解析失败
+					task.getCrawlerListener().onExtractError(page, e);
 					log.error("process request " + page + " error", e);
 				} finally {
 					LocalCrawler.clear();
