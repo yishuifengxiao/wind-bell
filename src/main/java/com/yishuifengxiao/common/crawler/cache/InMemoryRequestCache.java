@@ -1,11 +1,7 @@
 package com.yishuifengxiao.common.crawler.cache;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 基于内存实现的资源缓存器
@@ -16,26 +12,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class InMemoryRequestCache implements RequestCache {
 
-	private final Map<String, Set<String>> CACHE_MAP = new HashMap<>();
+	private final Set<String> cacheSet = new HashSet<>();
 
 	@Override
 	public synchronized void save(String cacheName, String value) {
+		if (null != value) {
+			cacheSet.add(value);
+		}
 
-		Set<String> set = this.getOps(cacheName);
-		set.add(value);
-		CACHE_MAP.put(cacheName, set);
 	}
 
-	private Set<String> getOps(String cacheName) {
-		if (StringUtils.isEmpty(cacheName)) {
-			throw new IllegalArgumentException("缓存集合的名字不能为空");
-		}
-		Set<String> set = CACHE_MAP.get(cacheName);
-		if (set == null) {
-			set = new HashSet<>();
-		}
-		return set;
-	}
 
 	@Override
 	public boolean lookAndCache(String cacheName, String value) {
@@ -47,18 +33,18 @@ public class InMemoryRequestCache implements RequestCache {
 
 	@Override
 	public boolean exist(String cacheName, String value) {
-		return this.getOps(cacheName).contains(value);
+		return this.cacheSet.contains(value);
 	}
 
 	@Override
 	public synchronized void remove(String cacheName) {
 
-		CACHE_MAP.put(cacheName, new HashSet<>());
+		this.cacheSet.clear();
 	}
 
 	@Override
 	public long getCount(String cacheName) {
-		return this.getOps(cacheName).size();
+		return this.cacheSet.size();
 	}
 
 }
