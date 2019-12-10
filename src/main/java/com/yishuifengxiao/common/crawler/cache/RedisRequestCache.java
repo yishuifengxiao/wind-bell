@@ -50,7 +50,7 @@ public class RedisRequestCache implements RequestCache {
 	}
 
 	private BoundSetOperations<String, Object> getOps(String cacheName) {
-		if (StringUtils.isNotEmpty(cacheName)) {
+		if (StringUtils.isEmpty(cacheName)) {
 			throw new IllegalArgumentException("缓存集合的名字不能为空");
 		}
 		return this.redisTemplate.boundSetOps(cacheName);

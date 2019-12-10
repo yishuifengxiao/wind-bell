@@ -27,7 +27,7 @@ public class InMemoryRequestCache implements RequestCache {
 	}
 
 	private Set<String> getOps(String cacheName) {
-		if (StringUtils.isNotEmpty(cacheName)) {
+		if (StringUtils.isEmpty(cacheName)) {
 			throw new IllegalArgumentException("缓存集合的名字不能为空");
 		}
 		Set<String> set = CACHE_MAP.get(cacheName);

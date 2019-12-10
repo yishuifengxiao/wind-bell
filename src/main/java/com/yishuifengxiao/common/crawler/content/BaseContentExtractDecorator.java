@@ -42,17 +42,19 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 		if (null != page && HttpStatus.SC_OK == page.getCode()) {
 			// 判断是否符合解析规则
 			boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
-			// 是否需要解析
-			boolean needExtract = this.scheduler.needExtract(page.getUrl());
-			log.debug(
-					"Whether the page [{}] matches the content page parsing result is {}, whether it needs to parse the result is {}",
-					page.getUrl(), match, needExtract);
+			log.debug("Whether the page [{}] matches the content page parsing result is {}", page.getUrl(), match);
+			if (match) {
+				// 是否需要解析,判断该网页是否已被解析过
+				boolean needExtract = this.scheduler.needExtract(page.getUrl());
+				log.debug("Whether the page [{}]  needs to parse the result is {}", page.getUrl(), needExtract);
 
-			// 二次判断此网页是否被解析过
-			if (match && needExtract) {
-				// 开始真正的内容解析操作
-				this.contentExtract.extract(page);
+				// 二次判断此网页是否被解析过
+				if (needExtract) {
+					// 开始真正的内容解析操作
+					this.contentExtract.extract(page);
+				}
 			}
+
 		}
 
 	}
