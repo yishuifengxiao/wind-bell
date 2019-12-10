@@ -26,7 +26,7 @@ public class RedisTaskManager implements TaskManager {
 	}
 
 	private BoundSetOperations<String, Object> getOperation() {
-		return redisTemplate.boundSetOps(CrawlerConstant.WAIT_FOR_CRAWLER + this.name);
+		return redisTemplate.boundSetOps(CrawlerConstant.WAIT_DOWN + this.name);
 	}
 
 	public RedisTemplate<String, Object> getRedisTemplate() {

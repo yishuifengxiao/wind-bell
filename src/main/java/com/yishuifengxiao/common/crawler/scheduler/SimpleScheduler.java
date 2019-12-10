@@ -79,8 +79,8 @@ public class SimpleScheduler implements Scheduler {
 	 */
 	@Override
 	public boolean needExtract(String url) {
-		// 只有在已经解析的库里不存在此资源时才需要解析
-		return !this.requestCache.exist(CrawlerConstant.HAS_CRAWLERED + this.taskManager.getName(), url);
+		// 查询该资源是否在已下载的资源中，同时将其存储在已下载的资源中
+		return !this.requestCache.lookAndCache(CrawlerConstant.HAS_DOWN + this.taskManager.getName(), url);
 	}
 
 	public SimpleScheduler(RequestCache requestCache, Pipeline pipeline, TaskManager taskManager) {
