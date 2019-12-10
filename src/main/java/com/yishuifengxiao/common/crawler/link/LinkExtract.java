@@ -16,6 +16,7 @@ public interface LinkExtract {
 	 * 提取出网页里所有的链接
 	 * 
 	 * @param page
+	 * @throws ServiceException
 	 */
 	void extract(Page page) throws ServiceException;
 }

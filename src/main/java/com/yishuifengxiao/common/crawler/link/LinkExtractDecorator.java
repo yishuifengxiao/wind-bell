@@ -36,12 +36,12 @@ public class LinkExtractDecorator implements LinkExtract {
 	private List<LinkExtractor> linkExtractors;
 
 	@Override
-	public void extract(Page page) throws ServiceException{
+	public void extract(Page page) throws ServiceException {
 		//@formatter:off 
 		// 调用实际处理类对信息进行处理
-		linkExtractProxy.extract(page);
+		this.linkExtractProxy.extract(page);
 
-		//解析数据
+		//自定义解析数据
 		if(this.linkExtract!=null) {
 			this.linkExtract.extract(page);
 		}

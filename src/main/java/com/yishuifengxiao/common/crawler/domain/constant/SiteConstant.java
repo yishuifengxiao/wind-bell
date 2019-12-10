@@ -18,6 +18,11 @@ public final class SiteConstant {
 	 * 平均每次请求的间隔时间，单位为秒
 	 */
 	public final static int REQUEST_INTERVAL_TIME = 10;
+	
+	/**
+	 * 默认使用的线程数,默认值为 2
+	 */
+	public final static int DEFAULT_THREAD_NUM = 2;
 	/**
 	 * 连续多长时间没有新的求表明任务已经完成，单位为秒
 	 */

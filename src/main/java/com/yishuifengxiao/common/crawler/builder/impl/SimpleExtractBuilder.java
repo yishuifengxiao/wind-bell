@@ -26,8 +26,10 @@ import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
 import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
 import com.yishuifengxiao.common.crawler.link.converter.impl.SimpleLinkConverter;
 import com.yishuifengxiao.common.crawler.utils.LinkUtils;
+
 /**
  * 简单的解析器构造者
+ * 
  * @author yishui
  * @date 2019年12月10日
  * @version 1.0.0
@@ -40,7 +42,9 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	 */
 	private LinkConverterChain strategyChain = new LinkConverterChain();
 
-	// 构建一个链接解析适配器
+	/**
+	 * 真实的链接解析器，负责从网页里提取出所有的原始的超链接
+	 */
 	private LinkExtractProxy linkExtractProxy = new LinkExtractProxy();
 
 	@Override
@@ -49,7 +53,7 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		// 获取所有的链接提取器
 		List<LinkExtractor> linkExtractors = this.buildLinkExtractor(link);
 		// 链接转换器
-		LinkConverter linkConverter = new SimpleLinkConverter(strategyChain, getTopLevelDomain(link));
+		LinkConverter linkConverter = new SimpleLinkConverter(strategyChain, this.getTopLevelDomain(link));
 		// 生成链接解析器
 		return new LinkExtractDecorator(linkExtractProxy, linkExtract, linkConverter, linkExtractors);
 

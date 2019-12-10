@@ -5,7 +5,12 @@ import org.junit.Test;
 import com.alibaba.fastjson.JSONObject;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
-
+/**
+ * 测试提取雅虎新闻的标题
+ * @author yishui
+ * @date 2019年12月10日
+ * @version 1.0.0
+ */
 public class YahuTest {
 	@Test
 	public void testCrawler() {

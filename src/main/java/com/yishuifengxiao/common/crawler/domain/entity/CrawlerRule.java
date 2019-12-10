@@ -62,7 +62,7 @@ public class CrawlerRule implements Serializable {
 	 * 爬虫线程数
 	 */
 	@ApiModelProperty("爬虫线程数")
-	protected Integer threadNum = 1;
+	protected Integer threadNum = SiteConstant.DEFAULT_THREAD_NUM;
 
 	/**
 	 * 站点设置信息

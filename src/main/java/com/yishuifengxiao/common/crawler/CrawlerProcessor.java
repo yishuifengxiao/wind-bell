@@ -14,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.yishuifengxiao.common.crawler.builder.ExtractProducer;
+import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
+import com.yishuifengxiao.common.crawler.link.LinkExtract;
 import com.yishuifengxiao.common.crawler.pool.SimpleThreadFactory;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
@@ -53,38 +55,54 @@ public class CrawlerProcessor extends Thread {
 	/**
 	 * 当前任务
 	 */
-	protected Task task;
+	private Task task;
 
 	/**
 	 * 爬虫的网页下载器，负责下载网页内容
 	 */
-	protected Downloader downloader;
+	private Downloader downloader;
 
 	/**
 	 * 调度器，负责存取将要抓取的请求
 	 */
-	protected Scheduler scheduler;
+	private Scheduler scheduler;
 
 	/**
 	 * 解析工具
 	 */
-	protected ExtractProducer producer;
+	private ExtractProducer producer;
 	/**
 	 * 执行任务的线程池
 	 */
-	protected ThreadPoolExecutor threadPool;
+	private ThreadPoolExecutor threadPool;
 
-	public CrawlerProcessor(Task task, Downloader downloader, Scheduler scheduler, ExtractProducer producer,
-			ThreadPoolExecutor threadPool) {
+	/**
+	 * 链接提取器，负责从内容中解析处理符合要求的链接
+	 */
+	private LinkExtract linkExtract;
+	/**
+	 * 内容解析器，负责从内容中解析出需要提取的内容
+	 */
+	private ContentExtract contentExtract;
+
+	public CrawlerProcessor(Task task, Downloader downloader, Scheduler scheduler, ThreadPoolExecutor threadPool,
+			LinkExtract linkExtract, ContentExtract contentExtract) {
+
 		this.task = task;
 		this.downloader = downloader;
 		this.scheduler = scheduler;
-		this.producer = producer;
 		this.threadPool = threadPool;
-		init();
+		this.linkExtract = linkExtract;
+		this.contentExtract = contentExtract;
+		this.init();
 	}
 
+	/**
+	 * 初始化组件信息
+	 */
 	private void init() {
+		this.producer = new ExtractProducer(this.task.getCrawlerRule(), this.linkExtract, this.contentExtract,
+				this.scheduler);
 		if (this.threadPool == null) {
 			this.threadPool = new ThreadPoolExecutor(this.task.getCrawlerRule().getThreadNum(),
 					this.task.getCrawlerRule().getThreadNum() * 2, 1000L, TimeUnit.SECONDS,

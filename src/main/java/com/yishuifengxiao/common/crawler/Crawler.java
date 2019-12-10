@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
-import com.yishuifengxiao.common.crawler.builder.ExtractProducer;
 import com.yishuifengxiao.common.crawler.cache.InMemoryRequestCache;
 import com.yishuifengxiao.common.crawler.cache.RequestCache;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
+import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
@@ -73,15 +73,15 @@ public class Crawler implements Task {
 	/**
 	 * 爬虫的定义
 	 */
-	protected CrawlerRule crawlerRule;
+	private CrawlerRule crawlerRule;
 	/**
 	 * 爬虫的网页下载器，负责下载网页内容
 	 */
-	protected Downloader downloader;
+	private Downloader downloader;
 	/**
 	 * 调度器，负责存取将要抓取的请求
 	 */
-	protected Scheduler scheduler;
+	private Scheduler scheduler;
 	/**
 	 * 爬虫处理器，负责解析下载后的网页内容
 	 */
@@ -89,39 +89,35 @@ public class Crawler implements Task {
 	/**
 	 * 链接提取器，负责从内容中解析处理符合要求的链接
 	 */
-	protected LinkExtract linkExtract;
+	private LinkExtract linkExtract;
 	/**
 	 * 内容解析器，负责从内容中解析出需要提取的内容
 	 */
-	protected ContentExtract contentExtract;
-	/**
-	 * 解析工具
-	 */
-	protected ExtractProducer producer;
+	private ContentExtract contentExtract;
 	/**
 	 * 解析内容输出
 	 */
-	protected Pipeline pipeline;
+	private Pipeline pipeline;
 	/**
 	 * 请求缓存器，负责缓存所有需要抓取的网页的URL(包括历史记录)和已经爬取的url集合
 	 */
-	protected RequestCache requestCache;
+	private RequestCache requestCache;
 	/**
 	 * 任务管理器，负责进行任务管理
 	 */
-	protected TaskManager taskManager;
+	private TaskManager taskManager;
 	/**
 	 * 爬虫监听器
 	 */
-	protected CrawlerListener crawlerListener;
+	private CrawlerListener crawlerListener;
 	/**
 	 * 运行的线程池
 	 */
-	protected ThreadPoolExecutor threadPool;
+	private ThreadPoolExecutor threadPool;
 	/**
 	 * 爬虫状态观察者
 	 */
-	protected StatuObserver statuObserver;
+	private StatuObserver statuObserver;
 
 	/**
 	 * 启动一个一个爬虫实例
@@ -188,12 +184,12 @@ public class Crawler implements Task {
 	}
 
 	public Crawler(CrawlerRule crawlerRule) {
-		Assert.notNull(crawlerRule, "配置规则不能为空");
+		Assert.notNull(crawlerRule, "爬虫规则配置不能为空");
 		this.crawlerRule = crawlerRule;
 		this.name = StringUtils.isNotBlank(crawlerRule.getName()) ? crawlerRule.getName()
 				: UUID.randomUUID().toString();
 		// 初始化数据
-		initData();
+		this.initData();
 
 	}
 
@@ -269,7 +265,8 @@ public class Crawler implements Task {
 	 * @param contentExtractRule 内容提取规则
 	 * @return
 	 */
-	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentExtractRule contentExtractRule) {
+	public final static SimulatorData testContent(String url, SiteRule siteRule,
+			ContentExtractRule contentExtractRule) {
 		return new SimpleSimulator().extract(url, siteRule, contentExtractRule);
 	}
 
@@ -328,7 +325,6 @@ public class Crawler implements Task {
 	 * 注意组件的初始化顺序有先后要求
 	 */
 	private void initComponents() {
-		Assert.notNull(this.crawlerRule, "爬虫定义规则不能为空");
 
 		if (this.pipeline == null) {
 			this.pipeline = new SimplePipeline();
@@ -349,15 +345,13 @@ public class Crawler implements Task {
 			this.scheduler = new SimpleScheduler(this.requestCache, this.pipeline, this.taskManager);
 		}
 
-		this.producer = new ExtractProducer(this.crawlerRule, this.linkExtract, this.contentExtract, this.scheduler);
-
 		// 注入起始链接
 		this.scheduler.push(
 				StringUtils.splitByWholeSeparatorPreserveAllTokens(this.crawlerRule.getLink().getStartUrl(), ","));
 
 		if (this.processor == null) {
-			this.processor = new CrawlerProcessor(this, this.downloader, this.scheduler, this.producer,
-					this.threadPool);
+			this.processor = new CrawlerProcessor(this, this.downloader, this.scheduler, this.threadPool,
+					this.linkExtract, this.contentExtract);
 		}
 		if (this.statuObserver == null) {
 			// 添加一个爬虫状态观察者
@@ -369,14 +363,21 @@ public class Crawler implements Task {
 	 * 数据初始化
 	 */
 	private void initData() {
-		if (this.crawlerRule == null) {
-			throw new IllegalArgumentException("配置数据不能为空");
+		if (this.crawlerRule.getThreadNum() == null || this.crawlerRule.getThreadNum() <= 0) {
+			this.crawlerRule.setThreadNum(SiteConstant.DEFAULT_THREAD_NUM);
 		}
+		if (this.crawlerRule.getInterval() == null || this.crawlerRule.getInterval() <= 0) {
+			this.crawlerRule.setInterval(SiteConstant.REQUEST_INTERVAL_TIME);
+		}
+		if (this.crawlerRule.getWaitTime() == null || this.crawlerRule.getWaitTime() <= 0) {
+			this.crawlerRule.setWaitTime(SiteConstant.WAIT_TIME_FOR_CLOSE);
+		}
+
 		if (this.crawlerRule.getSite() == null) {
 			this.crawlerRule.setSite(new SiteRule());
 		}
 		if (this.crawlerRule.getLink() == null) {
-			throw new IllegalArgumentException("配置数据不正确");
+			throw new IllegalArgumentException("链接提取配置数据不正确");
 		}
 		if (StringUtils.isBlank(this.crawlerRule.getLink().getStartUrl())) {
 			throw new IllegalArgumentException("起始链接不能为空");

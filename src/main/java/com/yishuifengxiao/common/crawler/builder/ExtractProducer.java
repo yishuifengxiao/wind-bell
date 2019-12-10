@@ -74,7 +74,7 @@ public class ExtractProducer {
 	 * @param page
 	 */
 	private void storeLink(final Page page) {
-		if (page.getLinks() != null) {
+		if (null != page && page.getLinks() != null) {
 			// 将提取出来的推送到资源调度器
 			page.getLinks().parallelStream().filter(t -> t != null).forEach(t -> {
 				scheduler.push(t);
