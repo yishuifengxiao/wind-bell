@@ -9,6 +9,7 @@ import com.yishuifengxiao.common.crawler.extractor.links.impl.SimpleLinkExtracto
 
 
 /**
+ * 提取器生成工厂
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-6

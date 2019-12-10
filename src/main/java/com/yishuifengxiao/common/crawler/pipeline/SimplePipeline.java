@@ -19,7 +19,6 @@ public class SimplePipeline implements Pipeline {
 	public void recieve(ResultData resultData) {
 
 		log.debug("\r\n");
-		log.debug("The output is ");
 		log.info("request : {} , out data : {}", resultData.getUrl(), resultData.getAllData());
 		log.debug("\r\n");
 	}

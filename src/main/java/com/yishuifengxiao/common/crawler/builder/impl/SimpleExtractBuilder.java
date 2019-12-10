@@ -35,7 +35,9 @@ import com.yishuifengxiao.common.crawler.utils.LinkUtils;
  * @version 1.0.0
  */
 public class SimpleExtractBuilder implements ExtractBuilder {
-
+    /**
+     * 提取器生成工厂
+     */
 	private ExtractorFactory factory = new ExtractorFactory();
 	/**
 	 * 链接转换器

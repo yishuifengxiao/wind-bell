@@ -23,7 +23,7 @@ public class SimpleContentExtract implements ContentExtract {
 	private List<ContentExtractor> contentExtractors;
 
 	@Override
-	public void extract(Page page) throws ServiceException{
+	public void extract(Page page) throws ServiceException {
 		// 提取出所有属性数据
 		Map<String, Object> data = this.extractContent(page.getRawTxt());
 		// 设置输出数据
@@ -39,7 +39,7 @@ public class SimpleContentExtract implements ContentExtract {
 	private Map<String, Object> extractContent(String rawText) {
 		Map<String, Object> map = new WeakHashMap<>();
 		// 调用内容抽取器进行抽取
-		contentExtractors.parallelStream().filter(t -> t != null).forEach(t -> {
+		this.contentExtractors.parallelStream().filter(t -> t != null).forEach(t -> {
 			map.put(t.getName(), t.extract(rawText));
 		});
 

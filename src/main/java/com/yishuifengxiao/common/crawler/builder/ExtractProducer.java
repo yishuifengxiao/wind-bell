@@ -12,10 +12,12 @@ import com.yishuifengxiao.common.tool.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 解析器生成工具<br/>
+ * 解析生产者<br/>
  * 功能如下：<br/>
  * 1. 根据提取规则生成链接提取器和内容提取器<br/>
- * 2. 将提取器组合成相对应的解析器 3. 解析下载完成的网页
+ * 2. 将提取器组合成相对应的解析器<br/>
+ * 3. 解析下载完成的网页<br/>
+ * 4. 输出解析后的数据
  * 
  * @author yishui
  * @date 2019年11月25日
@@ -23,7 +25,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ExtractProducer {
-
+	/**
+	 * 解析器生成器
+	 */
 	private ExtractBuilder extractBuilder = new SimpleExtractBuilder();
 	/**
 	 * 当前爬虫配置
@@ -59,7 +63,7 @@ public class ExtractProducer {
 
 		log.debug("Does the web page [{}] need to be parsed as {}", page.getUrl(), needExtract);
 
-		if (needExtract) {
+		if (needExtract && null != page) {
 			// 抽取内容
 			this.contentExtract.extract(page);
 			// 输出数据
