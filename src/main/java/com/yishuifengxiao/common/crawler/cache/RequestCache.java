@@ -4,6 +4,9 @@ package com.yishuifengxiao.common.crawler.cache;
  * 资源缓存器<br/>
  * 功能如下：<br/>
  * 1 查询此资源是否存在指定的的集合中<br/>
+ * 2 将资源存储到指定名字的集合中<br/>
+ * 3 清空指定名字的缓存集合<br/>
+ * 4 查询指定名字的缓存集合里的资源数量
  * 
  * @author yishui
  * @date 2019年11月26日

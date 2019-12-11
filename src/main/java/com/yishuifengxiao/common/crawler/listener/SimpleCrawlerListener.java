@@ -2,6 +2,14 @@ package com.yishuifengxiao.common.crawler.listener;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 
+/**
+ * 默认的爬虫处理事件监听器<br/>
+ * 不输出任何信息
+ * 
+ * @author yishui
+ * @date 2019年12月11日
+ * @version 1.0.0
+ */
 public class SimpleCrawlerListener implements CrawlerListener {
 
 	@Override

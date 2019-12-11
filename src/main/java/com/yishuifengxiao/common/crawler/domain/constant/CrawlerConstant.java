@@ -10,11 +10,6 @@ package com.yishuifengxiao.common.crawler.domain.constant;
 public final class CrawlerConstant {
 
 	/**
-	 * 已经解析过的URL的集合
-	 */
-	public final static String HAS_CRAWLERED = "HAS_CRAWLERED_";
-	
-	/**
 	 * 等待下载的URL的集合
 	 */
 	public final static String WAIT_DOWN = "WAIT_DOWN_";

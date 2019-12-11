@@ -141,8 +141,6 @@ public class SimpleSimulator implements Simulator {
 		return content;
 	}
 
-	public SimpleSimulator() {
 
-	}
 
 }

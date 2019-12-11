@@ -349,9 +349,9 @@ public class Crawler implements Task {
 			// 添加一个爬虫状态观察者
 			this.statuObserver = new SimpleStatuObserver();
 		}
-		
-		if(this.crawlerListener==null) {
-			this.crawlerListener=new SimpleCrawlerListener();
+
+		if (this.crawlerListener == null) {
+			this.crawlerListener = new SimpleCrawlerListener();
 		}
 	}
 
@@ -491,7 +491,7 @@ public class Crawler implements Task {
 	}
 
 	/**
-	 * 获取抓取的链接总数量
+	 * 已成功提取信息的页面的数据总数
 	 * 
 	 * @return
 	 */
@@ -525,7 +525,9 @@ public class Crawler implements Task {
 
 	@Override
 	public String toString() {
-		return "Crawler [name=" + name + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Crawler [name=").append(name).append(",scheduler=").append(scheduler.getName()).append("]");
+		return builder.toString();
 	}
 
 }

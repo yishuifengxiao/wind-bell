@@ -28,7 +28,7 @@ public interface Scheduler {
 	String poll();
 
 	/**
-	 * 任务管理器的名字
+	 * 资源调度器的名字，不能为空
 	 * 
 	 * @return
 	 */

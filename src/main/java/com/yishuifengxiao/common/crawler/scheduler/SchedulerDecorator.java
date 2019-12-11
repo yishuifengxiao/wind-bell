@@ -13,7 +13,7 @@ import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
  * 功能如下：<br/>
  * 1. 接收所有未过滤的链接并存储起来<br/>
  * 2. 从资源池中获取一个链接<br/>
- * 3. 判断资源是否需要解析<br/>
+ * 3. 判断资源是否需要存储<br/>
  * 
  * @author yishui
  * @date 2019年11月26日

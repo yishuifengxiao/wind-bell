@@ -2,8 +2,10 @@ package com.yishuifengxiao.common.crawler.pool;
 
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
+
 /**
  * 线程工厂
+ * 
  * @author yishui
  * @date 2019年11月28日
  * @version 1.0.0

@@ -12,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * 进行内容解析前的前置操作<br/>
  * 功能如下：<br/>
  * 1. 决定是否对该网页进行内容提取<br/>
- * 2. 提取前的数据过滤操作<br/>
- * 3. 输出解析后的数据
+ * 2. 调用真正的内容解析器进行内容解析
  * 
  * @author yishui
  * @date 2019年11月26日
@@ -33,7 +32,7 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	protected ContentExtract contentExtract;
 
 	@Override
-	public void extract(Page page) throws ServiceException{
+	public void extract(Page page) throws ServiceException {
 
 		if (null != page && HttpStatus.SC_OK == page.getCode()) {
 			// 判断是否符合解析规则
