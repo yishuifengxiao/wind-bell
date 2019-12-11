@@ -25,6 +25,7 @@ import com.yishuifengxiao.common.crawler.pipeline.Pipeline;
 import com.yishuifengxiao.common.crawler.pool.SimpleThreadFactory;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
+import com.yishuifengxiao.common.crawler.utils.RegexFactory;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
@@ -46,15 +47,20 @@ public class CrawlerProcessor extends Thread {
 	/**
 	 * 未获得新的请求任务的连续总时间
 	 */
-	protected AtomicInteger stat = new AtomicInteger(0);
+	private AtomicInteger stat = new AtomicInteger(0);
 	/**
 	 * 已成功提取信息的页面的数据
 	 */
-	private AtomicLong pageCount = new AtomicLong(0);
+	protected AtomicLong pageCount = new AtomicLong(0);
 	/**
 	 * 已经爬取的页面的数量
 	 */
 	private AtomicLong extractedCount = new AtomicLong(0);
+
+	/**
+	 * 被服务器连续拦截的次数
+	 */
+	private AtomicLong interceptCount = new AtomicLong(0);
 
 	private ReentrantLock newUrlLock = new ReentrantLock();
 
@@ -130,6 +136,11 @@ public class CrawlerProcessor extends Thread {
 		log.debug("Started crawling {} , preparing to crawl data", this.task.getName());
 		while (true) {
 
+			if (this.checkStat()) {
+				// 检测到任务已经完成
+				break;
+			}
+
 			// 先休眠一段时间
 			int sleepSeconds = this.sleep();
 
@@ -146,11 +157,8 @@ public class CrawlerProcessor extends Thread {
 				if (StringUtils.isBlank(url)) {
 					// 再次等待一段时间
 					this.waitNewUrl(sleepSeconds);
-					if (this.stat.getAndSet(sleepSeconds * 2) > this.task.getCrawlerRule().getWaitTime()) {
-						// 连续请求时间，超过指定的阀值还没有获取到新的请求，表明爬虫的爬取任务已经完成
-						this.stat.set(0);
-						break;
-					}
+					this.stat.addAndGet(sleepSeconds * 2);
+
 				} else {
 					// 每次新的请求时，需要记得将阀值归零
 					this.stat.set(0);
@@ -163,6 +171,27 @@ public class CrawlerProcessor extends Thread {
 
 		// 清理回收资源
 		clear();
+	}
+
+	/**
+	 * 检查爬取任务是否已经完成
+	 * 
+	 * @return 完成返回为true,否则为false
+	 */
+	private boolean checkStat() {
+
+		if (this.interceptCount.get() > this.task.getCrawlerRule().getSite().getInterceptCount()) {
+			// 连续多次检测到失败的标志，表示一倍服务器封锁
+			this.interceptCount.set(0);
+			return true;
+		}
+		if (this.stat.get() > this.task.getCrawlerRule().getWaitTime()) {
+			// 连续请求时间，超过指定的阀值还没有获取到新的请求，表明爬虫的爬取任务已经完成
+			this.stat.set(0);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -186,6 +215,8 @@ public class CrawlerProcessor extends Thread {
 			page.setUrl(url);
 			// 下载成功
 			this.task.getCrawlerListener().onDownSuccess(page);
+			// 服务器封杀检查
+			intercepCheck(page);
 
 			processRequest(page, linkExtract, contentExtract, scheduler, pipeline, task);
 
@@ -196,6 +227,25 @@ public class CrawlerProcessor extends Thread {
 			log.error("process request " + url + " error", e);
 		} finally {
 			signalNewUrl();
+		}
+
+	}
+
+	/**
+	 * 服务器封杀检查
+	 * 
+	 * @param page 下载的网页
+	 */
+	private void intercepCheck(Page page) {
+		if (this.task.getCrawlerRule().getSite().statCheck()) {
+			// 开启失败校验时才启用
+			boolean match = RegexFactory.find(this.task.getCrawlerRule().getSite().getFailureMark(), page.getRawTxt());
+			if (match) {
+				interceptCount.incrementAndGet();
+			} else {
+				// 重置
+				interceptCount.set(0);
+			}
 		}
 
 	}

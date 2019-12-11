@@ -73,6 +73,18 @@ public class SiteRule implements Serializable {
 	private int retryCount = SiteConstant.RETRY_COUNT;
 
 	/**
+	 * 下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验
+	 */
+	@ApiModelProperty("下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验")
+	private String failureMark;
+
+	/**
+	 * 连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
+	 */
+	@ApiModelProperty("连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5")
+	private Integer interceptCount = SiteConstant.INTERCEPT_RETRY_COUNT;
+
+	/**
 	 * 确定用于HTTP状态管理的cookie规范的名称<br/>
 	 * 值参考 CookieSpecs ,默认为 null<br/>
 	 * 
@@ -165,8 +177,8 @@ public class SiteRule implements Serializable {
 		return map;
 	}
 
-	/**ss
-	 * 获取到全部的请求头信息
+	/**
+	 * ss 获取到全部的请求头信息
 	 * 
 	 * @return Map<String, String> ，键为请求头的名字，值为请求头的值
 	 */
@@ -198,6 +210,26 @@ public class SiteRule implements Serializable {
 			return this.userAgent;
 		}
 		return SiteConstant.USER_AGENT_ARRAY[RandomUtils.nextInt(0, SiteConstant.USER_AGENT_ARRAY.length)];
+	}
+
+	/**
+	 * 是否进行拦截检查
+	 * 
+	 * @return 如果开启了拦截检查则返回为true
+	 */
+	@ApiModelProperty(hidden = true)
+	@JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
+	public boolean statCheck() {
+		if (StringUtils.isBlank(this.failureMark)) {
+			return false;
+		}
+		if (this.interceptCount == null) {
+			return false;
+		}
+		if (this.interceptCount <= 0) {
+			return false;
+		}
+		return true;
 	}
 
 }

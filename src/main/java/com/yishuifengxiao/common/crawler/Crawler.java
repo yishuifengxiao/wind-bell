@@ -385,9 +385,14 @@ public class Crawler implements Task {
 			this.crawlerRule.getSite().setHeaders(new ArrayList<>());
 		}
 
+		if (this.crawlerRule.getSite().getInterceptCount() == null) {
+			this.crawlerRule.getSite().setInterceptCount(SiteConstant.INTERCEPT_RETRY_COUNT);
+		}
+
 		if (this.crawlerRule.getContent() == null) {
 			this.crawlerRule.setContent(new ContentRule());
 		}
+
 		if (this.crawlerRule.getContent().getExtractUrl() == null) {
 			this.crawlerRule.getContent().setExtractUrl(RuleConstant.REGEX_MATCH_ALL);
 		}

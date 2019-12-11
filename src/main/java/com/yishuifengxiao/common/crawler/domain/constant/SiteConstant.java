@@ -27,6 +27,10 @@ public final class SiteConstant {
 	 * 连续多长时间没有新的求表明任务已经完成，单位为秒
 	 */
 	public final static int WAIT_TIME_FOR_CLOSE = 300;
+	/**
+	 * 连续多次在下载内容中获取到失败标识时的重试此次，默认为5
+	 */
+	public final static int INTERCEPT_RETRY_COUNT = 5;
 
 	/**
 	 * 请求失败时重新执行此请求的次数
