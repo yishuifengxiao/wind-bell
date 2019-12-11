@@ -65,6 +65,10 @@ public enum Rule {
 	 */
 	SYSTEM,
 	/**
+	 * 数字截取
+	 */
+	ARRAY,
+	/**
 	 * URL提取
 	 */
 	URL;

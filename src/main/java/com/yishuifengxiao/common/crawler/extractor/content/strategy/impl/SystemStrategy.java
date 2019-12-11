@@ -1,7 +1,6 @@
-package com.yishuifengxiao.common.crawler.extractor.content.strategy;
+package com.yishuifengxiao.common.crawler.extractor.content.strategy.impl;
 
 import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
-import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ReplaceStrategy;
 
 /**
  * 替换系统占位符

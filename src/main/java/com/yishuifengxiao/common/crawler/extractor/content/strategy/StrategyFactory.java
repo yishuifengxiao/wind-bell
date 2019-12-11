@@ -2,6 +2,7 @@ package com.yishuifengxiao.common.crawler.extractor.content.strategy;
 
 import com.yishuifengxiao.common.crawler.domain.eunm.Rule;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.AllStrategy;
+import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ArrayStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ChnStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ConstantStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.CssStrategy;
@@ -12,6 +13,7 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.NumStra
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.RegexStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.RemoveStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ReplaceStrategy;
+import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.SystemStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.UrlStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.XpathStrategy;
 
@@ -74,6 +76,9 @@ public class StrategyFactory {
 			break;
 		case SYSTEM:
 			strategy = new SystemStrategy();
+			break;
+		case ARRAY:
+			strategy = new ArrayStrategy();
 			break;
 		default:
 			break;
