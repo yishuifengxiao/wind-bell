@@ -68,7 +68,8 @@ public class RegexFactory {
 	}
 
 	/**
-	 * 根据正则表达式从内容中提取出一组匹配的内容
+	 * 根据正则表达式从内容中提取出一组匹配的内容<br/>
+	 * <b>只要匹配到第一组数据就会返回</b>
 	 * 
 	 * @param regex   正则表达式
 	 * @param content 目标内容
@@ -80,11 +81,12 @@ public class RegexFactory {
 		}
 		Pattern pattern = pattern(regex);
 		Matcher matcher = pattern.matcher(content);
-		return matcher.matches() ? matcher.group() : null;
+		return matcher.find() ? matcher.group() : null;
 	}
 
 	/**
-	 * 根据正则表达式从内容中提取出所有匹配的内容
+	 * 根据正则表达式从内容中提取出所有匹配的内容<br/>
+	 * <b>返回所有匹配的数据</b>
 	 * 
 	 * @param regex   正则表达式
 	 * @param content 目标内容
@@ -97,10 +99,8 @@ public class RegexFactory {
 		List<String> list = new ArrayList<>();
 		Pattern pattern = pattern(regex);
 		Matcher matcher = pattern.matcher(content);
-		if (matcher.find()) {
-			for (int i = 0; i < matcher.groupCount(); i++) {
-				list.add(matcher.group(i));
-			}
+		while (matcher.find()) {
+			list.add(matcher.group());
 		}
 		return list;
 	}
