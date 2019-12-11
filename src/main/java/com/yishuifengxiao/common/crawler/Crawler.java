@@ -50,7 +50,7 @@ import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
  * @date 2019年11月20日
  * @version 1.0.0
  */
-public class Crawler implements Task {
+public class Crawler implements Task, StatuObserver {
 	private final static Logger log = LoggerFactory.getLogger(Crawler.class);
 	/**
 	 * 存储所有已经创建的爬虫实例
@@ -69,7 +69,7 @@ public class Crawler implements Task {
 	/**
 	 * 爬虫的状态：运行中、停止、暂停
 	 */
-	private Statu statu;
+	protected Statu statu;
 	/**
 	 * 爬虫的定义
 	 */
@@ -127,8 +127,6 @@ public class Crawler implements Task {
 			this.processor.start();
 			// 注册一个爬虫实例
 			register(this);
-			// 运行状态监控检查
-			new Monitor().start();
 			this.statuChange();
 		}
 
@@ -142,7 +140,8 @@ public class Crawler implements Task {
 		statu = Statu.STOP;
 		// 移除一个爬虫实例
 		remove(this.name);
-
+		log.info("The crawler instance {} has been manually stopped", this.name);
+		this.statuChange();
 	};
 
 	/**
@@ -153,6 +152,7 @@ public class Crawler implements Task {
 		statu = Statu.PAUSE;
 		// 注册一个爬虫实例
 		register(this);
+		log.info("The crawler instance {} has been manually suspended", this.name);
 		this.statuChange();
 	}
 
@@ -186,34 +186,6 @@ public class Crawler implements Task {
 				: UUID.randomUUID().toString();
 		// 初始化数据
 		this.initData();
-
-	}
-
-	private class Monitor extends Thread {
-
-		@Override
-		public void run() {
-
-			while (true) {
-				/*
-				 * <pre> 两种情况下认为爬虫任务已经完成 <br/> 1. 任务处理器中线程池中的活跃线程数为0且任务管理器线程处于非活跃状态 <br/> 2.
-				 * 爬虫的状态为停止状态 </pre>
-				 */
-
-				if ((!Crawler.this.processor.isActive()) || Crawler.this.statu == Statu.STOP) {
-					Crawler.this.statuChange();
-					log.info("爬虫 {} 的状态变为 {}", Crawler.this.name, Crawler.this.statu);
-					break;
-				}
-
-				try {
-					Thread.sleep(1000 * 60);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-		}
 
 	}
 
@@ -312,7 +284,7 @@ public class Crawler implements Task {
 	 */
 	private void statuChange() {
 		if (this.statuObserver != null) {
-			this.statuObserver.update(this);
+			this.statuObserver.update(this, this.statu);
 		}
 	}
 
@@ -342,7 +314,7 @@ public class Crawler implements Task {
 				StringUtils.splitByWholeSeparatorPreserveAllTokens(this.crawlerRule.getLink().getStartUrl(), ","));
 
 		if (this.processor == null) {
-			this.processor = new CrawlerProcessor(this, this.downloader, this.scheduler, this.threadPool,
+			this.processor = new CrawlerProcessor(this, this, this.downloader, this.scheduler, this.threadPool,
 					this.linkExtract, this.contentExtract, this.pipeline);
 		}
 		if (this.statuObserver == null) {
@@ -539,6 +511,16 @@ public class Crawler implements Task {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Crawler [name=").append(name).append(",scheduler=").append(scheduler.getName()).append("]");
 		return builder.toString();
+	}
+
+	@Override
+	public void update(Task task, Statu statu) {
+		if (Statu.STOP == statu) {
+			// 移除一个爬虫实例
+			remove(this.name);
+		}
+		this.statu = statu;
+		this.statuChange();
 	}
 
 }
