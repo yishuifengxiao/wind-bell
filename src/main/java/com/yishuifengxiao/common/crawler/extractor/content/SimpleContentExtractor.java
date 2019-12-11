@@ -17,18 +17,17 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFact
 public class SimpleContentExtractor extends AbstractContentExtractor {
 
 	@Override
-	public Object extract(String rawText) {
+	public Object extract(String input, List<FieldExtractRule> fieldExtractRules) {
 		// 获取到所有的处理规则
-		List<FieldExtractRule> extractRules = getFieldExtractRules();
-		for (FieldExtractRule extractRule : extractRules) {
+		for (FieldExtractRule extractRule : fieldExtractRules) {
 			Strategy strategy = StrategyFactory.get(extractRule.getRule());
 			if (strategy == null) {
 				continue;
 			}
-			rawText = strategy.extract(rawText, extractRule.getParam1(), extractRule.getParam2());
+			input = strategy.extract(input, extractRule.getParam1(), extractRule.getParam2());
 		}
 
-		return rawText;
+		return input;
 	}
 
 	public SimpleContentExtractor(ContentExtractRule contentRule) {

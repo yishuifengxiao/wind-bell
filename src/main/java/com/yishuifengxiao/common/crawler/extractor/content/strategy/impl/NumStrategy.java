@@ -7,7 +7,7 @@ package com.yishuifengxiao.common.crawler.extractor.content.strategy.impl;
  * @date 2019-11-7
  */
 public class NumStrategy  extends RegexStrategy {
-    private final static String REGEX = "[0-9]*";
+    private final static String REGEX = "[0-9]+";
 
 
     @Override

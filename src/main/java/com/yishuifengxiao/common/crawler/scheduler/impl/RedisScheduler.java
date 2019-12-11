@@ -56,4 +56,9 @@ public class RedisScheduler implements Scheduler {
 		this.redisTemplate = redisTemplate;
 	}
 
+	public RedisScheduler(String name, RedisTemplate<String, Object> redisTemplate) {
+		this.name = name;
+		this.redisTemplate = redisTemplate;
+	}
+
 }
