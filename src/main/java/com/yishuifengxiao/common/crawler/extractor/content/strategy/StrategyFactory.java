@@ -6,11 +6,13 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ChnStra
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ConstantStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.CssStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.CssTextStrategy;
+import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.DomainStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.EmailStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.NumStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.RegexStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.RemoveStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ReplaceStrategy;
+import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.UrlStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.XpathStrategy;
 
 /**
@@ -63,6 +65,15 @@ public class StrategyFactory {
 			break;
 		case TEXT:
 			strategy = new CssTextStrategy();
+			break;
+		case DOMAIN:
+			strategy = new DomainStrategy();
+			break;
+		case URL:
+			strategy = new UrlStrategy();
+			break;
+		case SYSTEM:
+			strategy = new SystemStrategy();
 			break;
 		default:
 			break;

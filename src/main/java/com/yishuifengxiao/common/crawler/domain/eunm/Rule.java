@@ -55,6 +55,18 @@ public enum Rule {
 	/**
 	 * 切割
 	 */
-	SUBSTR;
+	SUBSTR,
+	/**
+	 * 域名提取
+	 */
+	DOMAIN,
+	/**
+	 * 替换系统占位符
+	 */
+	SYSTEM,
+	/**
+	 * URL提取
+	 */
+	URL;
 
 }

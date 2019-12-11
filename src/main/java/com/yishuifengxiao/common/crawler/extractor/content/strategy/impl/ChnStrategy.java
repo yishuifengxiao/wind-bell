@@ -10,7 +10,7 @@ package com.yishuifengxiao.common.crawler.extractor.content.strategy.impl;
  * @date 2019-11-7
  */
 public class ChnStrategy extends RegexStrategy {
-    private final static String REGEX = "[\\u4e00-\\u9fa5]{0,}";
+    private final static String REGEX = "[\\u4e00-\\u9fa5]{1,}";
 
 
     @Override
