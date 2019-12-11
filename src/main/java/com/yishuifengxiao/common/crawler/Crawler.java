@@ -490,6 +490,12 @@ public class Crawler implements Task {
 		return this;
 	}
 
+	public Crawler setScheduler(Scheduler scheduler) {
+		Assert.notNull(scheduler, "资源调度器不能为空");
+		this.scheduler = scheduler;
+		return this;
+	}
+
 	/**
 	 * 已成功提取信息的页面的数据总数
 	 * 
