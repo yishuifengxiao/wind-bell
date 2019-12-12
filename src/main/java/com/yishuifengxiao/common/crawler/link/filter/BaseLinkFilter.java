@@ -1,4 +1,4 @@
-package com.yishuifengxiao.common.crawler.link.chain;
+package com.yishuifengxiao.common.crawler.link.filter;
 
 /**
  * 抽象链接处理器
@@ -7,11 +7,11 @@ package com.yishuifengxiao.common.crawler.link.chain;
  * @version 1.0.0
  * @date 2019/11/20
  */
-public abstract class BaseLinkChain {
+public abstract class BaseLinkFilter {
 	/**
 	 * 下一个处理器
 	 */
-	protected BaseLinkChain next;
+	protected BaseLinkFilter next;
 
 	/**
 	 * 处理链接
@@ -23,7 +23,7 @@ public abstract class BaseLinkChain {
 	public abstract String handle(String path, String url);
 
 
-	public BaseLinkChain(BaseLinkChain next) {
+	public BaseLinkFilter(BaseLinkFilter next) {
 		this.next = next;
 	}
 

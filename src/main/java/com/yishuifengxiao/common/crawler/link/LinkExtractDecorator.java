@@ -1,11 +1,15 @@
 package com.yishuifengxiao.common.crawler.link;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
-import com.yishuifengxiao.common.crawler.link.filter.LinkFilter;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
@@ -29,7 +33,7 @@ public class LinkExtractDecorator implements LinkExtract {
 	/**
 	 * 链接转换器,将提取的链接统一转成网络地址形式
 	 */
-	private LinkFilter linkFilter;
+	private LinkFilterChain linkFilter;
 	/**
 	 * 链接提取器
 	 */
@@ -45,10 +49,9 @@ public class LinkExtractDecorator implements LinkExtract {
 		if(this.linkExtract!=null) {
 			this.linkExtract.extract(page);
 		}
-		//对提取出来的链接进行格式化，统一转化成网络地址形式
-		List<String> urls=	this.linkFilter.filter(page.getUrl(),page.getLinks());
+
 		//将提取出来的链接根据链接提取规则过滤
-		urls=this.fliter(urls);
+	   List<String>	urls=this.fliter(page.getUrl(),new HashSet<>(page.getLinks()));
 		page.setLinks(urls);
 		//@formatter:on  
 	}
@@ -59,22 +62,18 @@ public class LinkExtractDecorator implements LinkExtract {
 	 * @param urls
 	 * @return
 	 */
-	private List<String> fliter(List<String> urls) {
+	private List<String> fliter(final String path, Set<String> urls) {
 		//@formatter:off 
-		final List<String> list = new ArrayList<>();
-		
-			for(LinkExtractor linkExtractor:linkExtractors) {
-			List<String> links=linkExtractor.extract(urls);
-				if(links!=null) {
-					list.addAll(links);
-				}
-			}
-		
+		// 链接统一转换成网络地址形式
+		Set<String> links = urls.parallelStream().map(t -> linkFilter.handle(path, t)).collect(Collectors.toSet());
+		urls.clear();
+		linkExtractors.parallelStream().map(t -> t.extract(new ArrayList<>(links))).forEach(urls::addAll);
+
 		//@formatter:on  
-		return list;
+		return urls.parallelStream().filter(t -> StringUtils.isNotBlank(t)).collect(Collectors.toList());
 	}
 
-	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, LinkFilter linkFilter,
+	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, LinkFilterChain linkFilter,
 			List<LinkExtractor> linkExtractors) {
 		this.linkExtractProxy = linkExtractProxy;
 		this.linkExtract = linkExtract;

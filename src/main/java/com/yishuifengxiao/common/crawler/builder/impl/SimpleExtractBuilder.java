@@ -11,6 +11,7 @@ import com.yishuifengxiao.common.crawler.builder.ExtractBuilder;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.content.decorator.SimpleContentExtractDecorator;
 import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
+import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.extractor.ExtractorFactory;
@@ -19,12 +20,11 @@ import com.yishuifengxiao.common.crawler.extractor.content.impl.DescpContentExtr
 import com.yishuifengxiao.common.crawler.extractor.content.impl.KeywordContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.content.impl.TitleContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
-import com.yishuifengxiao.common.crawler.link.LinkConverterChain;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
 import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
 import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
-import com.yishuifengxiao.common.crawler.link.filter.LinkFilter;
-import com.yishuifengxiao.common.crawler.link.filter.impl.SimpleLinkFilter;
+import com.yishuifengxiao.common.crawler.link.LinkFilterChain;
+import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
 /**
  * 简单的解析器构造者
@@ -39,9 +39,9 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	 */
 	private ExtractorFactory factory = new ExtractorFactory();
 	/**
-	 * 链接转换器
+	 * 链接过滤器
 	 */
-	private LinkConverterChain strategyChain = new LinkConverterChain();
+	private LinkFilterChain filterChain = new LinkFilterChain();
 
 	/**
 	 * 真实的链接解析器，负责从网页里提取出所有的原始的超链接
@@ -53,10 +53,9 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 
 		// 获取所有的链接提取器
 		List<LinkExtractor> linkExtractors = this.buildLinkExtractor(link);
-		// 链接转换器
-		LinkFilter linkFilter = new SimpleLinkFilter(strategyChain, link.getAllKeywords());
+
 		// 生成链接解析器
-		return new LinkExtractDecorator(linkExtractProxy, linkExtract, linkFilter, linkExtractors);
+		return new LinkExtractDecorator(linkExtractProxy, linkExtract, filterChain, linkExtractors);
 
 	}
 
@@ -84,6 +83,7 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 			// 获取到所有的提取规则
 			linkExtractors = link.getRules().parallelStream()
 					.filter(t -> StringUtils.isNotBlank(t))
+					.map(t-> pattern(link.getStartUrl(),t))
 					.map(t -> factory.getLinkExtractor(t))
 					.collect(Collectors.toList());
 		}
@@ -130,6 +130,23 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		List<ContentExtractor> linkExtractors = this.buildContentExtractor(content);
 		linkExtractors.addAll(this.buildCommonExtractor());
 		return linkExtractors;
+	}
+
+	/**
+	 * 处理链接提取表达式<br/>
+	 * 
+	 * 将形如 /** 的表达式转换为 包含域名关键字的通配符形式
+	 * 
+	 * @param startUrl 起始链接
+	 * @param pattern  链接提取表达式
+	 * @return
+	 */
+	private String pattern(String startUrl, String pattern) {
+		if (StringUtils.equalsIgnoreCase(pattern, RuleConstant.ANT_MATCH_ALL)) {
+			String shortDomain = LinkUtils.extractShortDomain(startUrl);
+			pattern = new StringBuffer(".+").append(shortDomain).append(".+").toString();
+		}
+		return pattern;
 	}
 
 }
