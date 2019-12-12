@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
-import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
+import com.yishuifengxiao.common.crawler.link.filter.LinkFilter;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
@@ -29,7 +29,7 @@ public class LinkExtractDecorator implements LinkExtract {
 	/**
 	 * 链接转换器,将提取的链接统一转成网络地址形式
 	 */
-	private LinkConverter linkConverter;
+	private LinkFilter linkFilter;
 	/**
 	 * 链接提取器
 	 */
@@ -46,7 +46,7 @@ public class LinkExtractDecorator implements LinkExtract {
 			this.linkExtract.extract(page);
 		}
 		//对提取出来的链接进行格式化，统一转化成网络地址形式
-		List<String> urls=	this.linkConverter.format(page.getUrl(),page.getLinks());
+		List<String> urls=	this.linkFilter.filter(page.getUrl(),page.getLinks());
 		//将提取出来的链接根据链接提取规则过滤
 		urls=this.fliter(urls);
 		page.setLinks(urls);
@@ -74,11 +74,11 @@ public class LinkExtractDecorator implements LinkExtract {
 		return list;
 	}
 
-	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, LinkConverter linkConverter,
+	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, LinkFilter linkFilter,
 			List<LinkExtractor> linkExtractors) {
 		this.linkExtractProxy = linkExtractProxy;
 		this.linkExtract = linkExtract;
-		this.linkConverter = linkConverter;
+		this.linkFilter = linkFilter;
 		this.linkExtractors = linkExtractors;
 	}
 

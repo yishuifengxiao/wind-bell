@@ -83,16 +83,52 @@ public class LinkUtils {
 			String domain = matcher.group();
 			int lastOrdinal = StringUtils.lastOrdinalIndexOf(domain, ".", 2);
 			if (lastOrdinal != -1) {
-				return StringUtils.substring(domain, lastOrdinal+1);
+				return StringUtils.substring(domain, lastOrdinal + 1);
 			}
 		}
 
 		return null;
 	}
-	
+
+	/**
+	 * 从url里提取出简短域名信息<br/>
+	 * 例如www.yishuifengxiao.com 的提取值为 yishuifengxiao
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String extractShortDomain(String url) {
+
+		if (StringUtils.isBlank(url)) {
+			return null;
+		}
+		Matcher matcher = PATTERN_DOMAIN.matcher(url);
+		if (matcher.find()) {
+			String domain = matcher.group();
+			String[] tokens = StringUtils.splitByWholeSeparatorPreserveAllTokens(domain, ".");
+
+			if (!StringUtils.containsIgnoreCase(domain, RuleConstant.CN_COM_DOMAIN)) {
+				if (tokens.length > 1) {
+
+					return tokens[tokens.length - 2];
+				}
+			} else {
+				// 防止出现 xxx.com.cn这样的域名
+				if (tokens.length > 2) {
+					return tokens[tokens.length - 3];
+				}
+
+			}
+
+		}
+
+		return null;
+	}
+
 	public static void main(String[] args) {
-		String str="https://c.runoob.com/front-end/854";
-		System.out.println(extractTopLevelDomain(str));;
+		String str = "https://c.run.oob.com.cn/front-end/854";
+		System.out.println(extractShortDomain(str));
+		;
 	}
 
 }

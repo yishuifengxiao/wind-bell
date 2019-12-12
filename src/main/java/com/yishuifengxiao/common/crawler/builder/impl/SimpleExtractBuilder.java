@@ -23,9 +23,8 @@ import com.yishuifengxiao.common.crawler.link.LinkConverterChain;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
 import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
 import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
-import com.yishuifengxiao.common.crawler.link.converter.LinkConverter;
-import com.yishuifengxiao.common.crawler.link.converter.impl.SimpleLinkConverter;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
+import com.yishuifengxiao.common.crawler.link.filter.LinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.SimpleLinkFilter;
 
 /**
  * 简单的解析器构造者
@@ -55,9 +54,9 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		// 获取所有的链接提取器
 		List<LinkExtractor> linkExtractors = this.buildLinkExtractor(link);
 		// 链接转换器
-		LinkConverter linkConverter = new SimpleLinkConverter(strategyChain, this.getTopLevelDomain(link));
+		LinkFilter linkFilter = new SimpleLinkFilter(strategyChain, link.getAllKeywords());
 		// 生成链接解析器
-		return new LinkExtractDecorator(linkExtractProxy, linkExtract, linkConverter, linkExtractors);
+		return new LinkExtractDecorator(linkExtractProxy, linkExtract, linkFilter, linkExtractors);
 
 	}
 
@@ -70,23 +69,6 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 				: new SimpleContentExtract(contentExtractors);
 		// 构建一个内容解析装饰器
 		return new SimpleContentExtractDecorator(content.getExtractUrl(), simpleContentExtract);
-	}
-
-	/**
-	 * 获取当前爬虫爬取的一级域名<br/>
-	 * 形式如 yishuifengxiao.com
-	 * 
-	 * @return 一级域名
-	 */
-	private String getTopLevelDomain(LinkRule link) {
-		if (null == link) {
-			throw new IllegalArgumentException("链接提取规则不能为空");
-		}
-		if (null == link.getStartUrl() || "".equals(link.getStartUrl())) {
-			throw new IllegalArgumentException("起始链接不能为空");
-		}
-		String domain = LinkUtils.extractTopLevelDomain(link.getStartUrl());
-		return domain;
 	}
 
 	/**

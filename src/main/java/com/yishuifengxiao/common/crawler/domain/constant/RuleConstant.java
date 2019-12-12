@@ -49,5 +49,9 @@ public final class RuleConstant {
 	 * 提取域名
 	 */
 	public final static String REGEX_DOMAIN="[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
+	/**
+	 * com.cn域名表达式
+	 */
+	public final static String CN_COM_DOMAIN="com.cn";
 
 }
