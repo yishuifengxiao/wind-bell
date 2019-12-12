@@ -76,6 +76,9 @@ public class SimpleLinkFilter implements LinkFilter {
 	private boolean containsIgnoreCase(String url) {
 		// 提取出域名
 		url = LinkUtils.extractDomain(url);
+		if (StringUtils.isBlank(url)) {
+			return true;
+		}
 		for (String keyword : keywords) {
 			if (StringUtils.containsIgnoreCase(url, keyword)) {
 				return true;
