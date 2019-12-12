@@ -366,8 +366,8 @@ public class CrawlerProcessor extends Thread {
 		// 用来模仿自然请求，防止封杀
 		int randomSleepTime = RandomUtils.nextInt(0, this.task.getCrawlerRule().getInterval() * 2);
 		log.debug(
-				"The crawler sleeps for {} seconds and simulates a manual request to prevent frequent requests from blocking.",
-				randomSleepTime);
+				"The crawler sleeps {} for {} seconds and simulates a manual request to prevent frequent requests from blocking.",
+				this.task.getName(), randomSleepTime);
 		try {
 			Thread.sleep(1000 * randomSleepTime);
 		} catch (InterruptedException e) {
