@@ -3,6 +3,7 @@ package com.yishuifengxiao.common.crawler;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -274,7 +275,7 @@ public class Crawler implements Task, StatuObserver {
 			throw new IllegalArgumentException("起始链接不能为空");
 		}
 		if (this.crawlerRule.getLink().getRules() == null) {
-			this.crawlerRule.getLink().setRules(Arrays.asList(RuleConstant.REGEX_MATCH_ALL));
+			this.crawlerRule.getLink().setRules(new HashSet<>(Arrays.asList(RuleConstant.ANT_MATCH_ALL)));
 		}
 		if (this.crawlerRule.getSite().getHeaders() == null) {
 			this.crawlerRule.getSite().setHeaders(new ArrayList<>());
@@ -297,12 +298,6 @@ public class Crawler implements Task, StatuObserver {
 	@Override
 	public CrawlerRule getCrawlerRule() {
 		return this.crawlerRule;
-	}
-
-	public Crawler setCrawlerRule(CrawlerRule crawlerRule) {
-		Assert.notNull(crawlerRule, "配置规则不能为空");
-		this.crawlerRule = crawlerRule;
-		return this;
 	}
 
 	public Downloader getDownloader() {

@@ -1,7 +1,7 @@
 package com.yishuifengxiao.common.crawler.domain.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -47,6 +47,6 @@ public class LinkRule implements Serializable {
 	 */
 	@ApiModelProperty("链接的提取规则,正则表达式")
 	@NotEmpty(message = "请至少配置一个链接提取规则")
-	private List<String> rules;
+	private Set<String> rules;
 
 }

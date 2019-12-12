@@ -24,6 +24,10 @@ public class LinkUtils {
 	 * 判断是否符合形如 www.yishuifengxiao.com 的正则表达式
 	 */
 	private final static Pattern PATTERN_DOMAIN = Pattern.compile(RuleConstant.REGEX_DOMAIN);
+	/**
+	 * 二级域名限制
+	 */
+	private final static int SECOND_LEVEL_DOMAIN = 2;
 
 	/**
 	 * 从url中提取出来协议和域名
@@ -114,7 +118,7 @@ public class LinkUtils {
 				}
 			} else {
 				// 防止出现 xxx.com.cn这样的域名
-				if (tokens.length > 2) {
+				if (tokens.length > SECOND_LEVEL_DOMAIN) {
 					return tokens[tokens.length - 3];
 				}
 
