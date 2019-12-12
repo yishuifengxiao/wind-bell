@@ -240,7 +240,7 @@ public class CrawlerProcessor extends Thread {
 			// 下载失败
 			this.task.getCrawlerListener().onDownError(page, e);
 
-			log.error("process request " + url + " error", e);
+			log.info("process request " + url + " error", e);
 		} finally {
 			signalNewUrl();
 		}
@@ -294,7 +294,7 @@ public class CrawlerProcessor extends Thread {
 				} catch (Exception e) {
 					// 解析失败
 					task.getCrawlerListener().onExtractError(page, e);
-					log.error("process request " + page + " error", e);
+					log.info("process request " + page + " error", e);
 				} finally {
 					LocalCrawler.clear();
 					signalNewUrl();
@@ -365,9 +365,9 @@ public class CrawlerProcessor extends Thread {
 		// 休眠时间为 sleepTime 的0倍到两倍 之间的一个随机值
 		// 用来模仿自然请求，防止封杀
 		int randomSleepTime = RandomUtils.nextInt(0, this.task.getCrawlerRule().getInterval() * 2);
-		log.debug(
-				"The crawler sleeps {} for {} seconds and simulates a manual request to prevent frequent requests from blocking.",
-				this.task.getName(), randomSleepTime);
+//		log.debug(
+//				"The crawler sleeps {} for {} seconds and simulates a manual request to prevent frequent requests from blocking.",
+//				this.task.getName(), randomSleepTime);
 		try {
 			Thread.sleep(1000 * randomSleepTime);
 		} catch (InterruptedException e) {
