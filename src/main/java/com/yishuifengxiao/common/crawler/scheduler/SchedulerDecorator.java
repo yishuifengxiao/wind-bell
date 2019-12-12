@@ -71,6 +71,12 @@ public class SchedulerDecorator implements Scheduler {
 		return this.scheduler.getName();
 	}
 
+	@Override
+	public void clear() {
+		this.scheduler.clear();
+
+	}
+
 	public SchedulerDecorator(RequestCache requestCache, Scheduler scheduler) {
 		this.requestCache = requestCache;
 		this.scheduler = scheduler;

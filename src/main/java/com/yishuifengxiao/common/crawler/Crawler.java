@@ -3,13 +3,8 @@ package com.yishuifengxiao.common.crawler;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.WeakHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -52,10 +47,6 @@ import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
  */
 public class Crawler implements Task, StatuObserver {
 	private final static Logger log = LoggerFactory.getLogger(Crawler.class);
-	/**
-	 * 存储所有已经创建的爬虫实例
-	 */
-	private final static Map<String, Crawler> WORKER = new WeakHashMap<>();
 
 	/**
 	 * 爬虫的名字
@@ -125,8 +116,6 @@ public class Crawler implements Task, StatuObserver {
 			this.statu = Statu.RUNNING;
 			this.startTime = LocalDateTime.now();
 			this.processor.start();
-			// 注册一个爬虫实例
-			register(this);
 			this.statuChange();
 		}
 
@@ -138,8 +127,6 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	public void stop() {
 		statu = Statu.STOP;
-		// 移除一个爬虫实例
-		remove(this.name);
 		log.info("The crawler instance {} has been manually stopped", this.name);
 		this.statuChange();
 	};
@@ -150,10 +137,17 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	public void pause() {
 		statu = Statu.PAUSE;
-		// 注册一个爬虫实例
-		register(this);
 		log.info("The crawler instance {} has been manually suspended", this.name);
 		this.statuChange();
+	}
+
+	public void clear() {
+		if (null != this.requestCache) {
+			this.requestCache.remove(this.name);
+		}
+		if (null != this.scheduler) {
+			this.scheduler.clear();
+		}
 	}
 
 	/**
@@ -165,20 +159,6 @@ public class Crawler implements Task, StatuObserver {
 		return new Crawler(crawlerRule);
 	}
 
-	/**
-	 * 根据名字获取爬虫的状态
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static Statu statu(String name) {
-		Crawler crawler = WORKER.get(name);
-		if (crawler != null) {
-			return crawler.statu;
-		}
-		return null;
-	}
-
 	public Crawler(CrawlerRule crawlerRule) {
 		Assert.notNull(crawlerRule, "爬虫规则配置不能为空");
 		this.crawlerRule = crawlerRule;
@@ -187,42 +167,6 @@ public class Crawler implements Task, StatuObserver {
 		// 初始化数据
 		this.initData();
 
-	}
-
-	/**
-	 * 注册一个爬虫实例
-	 * 
-	 * @param crawler
-	 */
-	private synchronized void register(Crawler crawler) {
-		WORKER.put(crawler.name, crawler);
-	}
-
-	/**
-	 * 移除一个爬虫实例
-	 * 
-	 * @param crawler
-	 */
-	private synchronized void remove(String name) {
-		Assert.notNull(name, "移除爬虫实例时参数不能为空");
-		Iterator<String> it = WORKER.keySet().iterator();
-		while (it.hasNext()) {
-			String key = it.next();
-			if (StringUtils.equalsIgnoreCase(key, name)) {
-				it.remove();
-			}
-		}
-	}
-
-	/**
-	 * 根据爬虫名字获取一个运行实例
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static Crawler get(String name) {
-		Assert.notNull(name, "获取爬虫实例时参数不能为空");
-		return WORKER.get(name);
 	}
 
 	/**
@@ -247,27 +191,6 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	public final static SimulatorData testLink(SiteRule siteRule, LinkRule linkRule) {
 		return new SimpleSimulator().link(siteRule, linkRule);
-	}
-
-	/**
-	 * 获取到所有正在运行的实例
-	 * 
-	 * @return
-	 */
-	public static List<Crawler> getAllWorker() {
-		return WORKER.keySet().parallelStream().map(t -> WORKER.get(t)).filter(t -> t != null)
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 * 判断某个爬虫名字是否已经存在
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static boolean extis(String name) {
-		Assert.isNull(name, "判断爬虫是否存在时参数不能为空");
-		return WORKER.containsKey(name);
 	}
 
 	/**
@@ -515,10 +438,6 @@ public class Crawler implements Task, StatuObserver {
 
 	@Override
 	public void update(Task task, Statu statu) {
-		if (Statu.STOP == statu) {
-			// 移除一个爬虫实例
-			remove(this.name);
-		}
 		this.statu = statu;
 		this.statuChange();
 	}

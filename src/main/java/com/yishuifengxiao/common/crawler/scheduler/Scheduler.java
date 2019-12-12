@@ -26,6 +26,10 @@ public interface Scheduler {
 	 * @return
 	 */
 	String poll();
+	/**
+	 * 清空任务
+	 */
+	void clear();
 
 	/**
 	 * 资源调度器的名字，不能为空

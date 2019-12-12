@@ -27,6 +27,12 @@ public class SimpleScheduler implements Scheduler {
 	}
 
 	@Override
+	public synchronized void clear() {
+		this.queue.clear();
+
+	}
+
+	@Override
 	public synchronized String poll() {
 		return queue.poll();
 	}

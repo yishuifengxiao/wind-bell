@@ -1,5 +1,7 @@
 package com.yishuifengxiao.common.crawler.scheduler.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -35,6 +37,13 @@ public class RedisScheduler implements Scheduler {
 		return (String) this.getOperation().pop();
 	}
 
+	
+	@Override
+	public void clear() {
+		this.getOperation().expire(1L, TimeUnit.MILLISECONDS);
+		
+	}
+	
 	@Override
 	public String getName() {
 		return this.name;
@@ -60,5 +69,7 @@ public class RedisScheduler implements Scheduler {
 		this.name = name;
 		this.redisTemplate = redisTemplate;
 	}
+
+
 
 }
