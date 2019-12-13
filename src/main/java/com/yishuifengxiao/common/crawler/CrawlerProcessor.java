@@ -30,8 +30,8 @@ import com.yishuifengxiao.common.crawler.utils.RegexFactory;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
- * 爬虫处理器<br/>
- * 负责调用线程池使用多线程进行爬虫任务处理
+ * 风铃虫处理器<br/>
+ * 负责调用线程池使用多线程进行风铃虫任务处理
  * 
  * @author yishui
  * @date 2019年11月26日
@@ -80,7 +80,7 @@ public class CrawlerProcessor extends Thread {
 	private Task task;
 
 	/**
-	 * 爬虫的网页下载器，负责下载网页内容
+	 * 风铃虫的网页下载器，负责下载网页内容
 	 */
 	private Downloader downloader;
 
@@ -156,13 +156,13 @@ public class CrawlerProcessor extends Thread {
 			int sleepSeconds = this.sleep();
 
 			if (this.task.getStatu() == Statu.STOP) {
-				// 爬虫处于停止状态
-				// 如果爬虫被手动停止就中断线程
+				// 风铃虫处于停止状态
+				// 如果风铃虫被手动停止就中断线程
 				break;
 			}
 
 			if (this.task.getStatu() != Statu.PAUSE) {
-				// 如果爬虫不是暂停状态就默认其为运行状态
+				// 如果风铃虫不是暂停状态就默认其为运行状态
 				String url = this.scheduler.poll();
 				log.debug("new processing request is {} ", url);
 				if (StringUtils.isBlank(url)) {
@@ -200,7 +200,7 @@ public class CrawlerProcessor extends Thread {
 			return true;
 		}
 		if (this.stat.get() > this.task.getCrawlerRule().getWaitTime()) {
-			// 连续请求时间，超过指定的阀值还没有获取到新的请求，表明爬虫的爬取任务已经完成
+			// 连续请求时间，超过指定的阀值还没有获取到新的请求，表明风铃虫的爬取任务已经完成
 			log.info("The crawler instance {} has not received a new task for a long time and will automatically stop",
 					this.task.getName());
 			this.stat.set(0);
@@ -392,7 +392,7 @@ public class CrawlerProcessor extends Thread {
 	}
 
 	/**
-	 * 获取到爬虫线程池里最大活跃的线程数
+	 * 获取到风铃虫线程池里最大活跃的线程数
 	 * 
 	 * @return
 	 */
@@ -425,13 +425,13 @@ public class CrawlerProcessor extends Thread {
 
 			while (true) {
 				/*
-				 * <pre> 两种情况下认为爬虫任务已经完成 <br/> 1. 任务处理器中线程池中的活跃线程数为0且任务管理器线程处于非活跃状态 <br/> 2.
-				 * 爬虫的状态为停止状态 </pre>
+				 * <pre> 两种情况下认为风铃虫任务已经完成 <br/> 1. 任务处理器中线程池中的活跃线程数为0且任务管理器线程处于非活跃状态 <br/> 2.
+				 * 风铃虫的状态为停止状态 </pre>
 				 */
 
 				if ((!CrawlerProcessor.this.isActive())) {
 					CrawlerProcessor.this.statuObserver.update(CrawlerProcessor.this.task, Statu.STOP);
-					log.info("爬虫 {} 的状态变为 {}", CrawlerProcessor.this.task.getName(), Statu.STOP);
+					log.info("风铃虫 {} 的状态变为 {}", CrawlerProcessor.this.task.getName(), Statu.STOP);
 					break;
 				}
 

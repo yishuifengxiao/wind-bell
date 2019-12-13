@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 /**
- * 爬虫页面对象
+ * 风铃虫页面对象
  * 
  * @author yishui
  * @date 2019年11月26日
@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
  */
 public class Page {
 	/**
-	 * 爬虫下载页面是的响应码
+	 * 风铃虫下载页面是的响应码
 	 */
 	private int code;
 

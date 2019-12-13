@@ -13,8 +13,7 @@ public interface Pipeline {
 	/**
 	 * 输出解析出来的数据
 	 * 
-	 * @param crawler    爬虫的定义信息
-	 * @param resultData 爬虫的输出数据
+	 * @param resultData 风铃虫的输出数据
 	 */
 	void recieve(final ResultData resultData);
 }

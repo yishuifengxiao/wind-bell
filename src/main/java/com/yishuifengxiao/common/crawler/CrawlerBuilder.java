@@ -42,7 +42,7 @@ public class CrawlerBuilder {
 	private Integer waitTime = SiteConstant.WAIT_TIME_FOR_CLOSE;
 
 	/**
-	 * 爬虫解析时线程数
+	 * 风铃虫解析时线程数
 	 */
 	private Integer threadNum = SiteConstant.DEFAULT_THREAD_NUM;
 
@@ -76,7 +76,7 @@ public class CrawlerBuilder {
 	private String failureMark;
 
 	/**
-	 * 拦截次数阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
+	 * 拦截次数阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5
 	 */
 	private Integer interceptCount = SiteConstant.INTERCEPT_RETRY_COUNT;
 
@@ -218,7 +218,7 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 爬虫解析时线程数
+	 * 风铃虫解析时线程数
 	 * 
 	 * @return
 	 */
@@ -227,9 +227,9 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 设置 爬虫解析时线程数
+	 * 设置 风铃虫解析时线程数
 	 * 
-	 * @param threadNum 爬虫解析时线程数，必须大于0
+	 * @param threadNum 风铃虫解析时线程数，必须大于0
 	 * @return
 	 */
 	public CrawlerBuilder threadNum(int threadNum) {
@@ -343,7 +343,7 @@ public class CrawlerBuilder {
 
 	/**
 	 * 获取拦截次数阀域值<br/>
-	 * 连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
+	 * 连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5
 	 * 
 	 * @return 拦截次数阀域值
 	 */
@@ -354,7 +354,7 @@ public class CrawlerBuilder {
 
 	/**
 	 * 设置拦截次数阀域值<br/>
-	 * 连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
+	 * 连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5
 	 * 
 	 * @param interceptCount 拦截次数阀域值，此值小于1时表示不开启此功能
 	 * @return

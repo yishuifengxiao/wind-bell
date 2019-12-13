@@ -7,7 +7,7 @@ import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
 import com.yishuifengxiao.common.crawler.listener.CrawlerListener;
 
 /**
- * 爬虫任务
+ * 风铃虫任务
  * 
  * @author yishui
  * @date 2019年11月28日
@@ -43,7 +43,7 @@ public interface Task {
 	LocalDateTime getStartTime();
 
 	/**
-	 * 获取爬虫监听器
+	 * 获取风铃虫监听器
 	 * 
 	 * @return
 	 */

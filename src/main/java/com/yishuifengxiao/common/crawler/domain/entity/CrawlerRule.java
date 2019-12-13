@@ -64,7 +64,7 @@ public class CrawlerRule implements Serializable {
 	private SiteRule site;
 
 	/**
-	 * 爬虫的链接处理规则
+	 * 风铃虫的链接处理规则
 	 */
 	@ApiModelProperty("链接处理规则信息")
 	@Valid

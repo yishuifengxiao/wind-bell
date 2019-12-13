@@ -1,7 +1,7 @@
 package com.yishuifengxiao.common.crawler.domain.constant;
 
 /**
- * 爬虫常量类
+ * 风铃虫常量类
  * 
  * @author yishui
  * @date 2019年11月28日

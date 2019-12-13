@@ -32,7 +32,7 @@ import com.yishuifengxiao.common.crawler.scheduler.impl.SimpleScheduler;
 import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
 
 /**
- * 爬虫对象
+ * 风铃虫对象
  * 
  * @author yishui
  * @date 2019年11月20日
@@ -42,20 +42,20 @@ public class Crawler implements Task, StatuObserver {
 	private final static Logger log = LoggerFactory.getLogger(Crawler.class);
 
 	/**
-	 * 爬虫的启动时间
+	 * 风铃虫的启动时间
 	 */
 	private LocalDateTime startTime;
 
 	/**
-	 * 爬虫的状态：运行中、停止、暂停
+	 * 风铃虫的状态：运行中、停止、暂停
 	 */
 	protected Statu statu;
 	/**
-	 * 爬虫的定义
+	 * 风铃虫的定义
 	 */
 	private CrawlerRule crawlerRule;
 	/**
-	 * 爬虫的网页下载器，负责下载网页内容
+	 * 风铃虫的网页下载器，负责下载网页内容
 	 */
 	private Downloader downloader;
 	/**
@@ -63,7 +63,7 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	private Scheduler scheduler;
 	/**
-	 * 爬虫处理器，负责解析下载后的网页内容
+	 * 风铃虫处理器，负责解析下载后的网页内容
 	 */
 	private CrawlerProcessor processor;
 	/**
@@ -83,7 +83,7 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	private RequestCache requestCache;
 	/**
-	 * 爬虫监听器
+	 * 风铃虫监听器
 	 */
 	private CrawlerListener crawlerListener;
 	/**
@@ -91,12 +91,12 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	private ThreadPoolExecutor threadPool;
 	/**
-	 * 爬虫状态观察者
+	 * 风铃虫状态观察者
 	 */
 	private StatuObserver statuObserver;
 
 	/**
-	 * 启动一个一个爬虫实例
+	 * 启动一个一个风铃虫实例
 	 */
 	public void start() {
 		// 组件初始化
@@ -112,7 +112,7 @@ public class Crawler implements Task, StatuObserver {
 
 	/**
 	 * 停止运行<br/>
-	 * <b>停止运行后会清空爬虫示例</b>
+	 * <b>停止运行后会清空风铃虫示例</b>
 	 */
 	public void stop() {
 		statu = Statu.STOP;
@@ -122,7 +122,7 @@ public class Crawler implements Task, StatuObserver {
 
 	/**
 	 * 暂停运行<br/>
-	 * <b>停止运行后不会清空爬虫示例</b>
+	 * <b>停止运行后不会清空风铃虫示例</b>
 	 */
 	public void pause() {
 		statu = Statu.PAUSE;
@@ -140,7 +140,7 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
-	 * 创建一个默认的爬虫实例
+	 * 创建一个默认的风铃虫实例
 	 * 
 	 * @return
 	 */
@@ -183,7 +183,7 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
-	 * 爬虫是否正在运行状态
+	 * 风铃虫是否正在运行状态
 	 * 
 	 * @return
 	 */
@@ -230,7 +230,7 @@ public class Crawler implements Task, StatuObserver {
 					this.linkExtract, this.contentExtract, this.pipeline);
 		}
 		if (this.statuObserver == null) {
-			// 添加一个爬虫状态观察者
+			// 添加一个风铃虫状态观察者
 			this.statuObserver = new SimpleStatuObserver();
 		}
 

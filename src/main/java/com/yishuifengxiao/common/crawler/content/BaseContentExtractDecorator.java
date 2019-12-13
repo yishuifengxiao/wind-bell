@@ -27,7 +27,7 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	protected String contentExtractRules;
 
 	/**
-	 * 爬虫处理器，负责解析下载后的网页内容
+	 * 风铃虫处理器，负责解析下载后的网页内容
 	 */
 	protected ContentExtract contentExtract;
 

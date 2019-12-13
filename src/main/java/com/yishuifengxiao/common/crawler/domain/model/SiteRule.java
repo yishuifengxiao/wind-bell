@@ -79,9 +79,9 @@ public class SiteRule implements Serializable {
 	private String failureMark;
 
 	/**
-	 * 连拦截次数阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
+	 * 连拦截次数阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5
 	 */
-	@ApiModelProperty("连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5")
+	@ApiModelProperty("连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5")
 	private Integer interceptCount = SiteConstant.INTERCEPT_RETRY_COUNT;
 
 	/**

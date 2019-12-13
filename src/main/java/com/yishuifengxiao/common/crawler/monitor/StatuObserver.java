@@ -4,8 +4,8 @@ import com.yishuifengxiao.common.crawler.Task;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
 
 /**
- * 爬虫状态观察者<br/>
- * 监控爬虫状态的变化
+ * 风铃虫状态观察者<br/>
+ * 监控风铃虫状态的变化
  * 
  * @author yishui
  * @date 2019年11月28日

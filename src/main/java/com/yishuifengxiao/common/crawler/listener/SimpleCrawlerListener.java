@@ -3,7 +3,7 @@ package com.yishuifengxiao.common.crawler.listener;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 
 /**
- * 默认的爬虫处理事件监听器<br/>
+ * 默认的风铃虫处理事件监听器<br/>
  * 不输出任何信息
  * 
  * @author yishui
