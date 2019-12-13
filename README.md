@@ -66,51 +66,47 @@
 
 **简单使用**
 
-提取雅虎新闻的内容页的新闻标题
+提取凤凰新闻的内容页的新闻标题
 ```
-public class YahuTest {
-	@Test
-	public void testCrawler() {
-		CrawlerRule rule = JSONObject.parseObject(RULE, CrawlerRule.class);
+     //创建一个提取规则
+        //该提取规则标识使用 XPATH提取器进行提取，XPATH的表达式为 //h1[@class='topic-_XJ6ViSR']/text() ， 该提取提取器的作用顺序是0
+        FieldExtractRule extractRule = new FieldExtractRule(Rule.XPATH, "//h1[@class='topic-_XJ6ViSR']/text()", "", 0);
 
-		Crawler crawler = Crawler.create(rule);
-		crawler.start();
+        //创建一个提取项
+        ContentItem contentItem = new ContentItem();
+        contentItem
+                .setFiledName("name") //提取项代码，不能为空
+                .setName("新闻标题") //提取项名字，可以不设置
+                .setRules(Arrays.asList(extractRule)); //设置提取规则
 
-		while (Statu.STOP != crawler.getStatu()) {
-			try {
-				Thread.sleep(1000 * 20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        //创建一个风铃虫实例
+        Crawler crawler = CrawlerBuilder.create()
+                .startUrl("https://news.ifeng.com/c/7sMchCLy5se") //风铃虫的起始链接
+                // 风铃虫会将每次请求的网页的内容中的URL先全部提取出来，然后将完全匹配此规则的链接放入链接池，作为下次请求的种子链接。
+                // 如果不设置则表示提取链接中所有包含域名关键字（例如此例中的ifeng）的链接放入链接池
+                .addLinkRule("http[s]?://news\\.ifeng\\.com/.*")//链接提取规则，多可添加多个链接提取规则，
+                //可以设置多个内容页的规则，多个内容页规则之间用半角逗号隔开
+                //只要内容页URL中完全匹配此规则就进行内容提取，如果不设置标识提取域名下所有的链接
+                .extractUrl("https://news\\.ifeng\\.com/c/[A-Za-z0-9]+") //内容页的规则，
+                .addExtractItem(contentItem) //增加一个提取项，风铃虫可以设置多个提取项，这里为了演示只设置了一个提取项
+                .interval(20)//每次进行爬取时的平均间隔时间，单位为秒，如果不设置则使用默认时间10秒，此值时为了防止抓取频率太高被服务器封杀
+                .creatCrawler();
+        //启动爬虫实例
+        crawler.start();
+        // 这里没有设置信息输出器，表示使用默认的信息输出器，默认的信息输出器使用的logback日志输出方法，因此需要看控制台信息
 
-	private final static String RULE = "{\r\n" + "    \"name\": \"雅虎新闻抓取\",\r\n" + "    \"interval\": 20,\r\n"
-			+ "    \"waitTime\": 300,\r\n" + "    \"threadNum\": 1,\r\n" + "    \"site\": {\r\n"
-			+ "        \"domain\": \"\",\r\n" + "        \"userAgent\": \"\",\r\n"
-			+ "        \"cacheControl\": \"max-age=0\",\r\n" + "        \"charset\": \"utf-8\",\r\n"
-			+ "        \"retryCount\": 3,\r\n" + "        \"expectContinueEnabled\": false,\r\n"
-			+ "        \"redirectsEnabled\": true,\r\n" + "        \"relativeRedirectsAllowed\": false,\r\n"
-			+ "        \"circularRedirectsAllowed\": false,\r\n" + "        \"maxRedirects\": 50,\r\n"
-			+ "        \"authenticationEnabled\": true,\r\n" + "        \"connectionRequestTimeout\": -1,\r\n"
-			+ "        \"connectTimeout\": -1,\r\n" + "        \"socketTimeout\": -1,\r\n"
-			+ "        \"contentCompressionEnabled\": true,\r\n" + "        \"normalizeUri\": true,\r\n"
-			+ "        \"headers\": []\r\n" + "    },\r\n" + "    \"link\": {\r\n"
-			+ "        \"startUrl\": \"https://news.yahoo.com/world/\",\r\n" + "        \"rules\": [\r\n"
-			+ "            \".+\"\r\n" + "        ]\r\n" + "    },\r\n" + "    \"content\": {\r\n"
-			+ "        \"extractUrl\": \"https://news.yahoo.com/([a-z]|\\\\d|-)+.html\",\r\n"
-			+ "        \"contents\": [\r\n" + "            {\r\n" + "                \"name\": \"新闻标题\",\r\n"
-			+ "                \"filedName\": \"name\",\r\n" + "                \"descr\": \"雅虎新闻页的标题\",\r\n"
-			+ "                \"rules\": [\r\n" + "                    {\r\n"
-			+ "                        \"rule\": \"XPATH\",\r\n"
-			+ "                        \"param1\": \"//h1[@itemprop='headline']/text()\",\r\n"
-			+ "                        \"param2\": \"\",\r\n" + "                        \"sort\": 1\r\n"
-			+ "                    }\r\n" + "                ]\r\n" + "            }\r\n" + "        ]\r\n"
-			+ "    }\r\n" + "}";
-}
+        //由于风铃虫时异步运行的，所以演示这里加入循环
+        while (Statu.STOP != crawler.getStatu()) {
+            try {
+                Thread.sleep(1000 * 20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 ```
-上述例子的作用提取雅虎新闻的标题，如果用户想要提取其他信息，只需要按照规则配置好其他的提取规则即可。
+上述例子的作用提取凤凰新闻的标题，如果用户想要提取其他信息，只需要按照规则配置好其他的提取规则即可。
 
+>  **注意** 上述示例仅供学习演示所用，风铃虫使用者在抓取网页内容请严格遵守相关的法律规定和目标网站的蜘蛛协议
 
 **分布式支持**
 
