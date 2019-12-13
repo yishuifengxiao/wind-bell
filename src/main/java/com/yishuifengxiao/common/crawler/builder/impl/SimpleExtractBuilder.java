@@ -52,10 +52,12 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	public LinkExtract createLinkExtract(LinkRule link, LinkExtract linkExtract) {
 
 		// 获取所有的链接提取器
-		List<LinkExtractor> linkExtractors = this.buildLinkExtractor(link);
+		// 获取到所有的提取规则
+		List<LinkExtractor> linkExtractors = link.getRules().parallelStream().map(t -> factory.getLinkExtractor(t))
+				.collect(Collectors.toList());
 
 		// 生成链接解析器
-		return new LinkExtractDecorator(linkExtractProxy, linkExtract, linkFilter, linkExtractors);
+		return new LinkExtractDecorator(linkExtractProxy, linkExtract, this.linkFilter, linkExtractors);
 
 	}
 
@@ -68,25 +70,6 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 				: new SimpleContentExtract(contentExtractors);
 		// 构建一个内容解析装饰器
 		return new SimpleContentExtractDecorator(content.getExtractUrl(), simpleContentExtract);
-	}
-
-	/**
-	 * 根据链接解析规则构建所有的链接提取器
-	 * 
-	 * @param link 链接解析规则
-	 * @return
-	 */
-	private List<LinkExtractor> buildLinkExtractor(LinkRule link) {
-		//@formatter:off 
-		List<LinkExtractor> linkExtractors = new ArrayList<>();
-
-		// 获取到所有的提取规则
-		linkExtractors = link.getRules().parallelStream()
-				.map(t -> factory.getLinkExtractor(t))
-				.collect(Collectors.toList());
-	
-		//@formatter:on  
-		return linkExtractors;
 	}
 
 	/**
@@ -127,8 +110,6 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		linkExtractors.addAll(this.buildCommonExtractor());
 		return linkExtractors;
 	}
-
-
 
 	/**
 	 * 构建链接过滤器

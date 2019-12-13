@@ -120,7 +120,7 @@ public class SiteRule implements Serializable {
 	 * <b>默认为50</b>
 	 */
 	@ApiModelProperty("最大重定向数，默认为50")
-	private int maxRedirects = 50;
+	private int maxRedirects = SiteConstant.MAX_REDIRECTS;
 
 	/**
 	 * <pre>

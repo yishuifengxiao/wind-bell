@@ -31,6 +31,11 @@ public final class SiteConstant {
 	 * 连续多次在下载内容中获取到失败标识时的重试此次，默认为5
 	 */
 	public final static int INTERCEPT_RETRY_COUNT = 5;
+	/**
+	 * 返回要遵循的最大重定向数。 重定向次数的限制旨在防止无限循环 <br/>
+	 * <b>默认为50</b>
+	 */
+	public final static int MAX_REDIRECTS = 50;
 
 	/**
 	 * 请求失败时重新执行此请求的次数

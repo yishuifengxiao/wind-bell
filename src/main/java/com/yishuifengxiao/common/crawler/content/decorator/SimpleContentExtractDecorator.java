@@ -27,8 +27,9 @@ public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
 
 	/**
 	 * 判断是否符合提取页规则
-	 *
-	 * @param url 需要提取的网页的url的地址
+	 * 
+	 * @param contentExtractRules 内容页规则
+	 * @param url                 需要提取的网页的url的地址
 	 * @return 需要提取则返回为true，否则为false
 	 */
 	@Override

@@ -22,8 +22,6 @@ import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * 风铃虫规则构建器
  * 
@@ -47,10 +45,6 @@ public class CrawlerBuilder {
 	 * 爬虫解析时线程数
 	 */
 	private Integer threadNum = SiteConstant.DEFAULT_THREAD_NUM;
-	/**
-	 * 站点配置规则数据
-	 */
-	private SiteRule site = new SiteRule();
 
 	/**
 	 * 浏览器标志，默认值为空，表示系统从众多内置标识符中随机选择一个
@@ -69,8 +63,12 @@ public class CrawlerBuilder {
 	/**
 	 * 请求的cookie，默认为空
 	 */
-	@ApiModelProperty("请求的cookie，默认为空")
 	private String cookieValue;
+	/**
+	 * 返回要遵循的最大重定向数。 重定向次数的限制旨在防止无限循环 <br/>
+	 * <b>默认为50</b>
+	 */
+	private int maxRedirects = SiteConstant.MAX_REDIRECTS;
 
 	/**
 	 * 失败标志， 下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验
@@ -81,14 +79,40 @@ public class CrawlerBuilder {
 	 * 拦截次数阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
 	 */
 	private Integer interceptCount = SiteConstant.INTERCEPT_RETRY_COUNT;
+
+	/**
+	 * 请求失败时重新执行此请求的次数,默认为3
+	 */
+	private int retryCount = SiteConstant.RETRY_COUNT;
+
+	/**
+	 * <pre>
+	 * 
+	 * 确定连接建立之前的超时时间（以毫秒为单位）。
+	 * 
+	 * 超时值零被解释为无限超时，负值被解释为未定义（如果适用，则为系统默认值）。
+	 * <b>默认为-1</b>
+	 * </pre>
+	 */
+	private int connectTimeout = -1;
+
+	/**
+	 * 确定是否应自动处理重定向。 <br/>
+	 * <b>默认为true</b>
+	 */
+	private boolean redirectsEnabled = true;
+
+	/**
+	 * <pre>
+	 * 确定是否请求目标服务器压缩内容。
+	 * <b>默认为true</b>
+	 * </pre>
+	 */
+	private boolean contentCompressionEnabled = true;
 	/**
 	 * 请求头参数
 	 */
 	private List<HeaderRule> headers = new ArrayList<>();
-	/**
-	 * 链接处理规则
-	 */
-	private LinkRule link = new LinkRule();
 
 	/**
 	 * 起始链接，多个起始链接之间用半角逗号隔开
@@ -98,10 +122,7 @@ public class CrawlerBuilder {
 	 * 链接提取规则
 	 */
 	private Set<String> linkRules = new HashSet<>();
-	/**
-	 * 内容处理规则
-	 */
-	private ContentRule content = new ContentRule();
+
 	/**
 	 * 内容页规则，多个规则之间用半角逗号隔开
 	 */
@@ -225,8 +246,10 @@ public class CrawlerBuilder {
 	 * @return 站点配置规则数据
 	 */
 	public SiteRule site() {
-		return this.site.setUserAgent(this.userAgent).setReferrer(this.referrer).setCacheControl(this.cacheControl)
-				.setCookieValue(this.cookieValue).setFailureMark(this.failureMark)
+		return new SiteRule().setUserAgent(this.userAgent).setReferrer(this.referrer).setCacheControl(this.cacheControl)
+				.setCookieValue(this.cookieValue).setFailureMark(this.failureMark).setRetryCount(this.retryCount)
+				.setRedirectsEnabled(this.redirectsEnabled).setConnectTimeout(this.connectTimeout)
+				.setContentCompressionEnabled(this.contentCompressionEnabled).setMaxRedirects(this.maxRedirects)
 				.setInterceptCount(this.interceptCount).setHeaders(this.headers);
 	}
 
@@ -238,7 +261,6 @@ public class CrawlerBuilder {
 	 */
 	public CrawlerBuilder site(SiteRule site) {
 		Assert.notNull(site, "站点配置规则数据不能为空");
-		this.site = site;
 		this.userAgent(site.getUserAgent());
 		this.referrer(site.getReferrer());
 		this.cacheControl(site.getCacheControl());
@@ -246,6 +268,11 @@ public class CrawlerBuilder {
 		this.failureMark(site.getFailureMark());
 		this.interceptCount(site.getInterceptCount());
 		this.setHeaders(site.getHeaders());
+		this.retryCount(site.getRetryCount());
+		this.connectTimeout(site.getConnectTimeout());
+		this.redirectsEnabled(site.isRedirectsEnabled());
+		this.maxRedirects(site.getMaxRedirects());
+		this.contentCompressionEnabled(site.isContentCompressionEnabled());
 		return this;
 	}
 
@@ -338,12 +365,112 @@ public class CrawlerBuilder {
 	}
 
 	/**
+	 * 获取请求失败时的重试次数
+	 * 
+	 * @return 请求失败时的重试次数
+	 */
+	public int retryCount() {
+		return this.retryCount;
+	}
+
+	/**
+	 * 设置请求失败时的重试次数
+	 * 
+	 * @param retryCount 请求失败时的重试次数,连续多次在下载内容中获取到失败标识时的重试此次，默认为5
+	 * @return
+	 */
+	public CrawlerBuilder retryCount(int retryCount) {
+		this.retryCount = interceptCount < 0 ? SiteConstant.INTERCEPT_RETRY_COUNT : interceptCount;
+		return this;
+	}
+
+	/**
+	 * 获取确定连接建立之前的超时时间（以毫秒为单位）
+	 * 
+	 * @return 确定连接建立之前的超时时间（以毫秒为单位）,非正数时表示不开启此功能
+	 */
+	public int connectTimeout() {
+		return this.connectTimeout;
+	}
+
+	/**
+	 * 设置确定连接建立之前的超时时间（以毫秒为单位）
+	 * 
+	 * @param connectTimeout 确定连接建立之前的超时时间（以毫秒为单位）,非正数时表示不开启此功能
+	 * @return
+	 */
+	public CrawlerBuilder connectTimeout(int connectTimeout) {
+		this.connectTimeout = connectTimeout < 0 ? -1 : connectTimeout;
+		return this;
+	}
+
+	/**
+	 * 获取是否应自动处理重定向
+	 * 
+	 * @return 是否应自动处理重定向
+	 */
+	public boolean redirectsEnabled() {
+		return this.redirectsEnabled;
+	}
+
+	/**
+	 * 设置是否应自动处理重定向
+	 * 
+	 * @param redirectsEnabled 是否应自动处理重定向，默认为true
+	 * @return
+	 */
+	public CrawlerBuilder redirectsEnabled(boolean redirectsEnabled) {
+		this.redirectsEnabled = redirectsEnabled;
+		return this;
+	}
+
+	/**
+	 * 获取要遵循的最大重定向数
+	 * 
+	 * @return
+	 */
+	public int maxRedirects() {
+		return this.maxRedirects;
+	}
+
+	/**
+	 * 设置要遵循的最大重定向数
+	 * 
+	 * @param maxRedirects 要遵循的最大重定向数
+	 * @return
+	 */
+	public CrawlerBuilder maxRedirects(int maxRedirects) {
+		this.maxRedirects = maxRedirects <= 0 ? SiteConstant.MAX_REDIRECTS : maxRedirects;
+		return this;
+	}
+
+	/**
+	 * 是否是否请求目标服务器压缩内容
+	 * 
+	 * @return 是否请求目标服务器压缩内容
+	 */
+	public boolean contentCompressionEnabled() {
+		return this.contentCompressionEnabled;
+	}
+
+	/**
+	 * 设置是否请求目标服务器压缩内容
+	 * 
+	 * @param contentCompressionEnabled 是否请求目标服务器压缩内容
+	 * @return
+	 */
+	public CrawlerBuilder contentCompressionEnabled(boolean contentCompressionEnabled) {
+		this.contentCompressionEnabled = contentCompressionEnabled;
+		return this;
+	}
+
+	/**
 	 * 获取链接处理规则
 	 * 
 	 * @return 链接处理规则
 	 */
 	public LinkRule link() {
-		return this.link.setStartUrl(this.startUrl).setRules(this.linkRules);
+		return new LinkRule().setStartUrl(this.startUrl).setRules(this.linkRules);
 	}
 
 	/**
@@ -354,7 +481,6 @@ public class CrawlerBuilder {
 	 */
 	public CrawlerBuilder link(LinkRule link) {
 		Assert.notNull(link, "链接提取规则不能为空");
-		this.link = link;
 		this.startUrl(link.getStartUrl());
 		this.setLinkRules(link.getRules());
 		return this;
@@ -435,7 +561,7 @@ public class CrawlerBuilder {
 	 * @return 设置内容处理规则
 	 */
 	public ContentRule content() {
-		return this.content.setExtractUrl(this.extractUrl).setContents(this.extractItems());
+		return new ContentRule().setExtractUrl(this.extractUrl).setContents(this.extractItems());
 	}
 
 	/**
@@ -446,7 +572,6 @@ public class CrawlerBuilder {
 	 */
 	public CrawlerBuilder content(ContentRule content) {
 		Assert.notNull(content, "内容提取规则不能为空");
-		this.content = content;
 		this.extractUrl(content.getExtractUrl());
 		this.setExtractItems(content.getContents());
 		return this;
@@ -577,9 +702,8 @@ public class CrawlerBuilder {
 	 */
 	public CrawlerBuilder addExtractItems(List<ContentItem> list) {
 		if (null != list) {
-			list.parallelStream().filter(t -> null != t && StringUtils.isNotBlank(t.getFiledName())).forEach(t -> {
-				extractItems.put(t.getFiledName(), t);
-			});
+			list.parallelStream().filter(t -> null != t && StringUtils.isNotBlank(t.getFiledName()))
+					.forEach(this::addExtractItem);
 		}
 
 		return this;
@@ -725,11 +849,17 @@ public class CrawlerBuilder {
 		if (null == this.linkRules) {
 			this.linkRules = new HashSet<>();
 		}
+
 		if (this.linkRules.size() == 0) {
 			this.addLinkRule(RuleConstant.ANT_MATCH_ALL);
 		} else {
 			this.linkRules = this.linkRules.parallelStream().filter(t -> null != t).map(t -> pattern(startUrl, t))
 					.collect(Collectors.toSet());
+		}
+
+		// 检查内容页规则
+		if (StringUtils.isBlank(this.extractUrl)) {
+			this.extractUrl = RuleConstant.ANT_MATCH_ALL;
 		}
 
 		// 检查提取项数据
