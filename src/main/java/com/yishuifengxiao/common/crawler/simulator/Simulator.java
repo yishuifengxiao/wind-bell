@@ -1,7 +1,7 @@
 package com.yishuifengxiao.common.crawler.simulator;
 
 import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
-import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
+import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 
@@ -30,6 +30,6 @@ public interface Simulator {
 	 * @param contentExtractRule 内容提取规则
 	 * @return
 	 */
-	SimulatorData extract(String url, SiteRule siteRule, ContentExtractRule contentExtractRule);
+	SimulatorData extract(String url, SiteRule siteRule, ContentItem contentExtractRule);
 
 }

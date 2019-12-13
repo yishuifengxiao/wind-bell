@@ -1,28 +1,20 @@
 package com.yishuifengxiao.common.crawler;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.validation.annotation.Validated;
 
 import com.yishuifengxiao.common.crawler.cache.InMemoryRequestCache;
 import com.yishuifengxiao.common.crawler.cache.RequestCache;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
-import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
-import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
-import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
-import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
+import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
@@ -49,10 +41,6 @@ import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
 public class Crawler implements Task, StatuObserver {
 	private final static Logger log = LoggerFactory.getLogger(Crawler.class);
 
-	/**
-	 * 爬虫的名字
-	 */
-	private String name;
 	/**
 	 * 爬虫的启动时间
 	 */
@@ -128,7 +116,7 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	public void stop() {
 		statu = Statu.STOP;
-		log.info("The crawler instance {} has been manually stopped", this.name);
+		log.info("The crawler instance {} has been manually stopped", this.getName());
 		this.statuChange();
 	};
 
@@ -138,13 +126,13 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	public void pause() {
 		statu = Statu.PAUSE;
-		log.info("The crawler instance {} has been manually suspended", this.name);
+		log.info("The crawler instance {} has been manually suspended", this.getName());
 		this.statuChange();
 	}
 
 	public void clear() {
 		if (null != this.requestCache) {
-			this.requestCache.remove(this.name);
+			this.requestCache.remove(this.getName());
 		}
 		if (null != this.scheduler) {
 			this.scheduler.clear();
@@ -156,18 +144,19 @@ public class Crawler implements Task, StatuObserver {
 	 * 
 	 * @return
 	 */
-	public static Crawler create(@Validated CrawlerRule crawlerRule) {
-		return new Crawler(crawlerRule);
+	public static Crawler create(CrawlerRule crawlerRule) {
+		// 初始化数据
+		Crawler crawler = new Crawler();
+		crawler.crawlerRule = CrawlerBuilder.create(crawlerRule).build();
+		return crawler;
 	}
 
-	public Crawler(CrawlerRule crawlerRule) {
-		Assert.notNull(crawlerRule, "爬虫规则配置不能为空");
-		this.crawlerRule = crawlerRule;
-		this.name = StringUtils.isNotBlank(crawlerRule.getName()) ? crawlerRule.getName()
-				: UUID.randomUUID().toString();
-		// 初始化数据
-		this.initData();
+	private Crawler() {
 
+	}
+
+	protected Crawler(CrawlerRule crawlerRule) {
+		this.crawlerRule = crawlerRule;
 	}
 
 	/**
@@ -178,8 +167,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param contentExtractRule 内容提取规则
 	 * @return
 	 */
-	public final static SimulatorData testContent(String url, SiteRule siteRule,
-			ContentExtractRule contentExtractRule) {
+	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentItem contentExtractRule) {
 		return new SimpleSimulator().extract(url, siteRule, contentExtractRule);
 	}
 
@@ -249,50 +237,6 @@ public class Crawler implements Task, StatuObserver {
 		if (this.crawlerListener == null) {
 			this.crawlerListener = new SimpleCrawlerListener();
 		}
-	}
-
-	/**
-	 * 数据初始化
-	 */
-	private void initData() {
-		if (this.crawlerRule.getThreadNum() == null || this.crawlerRule.getThreadNum() <= 0) {
-			this.crawlerRule.setThreadNum(SiteConstant.DEFAULT_THREAD_NUM);
-		}
-		if (this.crawlerRule.getInterval() == null || this.crawlerRule.getInterval() <= 0) {
-			this.crawlerRule.setInterval(SiteConstant.REQUEST_INTERVAL_TIME);
-		}
-		if (this.crawlerRule.getWaitTime() == null || this.crawlerRule.getWaitTime() <= 0) {
-			this.crawlerRule.setWaitTime(SiteConstant.WAIT_TIME_FOR_CLOSE);
-		}
-
-		if (this.crawlerRule.getSite() == null) {
-			this.crawlerRule.setSite(new SiteRule());
-		}
-		if (this.crawlerRule.getLink() == null) {
-			throw new IllegalArgumentException("链接提取配置数据不正确");
-		}
-		if (StringUtils.isBlank(this.crawlerRule.getLink().getStartUrl())) {
-			throw new IllegalArgumentException("起始链接不能为空");
-		}
-		if (this.crawlerRule.getLink().getRules() == null) {
-			this.crawlerRule.getLink().setRules(new HashSet<>(Arrays.asList(RuleConstant.ANT_MATCH_ALL)));
-		}
-		if (this.crawlerRule.getSite().getHeaders() == null) {
-			this.crawlerRule.getSite().setHeaders(new ArrayList<>());
-		}
-
-		if (this.crawlerRule.getSite().getInterceptCount() == null) {
-			this.crawlerRule.getSite().setInterceptCount(SiteConstant.INTERCEPT_RETRY_COUNT);
-		}
-
-		if (this.crawlerRule.getContent() == null) {
-			this.crawlerRule.setContent(new ContentRule());
-		}
-
-		if (this.crawlerRule.getContent().getExtractUrl() == null) {
-			this.crawlerRule.getContent().setExtractUrl(RuleConstant.REGEX_MATCH_ALL);
-		}
-
 	}
 
 	@Override
@@ -411,7 +355,8 @@ public class Crawler implements Task, StatuObserver {
 
 	@Override
 	public String getName() {
-		return this.name;
+
+		return this.scheduler != null ? this.scheduler.getName() : null;
 	}
 
 	@Override
@@ -427,7 +372,8 @@ public class Crawler implements Task, StatuObserver {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Crawler [name=").append(name).append(",scheduler=").append(scheduler.getName()).append("]");
+		builder.append("Crawler [name=").append(this.getName()).append(",scheduler=").append(scheduler.getName())
+				.append("]");
 		return builder.toString();
 	}
 

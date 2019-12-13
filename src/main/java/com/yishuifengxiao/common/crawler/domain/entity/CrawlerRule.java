@@ -3,7 +3,6 @@ package com.yishuifengxiao.common.crawler.domain.entity;
 import java.io.Serializable;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -20,13 +19,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 爬虫完整信息
+ * 风铃虫规则
  * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "爬虫完整信息")
+@ApiModel(value = "风铃虫规则")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -38,13 +37,6 @@ public class CrawlerRule implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3777184037897778033L;
-
-	/**
-	 * 爬虫的名字
-	 */
-	@ApiModelProperty("爬虫的名字")
-	@NotBlank(message = "爬虫的名字不能为空")
-	protected String name;
 
 	/**
 	 * 每次请求的间隔时间，单位为秒，间隔时间为0到改值得两倍之间的一个随机数<br/>
@@ -59,32 +51,30 @@ public class CrawlerRule implements Serializable {
 	protected Integer waitTime = SiteConstant.WAIT_TIME_FOR_CLOSE;
 
 	/**
-	 * 爬虫线程数
+	 * 内容解析时使用到的线程数，默认为2
 	 */
-	@ApiModelProperty("爬虫线程数")
+	@ApiModelProperty("内容解析时使用到的线程数，默认为2")
 	protected Integer threadNum = SiteConstant.DEFAULT_THREAD_NUM;
 
 	/**
-	 * 站点设置信息
+	 * 站点规则信息
 	 */
-	@ApiModelProperty("站点设置信息")
+	@ApiModelProperty("站点规则信息")
 	@Valid
 	private SiteRule site;
 
 	/**
 	 * 爬虫的链接处理规则
 	 */
-	@ApiModelProperty("爬虫的链接处理规则")
+	@ApiModelProperty("链接处理规则信息")
 	@Valid
 	private LinkRule link;
 
 	/**
-	 * 内容处理规则设置
+	 * 内容处理规则信息
 	 */
-	@ApiModelProperty("内容处理规则设置")
+	@ApiModelProperty("内容处理规则信息")
 	@Valid
 	private ContentRule content;
-
-
 
 }

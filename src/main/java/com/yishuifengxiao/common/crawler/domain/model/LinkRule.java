@@ -17,13 +17,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 链接处理规则
+ * 链接处理规则信息
  *
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "链接处理规则")
+@ApiModel(value = "链接处理规则信息")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

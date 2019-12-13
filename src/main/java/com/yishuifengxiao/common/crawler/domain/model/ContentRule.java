@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
  * @version 1.0.0
  * @date 2019-11-14
  */
-@ApiModel(value = "内容提取规则")
+@ApiModel(value = "内容处理规则信息")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -46,6 +46,6 @@ public class ContentRule implements Serializable {
 	@ApiModelProperty(" 爬虫内容提取项的配置")
 	@NotEmpty(message = "请至少配置一个内容提取项")
 	@Valid
-	private List<ContentExtractRule> contents;
+	private List<ContentItem> contents;
 
 }

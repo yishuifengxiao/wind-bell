@@ -1,6 +1,6 @@
 package com.yishuifengxiao.common.crawler.extractor;
 
-import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
+import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 
@@ -26,5 +26,5 @@ public abstract class AbstractExtractorFactory {
 	 * @param contentRule 内容提取规则
 	 * @return
 	 */
-	public abstract ContentExtractor getContentExtractor(ContentExtractRule contentRule);
+	public abstract ContentExtractor getContentExtractor(ContentItem contentRule);
 }

@@ -2,7 +2,7 @@ package com.yishuifengxiao.common.crawler.extractor.content;
 
 import java.util.List;
 
-import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
+import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.FieldExtractRule;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFactory;
@@ -30,7 +30,7 @@ public class SimpleContentExtractor extends AbstractContentExtractor {
 		return input;
 	}
 
-	public SimpleContentExtractor(ContentExtractRule contentRule) {
+	public SimpleContentExtractor(ContentItem contentRule) {
 		super(contentRule);
 	}
 

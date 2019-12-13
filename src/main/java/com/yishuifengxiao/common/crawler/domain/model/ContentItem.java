@@ -30,7 +30,7 @@ import java.util.List;
 @Accessors(chain = true)
 @Validated
 @Valid
-public class ContentExtractRule  implements Serializable {
+public class ContentItem  implements Serializable {
 
     /**
 	 * 

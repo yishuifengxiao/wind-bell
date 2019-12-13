@@ -13,7 +13,7 @@ import com.yishuifengxiao.common.crawler.builder.impl.SimpleExtractBuilder;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
-import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
+import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.FieldExtractRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
@@ -33,7 +33,7 @@ public class SimpleSimulator implements Simulator {
 	private ExtractBuilder extractBuilder = new SimpleExtractBuilder();
 
 	@Override
-	public SimulatorData extract(String url, SiteRule siteRule, ContentExtractRule contentExtractRule) {
+	public SimulatorData extract(String url, SiteRule siteRule, ContentItem contentExtractRule) {
 
 		SimulatorData simulatorData = null;
 		try {
@@ -116,7 +116,7 @@ public class SimpleSimulator implements Simulator {
 	 * @return
 	 * @throws Exception
 	 */
-	private ContentRule check(String url, ContentExtractRule contentExtractRule) throws Exception {
+	private ContentRule check(String url, ContentItem contentExtractRule) throws Exception {
 
 		if (StringUtils.isBlank(url)) {
 			throw new Exception("测试网址不能为空");

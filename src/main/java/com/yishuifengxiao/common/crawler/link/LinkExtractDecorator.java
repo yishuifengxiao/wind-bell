@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
+import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
@@ -33,7 +34,7 @@ public class LinkExtractDecorator implements LinkExtract {
 	/**
 	 * 链接转换器,将提取的链接统一转成网络地址形式
 	 */
-	private LinkFilterChain linkFilter;
+	private BaseLinkFilter  linkFilter;
 	/**
 	 * 链接提取器
 	 */
@@ -73,7 +74,7 @@ public class LinkExtractDecorator implements LinkExtract {
 		return urls.parallelStream().filter(t -> StringUtils.isNotBlank(t)).collect(Collectors.toList());
 	}
 
-	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, LinkFilterChain linkFilter,
+	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, BaseLinkFilter linkFilter,
 			List<LinkExtractor> linkExtractors) {
 		this.linkExtractProxy = linkExtractProxy;
 		this.linkExtract = linkExtract;

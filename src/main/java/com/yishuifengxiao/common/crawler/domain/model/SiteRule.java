@@ -23,13 +23,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 站点信息
+ * 站点规则信息
  * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "站点设置规则")
+@ApiModel(value = "站点规则信息")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -73,13 +73,13 @@ public class SiteRule implements Serializable {
 	private int retryCount = SiteConstant.RETRY_COUNT;
 
 	/**
-	 * 下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验
+	 * 失败标志， 下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验
 	 */
 	@ApiModelProperty("下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验")
 	private String failureMark;
 
 	/**
-	 * 连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
+	 * 连拦截次数阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5
 	 */
 	@ApiModelProperty("连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该爬虫实例，默认为5")
 	private Integer interceptCount = SiteConstant.INTERCEPT_RETRY_COUNT;

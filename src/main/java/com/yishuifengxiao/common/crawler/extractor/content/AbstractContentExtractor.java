@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
+import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.FieldExtractRule;
 
 /**
@@ -16,7 +16,7 @@ import com.yishuifengxiao.common.crawler.domain.model.FieldExtractRule;
  */
 public abstract class AbstractContentExtractor implements ContentExtractor {
 
-	protected ContentExtractRule contentRule;
+	protected ContentItem contentRule;
 
 	/**
 	 * 获取所有的属性处理规则
@@ -47,7 +47,7 @@ public abstract class AbstractContentExtractor implements ContentExtractor {
 	 */
 	protected abstract Object extract(String input, List<FieldExtractRule> fieldExtractRules);
 
-	public AbstractContentExtractor(ContentExtractRule contentRule) {
+	public AbstractContentExtractor(ContentItem contentRule) {
 		this.contentRule = contentRule;
 	}
 
@@ -56,11 +56,11 @@ public abstract class AbstractContentExtractor implements ContentExtractor {
 		return this.contentRule.getFiledName();
 	}
 
-	public ContentExtractRule getContentRule() {
+	public ContentItem getContentRule() {
 		return contentRule;
 	}
 
-	public void setContentRule(ContentExtractRule contentRule) {
+	public void setContentRule(ContentItem contentRule) {
 		this.contentRule = contentRule;
 	}
 }

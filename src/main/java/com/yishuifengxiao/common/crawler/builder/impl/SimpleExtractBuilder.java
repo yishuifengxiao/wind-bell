@@ -5,13 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.yishuifengxiao.common.crawler.builder.ExtractBuilder;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.content.decorator.SimpleContentExtractDecorator;
 import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
-import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.extractor.ExtractorFactory;
@@ -23,8 +20,11 @@ import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
 import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
 import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
-import com.yishuifengxiao.common.crawler.link.LinkFilterChain;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
+import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.AbsoluteLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.HttpLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.NotLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.RelativeLinkFilter;
 
 /**
  * 简单的解析器构造者
@@ -41,7 +41,7 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	/**
 	 * 链接过滤器
 	 */
-	private LinkFilterChain filterChain = new LinkFilterChain();
+	private BaseLinkFilter linkFilter = this.createLinkFilter();
 
 	/**
 	 * 真实的链接解析器，负责从网页里提取出所有的原始的超链接
@@ -55,7 +55,7 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		List<LinkExtractor> linkExtractors = this.buildLinkExtractor(link);
 
 		// 生成链接解析器
-		return new LinkExtractDecorator(linkExtractProxy, linkExtract, filterChain, linkExtractors);
+		return new LinkExtractDecorator(linkExtractProxy, linkExtract, linkFilter, linkExtractors);
 
 	}
 
@@ -79,14 +79,12 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	private List<LinkExtractor> buildLinkExtractor(LinkRule link) {
 		//@formatter:off 
 		List<LinkExtractor> linkExtractors = new ArrayList<>();
-		if (link != null && link.getRules() != null) {
-			// 获取到所有的提取规则
-			linkExtractors = link.getRules().parallelStream()
-					.filter(t -> StringUtils.isNotBlank(t))
-					.map(t-> pattern(link.getStartUrl(),t))
-					.map(t -> factory.getLinkExtractor(t))
-					.collect(Collectors.toList());
-		}
+
+		// 获取到所有的提取规则
+		linkExtractors = link.getRules().parallelStream()
+				.map(t -> factory.getLinkExtractor(t))
+				.collect(Collectors.toList());
+	
 		//@formatter:on  
 		return linkExtractors;
 	}
@@ -100,13 +98,11 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	private List<ContentExtractor> buildContentExtractor(ContentRule content) {
 		//@formatter:off 
 		List<ContentExtractor> contentExtractors = new ArrayList<>();
-		if (content != null && content.getContents() != null) {
 
-			contentExtractors = content.getContents().parallelStream()
-					.filter(t -> t != null)
-					.map(t -> factory.getContentExtractor(t))
-					.collect(Collectors.toList());
-		}
+		contentExtractors = content.getContents().parallelStream()
+				.map(t -> factory.getContentExtractor(t))
+				.collect(Collectors.toList());
+	
 		//@formatter:on  
 		return contentExtractors;
 	}
@@ -132,21 +128,19 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		return linkExtractors;
 	}
 
+
+
 	/**
-	 * 处理链接提取表达式<br/>
+	 * 构建链接过滤器
 	 * 
-	 * 将形如 /** 的表达式转换为 包含域名关键字的通配符形式
-	 * 
-	 * @param startUrl 起始链接
-	 * @param pattern  链接提取表达式
-	 * @return
+	 * @return 链接过滤器
 	 */
-	private String pattern(String startUrl, String pattern) {
-		if (StringUtils.equalsIgnoreCase(pattern, RuleConstant.ANT_MATCH_ALL)) {
-			String shortDomain = LinkUtils.extractShortDomain(startUrl);
-			pattern = new StringBuffer(".+").append(shortDomain).append(".+").toString();
-		}
-		return pattern;
+	private BaseLinkFilter createLinkFilter() {
+		RelativeLinkFilter relativeLinkFilter = new RelativeLinkFilter(null);
+		AbsoluteLinkFilter absoluteLinkFilter = new AbsoluteLinkFilter(relativeLinkFilter);
+		HttpLinkFilter httpLinkFilter = new HttpLinkFilter(absoluteLinkFilter);
+		NotLinkFilter notLinkFilter = new NotLinkFilter(httpLinkFilter);
+		return notLinkFilter;
 	}
 
 }

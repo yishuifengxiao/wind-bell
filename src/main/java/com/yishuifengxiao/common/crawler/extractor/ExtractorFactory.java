@@ -1,7 +1,7 @@
 package com.yishuifengxiao.common.crawler.extractor;
 
 
-import com.yishuifengxiao.common.crawler.domain.model.ContentExtractRule;
+import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.content.SimpleContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
@@ -22,7 +22,7 @@ public class ExtractorFactory extends AbstractExtractorFactory {
     }
 
     @Override
-    public ContentExtractor getContentExtractor(ContentExtractRule contentRule) {
+    public ContentExtractor getContentExtractor(ContentItem contentRule) {
         return new SimpleContentExtractor(contentRule);
     }
 }
