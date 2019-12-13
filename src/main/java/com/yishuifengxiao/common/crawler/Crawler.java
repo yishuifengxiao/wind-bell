@@ -32,7 +32,7 @@ import com.yishuifengxiao.common.crawler.scheduler.impl.SimpleScheduler;
 import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
 
 /**
- * 风铃虫对象
+ * 风铃虫
  * 
  * @author yishui
  * @date 2019年11月20日
@@ -99,8 +99,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 启动一个一个风铃虫实例
 	 */
 	public void start() {
-		// 组件初始化
-		initComponents();
+
 		if (statu != Statu.RUNNING) {
 			this.statu = Statu.RUNNING;
 			this.startTime = LocalDateTime.now();
@@ -130,6 +129,9 @@ public class Crawler implements Task, StatuObserver {
 		this.statuChange();
 	}
 
+	/**
+	 * 清空数据
+	 */
 	public void clear() {
 		if (null != this.requestCache) {
 			this.requestCache.remove(this.getName());
@@ -152,11 +154,15 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	private Crawler() {
-
+		// 组件初始化
+		this.initComponents();
 	}
 
 	protected Crawler(CrawlerRule crawlerRule) {
+
 		this.crawlerRule = crawlerRule;
+		// 组件初始化
+		this.initComponents();
 	}
 
 	/**
@@ -239,60 +245,121 @@ public class Crawler implements Task, StatuObserver {
 		}
 	}
 
+	/**
+	 * 获取风铃虫定义规则
+	 */
 	@Override
 	public CrawlerRule getCrawlerRule() {
 		return this.crawlerRule;
 	}
 
+	/**
+	 * 获取网页下载器
+	 * 
+	 * @return 网页下载器
+	 */
 	public Downloader getDownloader() {
 		return downloader;
 	}
 
+	/**
+	 * 设置网页下载器
+	 * 
+	 * @param downloader 网页下载器
+	 * @return
+	 */
 	public Crawler setDownloader(Downloader downloader) {
 		Assert.notNull(downloader, "下载器不能为空");
 		this.downloader = downloader;
 		return this;
 	}
 
+	/**
+	 * 获取资源调度器
+	 * 
+	 * @return
+	 */
 	public Scheduler getScheduler() {
-		return scheduler;
+		return this.scheduler;
 	}
 
+	/**
+	 * 获取事件监听器
+	 */
 	@Override
 	public CrawlerListener getCrawlerListener() {
 		return crawlerListener;
 	}
 
+	/**
+	 * 设置事件监听器
+	 * 
+	 * @param crawlerListener 事件监听器
+	 * @return
+	 */
 	public Crawler setCrawlerListener(CrawlerListener crawlerListener) {
 		Assert.notNull(crawlerListener, "事件监听器不能为空");
 		this.crawlerListener = crawlerListener;
 		return this;
 	}
 
+	/**
+	 * 设置链接解析器
+	 * 
+	 * @return
+	 */
 	public LinkExtract getLinkExtract() {
 		return linkExtract;
 	}
 
+	/**
+	 * 设置链接解析器
+	 * 
+	 * @param linkExtract 链接解析器
+	 * @return
+	 */
 	public Crawler setLinkExtract(LinkExtract linkExtract) {
 		Assert.notNull(linkExtract, "链接解析器不能为空");
 		this.linkExtract = linkExtract;
 		return this;
 	}
 
+	/**
+	 * 获取内容解析器
+	 * 
+	 * @return
+	 */
 	public ContentExtract getContentExtract() {
-		return contentExtract;
+		return this.contentExtract;
 	}
 
+	/**
+	 * 设置内容解析器
+	 * 
+	 * @param contentExtract
+	 * @return
+	 */
 	public Crawler setContentExtract(ContentExtract contentExtract) {
 		Assert.notNull(contentExtract, "内容解析器不能为空");
 		this.contentExtract = contentExtract;
 		return this;
 	}
 
+	/**
+	 * 获取信息输出器
+	 * 
+	 * @return
+	 */
 	public Pipeline getPipeline() {
-		return pipeline;
+		return this.pipeline;
 	}
 
+	/**
+	 * 设置信息输出器
+	 * 
+	 * @param pipeline
+	 * @return
+	 */
 	public Crawler setPipeline(Pipeline pipeline) {
 		Assert.notNull(pipeline, "信息输出器不能为空");
 		this.pipeline = pipeline;
@@ -309,26 +376,54 @@ public class Crawler implements Task, StatuObserver {
 		return this;
 	}
 
+	/**
+	 * 设置资源缓存器
+	 * 
+	 * @return
+	 */
 	public RequestCache getRequestCache() {
 		return requestCache;
 	}
 
+	/**
+	 * 设置资源缓存器
+	 * 
+	 * @param requestCache 资源缓存器
+	 * @return
+	 */
 	public Crawler setRequestCache(RequestCache requestCache) {
 		Assert.notNull(requestCache, "资源缓存器不能为空");
 		this.requestCache = requestCache;
 		return this;
 	}
 
+	/**
+	 * 获取状态监听器
+	 * 
+	 * @return
+	 */
 	public StatuObserver getStatuObserver() {
-		return statuObserver;
+		return this.statuObserver;
 	}
 
+	/**
+	 * 设置状态监听器
+	 * 
+	 * @param statuObserver 状态监听器
+	 * @return
+	 */
 	public Crawler setStatuObserver(StatuObserver statuObserver) {
 		Assert.notNull(statuObserver, "状态观察者不能为空");
 		this.statuObserver = statuObserver;
 		return this;
 	}
 
+	/**
+	 * 设置资源调度器
+	 * 
+	 * @param scheduler 资源调度器
+	 * @return
+	 */
 	public Crawler setScheduler(Scheduler scheduler) {
 		Assert.notNull(scheduler, "资源调度器不能为空");
 		this.scheduler = scheduler;
@@ -352,18 +447,27 @@ public class Crawler implements Task, StatuObserver {
 	public long getExtractedTaskCount() {
 		return this.processor.getExtractedTaskCount();
 	}
-
+   
+	/**
+	 * 获取风铃虫实例的名字
+	 */
 	@Override
 	public String getName() {
 
 		return this.scheduler != null ? this.scheduler.getName() : null;
 	}
-
+    
+	/**
+	 * 获取风铃虫实例的启动时间
+	 */
 	@Override
 	public LocalDateTime getStartTime() {
 		return this.startTime;
 	}
-
+   
+	/**
+	 * 获取风铃虫的状态
+	 */
 	@Override
 	public Statu getStatu() {
 		return this.statu;
