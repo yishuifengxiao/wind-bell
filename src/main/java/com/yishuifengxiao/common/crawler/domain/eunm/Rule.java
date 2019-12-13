@@ -9,67 +9,67 @@ package com.yishuifengxiao.common.crawler.domain.eunm;
  */
 public enum Rule {
 	/**
-	 * 原始文本
+	 * 原始提取器
 	 */
 	ALL,
 	/**
-	 * CSS提取
+	 * CSS提取器
 	 */
 	CSS,
 	/**
-	 * CSS模式文本提取
+	 * CSS模式文本提取器
 	 */
 	TEXT,
 	/**
-	 * XPATH提取
+	 * XPATH提取器
 	 */
 	XPATH,
 	/**
-	 * 正则提取
+	 * 正则提取器
 	 */
 	REGEX,
 	/**
-	 * 替换
+	 * 替换提取器
 	 */
 	REPLACE,
 	/**
-	 * 移除
+	 * 移除提取器
 	 */
 	REMOVE,
 	/**
-	 * 自定义常量
+	 * 常量提取器
 	 */
 	CONSTANT,
 	/**
-	 * 中文
+	 * 中文提取器
 	 */
 	CHN,
 	/**
-	 * 数字
+	 * 数字提取器
 	 */
 	NUM,
 	/**
-	 * 邮件
+	 * 邮件提取器
 	 */
 	EMAIL,
 	/**
-	 * 切割
+	 * 切割提取器
 	 */
 	SUBSTR,
 	/**
-	 * 域名提取
+	 * 域名提取器
 	 */
 	DOMAIN,
 	/**
-	 * 替换系统占位符
+	 * 占位符替换器
 	 */
 	SYSTEM,
 	/**
-	 * 数字截取
+	 * 数组截取提取器
 	 */
 	ARRAY,
 	/**
-	 * URL提取
+	 * URL提取器
 	 */
 	URL;
 
