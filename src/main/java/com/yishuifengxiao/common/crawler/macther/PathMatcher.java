@@ -10,7 +10,7 @@ package com.yishuifengxiao.common.crawler.macther;
  */
 public interface PathMatcher {
 	/**
-	 * 判断路径于给定的模式是否匹配
+	 * 判断路径于给定的模式是否完全匹配匹配
 	 * 
 	 * @param pattern 给定的牧师
 	 * @param url     需要匹配的路径
