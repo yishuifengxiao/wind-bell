@@ -15,12 +15,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SimplePipeline implements Pipeline {
 
+	private final static String SEPARATOR = System.getProperty("line.separator");
+
 	@Override
 	public void recieve(ResultData resultData) {
 
-		log.debug("\r\n");
-		log.info("\\r\\n request : {} , out data : {}", resultData.getUrl(), resultData.getAllData());
-		log.debug("\r\n");
+		log.debug(SEPARATOR);
+		log.info("{} request : {} , out data : {} {}", SEPARATOR, resultData.getUrl(), resultData.getAllData(),
+				SEPARATOR);
+
 	}
 
 }
