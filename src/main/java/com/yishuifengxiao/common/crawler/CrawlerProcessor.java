@@ -230,7 +230,7 @@ public class CrawlerProcessor extends Thread {
 			// 补全URL信息
 			page.setUrl(url);
 			// 下载成功
-			this.task.getCrawlerListener().onDownSuccess(page);
+			this.task.getCrawlerListener().onDownSuccess(this.task,page);
 			// 服务器封杀检查
 			intercepCheck(page);
 
@@ -238,7 +238,7 @@ public class CrawlerProcessor extends Thread {
 
 		} catch (Exception e) {
 			// 下载失败
-			this.task.getCrawlerListener().onDownError(page, e);
+			this.task.getCrawlerListener().onDownError(this.task,page, e);
 
 			log.info("process request " + url + " error", e);
 		} finally {
@@ -290,10 +290,10 @@ public class CrawlerProcessor extends Thread {
 					// 增加已爬取网页的数据
 					extractedCount.incrementAndGet();
 					// 解析成功消息
-					task.getCrawlerListener().onExtractSuccess(page);
+					task.getCrawlerListener().onExtractSuccess(task,page);
 				} catch (Exception e) {
 					// 解析失败
-					task.getCrawlerListener().onExtractError(page, e);
+					task.getCrawlerListener().onExtractError(task,page, e);
 					log.info("process request " + page + " error", e);
 				} finally {
 					LocalCrawler.clear();

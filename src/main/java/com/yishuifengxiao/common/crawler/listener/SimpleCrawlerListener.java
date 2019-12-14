@@ -1,5 +1,6 @@
 package com.yishuifengxiao.common.crawler.listener;
 
+import com.yishuifengxiao.common.crawler.Task;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 
 /**
@@ -13,25 +14,25 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
 public class SimpleCrawlerListener implements CrawlerListener {
 
 	@Override
-	public void onDownError(Page page, Exception e) {
+	public void onDownError(final Task task,Page page, Exception e) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onDownSuccess(Page page) {
+	public void onDownSuccess(final Task task,Page page) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onExtractError(Page page, Exception e) {
+	public void onExtractError(final Task task,Page page, Exception e) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onExtractSuccess(Page page) {
+	public void onExtractSuccess(final Task task,Page page) {
 		// TODO Auto-generated method stub
 
 	}
