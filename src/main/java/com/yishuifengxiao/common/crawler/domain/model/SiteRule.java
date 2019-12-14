@@ -52,7 +52,7 @@ public class SiteRule implements Serializable {
 	/**
 	 * 用于指明当前流量的来源参考页面，默认为空，表示系统设置为当前请求的网页值
 	 */
-	@ApiModelProperty("用于指明当前流量的来源参考页面，默认为空，表示系统设置为当前请求的网页值")
+	@ApiModelProperty("来源参考页，默认为空，表示系统设置为当前请求的网页值")
 	private String referrer;
 
 	/**
@@ -67,19 +67,19 @@ public class SiteRule implements Serializable {
 	private String cookieValue;
 
 	/**
-	 * 请求失败时重新执行此请求的次数,默认为3
+	 * 失败重试次数，请求失败时重新执行此请求的次数,默认为3
 	 */
-	@ApiModelProperty("请求失败时重新执行此请求的次数,默认为3")
+	@ApiModelProperty("失败重试次数,默认为3")
 	private int retryCount = SiteConstant.RETRY_COUNT;
 
 	/**
-	 * 失败标志， 下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验
+	 * 封杀标志， 下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验
 	 */
-	@ApiModelProperty("下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验")
+	@ApiModelProperty("封杀标志，使用正则表达式，如果为空则不进行此校验")
 	private String failureMark;
 
 	/**
-	 * 连拦截次数阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5
+	 * 封杀阀域值，连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5
 	 */
 	@ApiModelProperty("连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5")
 	private Integer interceptCount = SiteConstant.INTERCEPT_RETRY_COUNT;

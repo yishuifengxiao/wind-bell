@@ -21,7 +21,7 @@ public interface Scheduler {
 	void push(String... urls);
 
 	/**
-	 * 从资源调度器里获取一个一个资源
+	 * 从资源调度器里获取一个资源
 	 * 
 	 * @return
 	 */
