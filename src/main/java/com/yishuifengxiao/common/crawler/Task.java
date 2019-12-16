@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
-import com.yishuifengxiao.common.crawler.listener.CrawlerListener;
 
 /**
  * 风铃虫任务
@@ -43,9 +42,27 @@ public interface Task {
 	LocalDateTime getStartTime();
 
 	/**
-	 * 获取风铃虫监听器
+	 * 获取所有的任务总数<br/>
+	 * 注意此数量是在变化的，且应该在任务启动时调用
 	 * 
 	 * @return
 	 */
-	CrawlerListener getCrawlerListener();
+	long getAllTaskCount();
+
+	/**
+	 * 获取已经解析成功的网页的数量<br/>
+	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 
+	 * @return
+	 */
+	long getExtractedTaskCount();
+
+	/**
+	 * 获取已经解析失败的网页的数量<br/>
+	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 
+	 * @return
+	 */
+	long getFailTaskCount();
+
 }

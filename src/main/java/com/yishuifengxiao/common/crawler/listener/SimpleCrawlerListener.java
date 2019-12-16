@@ -37,4 +37,16 @@ public class SimpleCrawlerListener implements CrawlerListener {
 
 	}
 
+	@Override
+	public void exitOnBlock(Task task) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitOnFinish(Task task) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

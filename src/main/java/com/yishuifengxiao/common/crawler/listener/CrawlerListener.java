@@ -46,4 +46,17 @@ public interface CrawlerListener {
 	 */
 	void onExtractSuccess(final Task task, final Page page);
 
+	/**
+	 * 任务因为被目标服务器封杀而退出
+	 * 
+	 * @param task 当前任务信息
+	 */
+	void exitOnBlock(final Task task);
+
+	/**
+	 * 任务因为已经完成而退出
+	 * 
+	 * @param task 当前任务信息
+	 */
+	void exitOnFinish(final Task task);
 }

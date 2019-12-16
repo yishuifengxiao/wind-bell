@@ -21,6 +21,7 @@ import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
+import com.yishuifengxiao.common.crawler.listener.CrawlerListener;
 import com.yishuifengxiao.common.crawler.monitor.StatuObserver;
 import com.yishuifengxiao.common.crawler.pipeline.Pipeline;
 import com.yishuifengxiao.common.crawler.pool.SimpleThreadFactory;
@@ -53,14 +54,13 @@ public class CrawlerProcessor extends Thread {
 	 */
 	private AtomicInteger stat = new AtomicInteger(0);
 	/**
-	 * 已成功提取信息的页面的数据
+	 * 解析成功的任务数据
 	 */
-	protected AtomicLong pageCount = new AtomicLong(0);
+	protected AtomicLong taskCount = new AtomicLong(0);
 	/**
-	 * 已经爬取的页面的数量
+	 * 解析失败的任务数据
 	 */
-	private AtomicLong extractedCount = new AtomicLong(0);
-
+	protected AtomicLong failCount = new AtomicLong(0);
 	/**
 	 * 被服务器连续拦截的次数
 	 */
@@ -101,6 +101,10 @@ public class CrawlerProcessor extends Thread {
 	 * 内容解析器，负责从内容中解析出需要提取的内容
 	 */
 	private ContentExtract contentExtract;
+	/**
+	 * 事件监听器
+	 */
+	private CrawlerListener crawlerListener;
 
 	/**
 	 * 内容输出
@@ -108,7 +112,8 @@ public class CrawlerProcessor extends Thread {
 	private Pipeline pipeline;
 
 	public CrawlerProcessor(Task task, StatuObserver statuObserver, Downloader downloader, Scheduler scheduler,
-			ThreadPoolExecutor threadPool, LinkExtract linkExtract, ContentExtract contentExtract, Pipeline pipeline) {
+			ThreadPoolExecutor threadPool, LinkExtract linkExtract, ContentExtract contentExtract, Pipeline pipeline,
+			CrawlerListener crawlerListener) {
 		this.statuObserver = statuObserver;
 		this.task = task;
 		this.downloader = downloader;
@@ -117,6 +122,7 @@ public class CrawlerProcessor extends Thread {
 		this.linkExtract = linkExtract;
 		this.contentExtract = contentExtract;
 		this.pipeline = pipeline;
+		this.crawlerListener = crawlerListener;
 		this.init();
 	}
 
@@ -197,6 +203,7 @@ public class CrawlerProcessor extends Thread {
 					"The crawler instance {} has been blocked by the target server, and the crawler instance is automatically tentatively run.",
 					this.task.getName());
 			this.interceptCount.set(0);
+			this.crawlerListener.exitOnBlock(this.task);
 			return true;
 		}
 		if (this.stat.get() > this.task.getCrawlerRule().getWaitTime()) {
@@ -204,6 +211,7 @@ public class CrawlerProcessor extends Thread {
 			log.info("The crawler instance {} has not received a new task for a long time and will automatically stop",
 					this.task.getName());
 			this.stat.set(0);
+			this.crawlerListener.exitOnFinish(this.task);
 			return true;
 		}
 
@@ -230,15 +238,16 @@ public class CrawlerProcessor extends Thread {
 			// 补全URL信息
 			page.setUrl(url);
 			// 下载成功
-			this.task.getCrawlerListener().onDownSuccess(this.task,page);
+			this.crawlerListener.onDownSuccess(this.task, page);
 			// 服务器封杀检查
 			intercepCheck(page);
 
-			processRequest(page, linkExtract, contentExtract, scheduler, pipeline, task);
+			processRequest(page, linkExtract, contentExtract, scheduler, pipeline, task, crawlerListener);
 
 		} catch (Exception e) {
+
 			// 下载失败
-			this.task.getCrawlerListener().onDownError(this.task,page, e);
+			this.crawlerListener.onDownError(this.task, page, e);
 
 			log.info("process request " + url + " error", e);
 		} finally {
@@ -275,7 +284,8 @@ public class CrawlerProcessor extends Thread {
 	 * @param request
 	 */
 	private void processRequest(final Page page, final LinkExtract linkExtract, final ContentExtract contentExtract,
-			final Scheduler scheduler, final Pipeline pipeline, final Task task) {
+			final Scheduler scheduler, final Pipeline pipeline, final Task task,
+			final CrawlerListener crawlerListener) {
 
 		this.threadPool.execute(new Runnable() {
 			@Override
@@ -285,15 +295,15 @@ public class CrawlerProcessor extends Thread {
 					// 解析数据
 					linkExtract.extract(page);
 					extracted(page);
-					// 增加抓取的链接总数量
-					pageCount.addAndGet(page.getLinks().size());
-					// 增加已爬取网页的数据
-					extractedCount.incrementAndGet();
+					// 解析成功任务数
+					taskCount.incrementAndGet();
 					// 解析成功消息
-					task.getCrawlerListener().onExtractSuccess(task,page);
+					crawlerListener.onExtractSuccess(task, page);
 				} catch (Exception e) {
+					// 解析失败的任务数量
+					failCount.incrementAndGet();
 					// 解析失败
-					task.getCrawlerListener().onExtractError(task,page, e);
+					crawlerListener.onExtractError(task, page, e);
 					log.info("process request " + page + " error", e);
 				} finally {
 					LocalCrawler.clear();
@@ -373,23 +383,6 @@ public class CrawlerProcessor extends Thread {
 		return randomSleepTime;
 	}
 
-	/**
-	 * 抓取的链接总数量
-	 * 
-	 * @return
-	 */
-	protected long getAllTaskCount() {
-		return pageCount.get();
-	}
-
-	/**
-	 * 获取已经爬取的网页的数量的值
-	 * 
-	 * @return
-	 */
-	protected long getExtractedTaskCount() {
-		return extractedCount.get();
-	}
 
 	/**
 	 * 获取到风铃虫线程池里最大活跃的线程数

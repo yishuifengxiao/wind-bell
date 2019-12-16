@@ -235,18 +235,20 @@ public class Crawler implements Task, StatuObserver {
 		this.scheduler.push(
 				StringUtils.splitByWholeSeparatorPreserveAllTokens(this.crawlerRule.getLink().getStartUrl(), ","));
 
-		if (this.processor == null) {
-			this.processor = new CrawlerProcessor(this, this, this.downloader, this.scheduler, this.threadPool,
-					this.linkExtract, this.contentExtract, this.pipeline);
+		if (this.crawlerListener == null) {
+			this.crawlerListener = new SimpleCrawlerListener();
 		}
+
 		if (this.statuObserver == null) {
 			// 添加一个风铃虫状态观察者
 			this.statuObserver = new SimpleStatuObserver();
 		}
 
-		if (this.crawlerListener == null) {
-			this.crawlerListener = new SimpleCrawlerListener();
+		if (this.processor == null) {
+			this.processor = new CrawlerProcessor(this, this, this.downloader, this.scheduler, this.threadPool,
+					this.linkExtract, this.contentExtract, this.pipeline, this.crawlerListener);
 		}
+
 	}
 
 	/**
@@ -290,9 +292,9 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 获取事件监听器
 	 */
-	@Override
+
 	public CrawlerListener getCrawlerListener() {
-		return crawlerListener;
+		return this.crawlerListener;
 	}
 
 	/**
@@ -435,21 +437,33 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
-	 * 已成功提取信息的页面的数据总数
-	 * 
+	 * 获取所有的任务总数<br/>
+	 *  注意此数量是在变化的，且应该在任务启动时调用
 	 * @return
 	 */
+	@Override
 	public long getAllTaskCount() {
-		return this.processor.getAllTaskCount();
+		return this.requestCache.getCount(this.getName());
 	}
 
 	/**
-	 * 获取已经爬取的网页的数量的值
-	 * 
+	 * 获取已经解析成功的网页的数量<br/>
+	 * 注意此数量是在变化的，且应该在任务启动时调用
 	 * @return
 	 */
+	@Override
 	public long getExtractedTaskCount() {
-		return this.processor.getExtractedTaskCount();
+		return this.processor.taskCount.get();
+	}
+	
+	/**
+	 * 获取已经解析失败的网页的数量<br/>
+	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * @return
+	 */
+	@Override
+	public long getFailTaskCount() {
+		return this.processor.failCount.get();
 	}
 
 	/**
