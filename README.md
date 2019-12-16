@@ -136,14 +136,14 @@
 ....
 //省略其他代码
 ....
-RequestCache requestCache = new RedisRequestCache(redisTemplate);
+    //创建redis资源调度器
+    Scheduler scheduler=new RedisScheduler("唯一的名字",redisTemplate)
+    //创建一个redis资源缓存器
+    RequestCache requestCache = new RedisRequestCache(redisTemplate);
 
-RedisTaskScheduler redisTaskScheduler = new RedisTaskScheduler(crawlerData.getId(), redisTemplate);
-
-crawler = Crawler.create(crawlerData)
-                 .setRequestCache(requestCache)
-                 .setTaskScheduler(redisTaskScheduler)
-                 .setPipeline(dataPipeline);
+     crawler     
+            .setRequestCache(requestCache) //设置使用redis资源缓存器
+            .setScheduler(scheduler); //设置使用redis资源调度器
                  
 ....
 //省略其他代码
