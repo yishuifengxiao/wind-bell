@@ -159,6 +159,11 @@ crawler.start();
 
 风铃虫还提供了强大的状态监控和事件监控能力，通过 [状态监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)和[事件监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)，风铃虫让你对任务的运行情况了如指掌，实时掌控实例运行过程中遇到的各种问题，真正做到对任务的运行情况洞若观火，方便运维。
 
+ **解析模拟器** 
+
+由于风铃虫的解析功能十分强大，规定定义十分灵活，为了直观地了解已配置的规则定义的作用，风铃虫提供了[解析模拟器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1797313&doc_id=471326)，让使用者能够快速了解自己设置的规则定义的效果是否符合预期目标，及时调整规则定义，方便风铃虫实例的配置。
+
+
 <br/><br/>
 
  **风铃虫平台效果演示** 
