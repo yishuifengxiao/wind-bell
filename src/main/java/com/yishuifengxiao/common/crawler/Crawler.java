@@ -145,21 +145,28 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 创建一个默认的风铃虫实例
 	 * 
-	 * @return
+	 * @param crawlerRule 规定定义
+	 * @return 风铃虫实例
 	 */
 	public static Crawler create(CrawlerRule crawlerRule) {
 		// 初始化数据
-		Crawler crawler = new Crawler(crawlerRule);
+		Crawler crawler = new Crawler();
 		crawler.crawlerRule = CrawlerBuilder.create(crawlerRule).build();
 		return crawler;
 	}
 
+	private Crawler() {
 
+	}
 
+	/**
+	 * 构建函数<br/>
+	 * <b> 注意此构造方法不会校验规则定义</b>
+	 * 
+	 * @param crawlerRule
+	 */
 	protected Crawler(CrawlerRule crawlerRule) {
-
 		this.crawlerRule = crawlerRule;
-	
 	}
 
 	/**
@@ -444,7 +451,7 @@ public class Crawler implements Task, StatuObserver {
 	public long getExtractedTaskCount() {
 		return this.processor.getExtractedTaskCount();
 	}
-   
+
 	/**
 	 * 获取风铃虫实例的名字
 	 */
@@ -453,7 +460,7 @@ public class Crawler implements Task, StatuObserver {
 
 		return this.scheduler != null ? this.scheduler.getName() : null;
 	}
-    
+
 	/**
 	 * 获取风铃虫实例的启动时间
 	 */
@@ -461,7 +468,7 @@ public class Crawler implements Task, StatuObserver {
 	public LocalDateTime getStartTime() {
 		return this.startTime;
 	}
-   
+
 	/**
 	 * 获取风铃虫的状态
 	 */
