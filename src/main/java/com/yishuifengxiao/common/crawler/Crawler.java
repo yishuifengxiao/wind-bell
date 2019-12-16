@@ -99,7 +99,8 @@ public class Crawler implements Task, StatuObserver {
 	 * 启动一个一个风铃虫实例
 	 */
 	public void start() {
-
+		// 组件初始化
+		this.initComponents();
 		if (statu != Statu.RUNNING) {
 			this.statu = Statu.RUNNING;
 			this.startTime = LocalDateTime.now();
@@ -148,21 +149,17 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	public static Crawler create(CrawlerRule crawlerRule) {
 		// 初始化数据
-		Crawler crawler = new Crawler();
+		Crawler crawler = new Crawler(crawlerRule);
 		crawler.crawlerRule = CrawlerBuilder.create(crawlerRule).build();
 		return crawler;
 	}
 
-	private Crawler() {
-		// 组件初始化
-		this.initComponents();
-	}
+
 
 	protected Crawler(CrawlerRule crawlerRule) {
 
 		this.crawlerRule = crawlerRule;
-		// 组件初始化
-		this.initComponents();
+	
 	}
 
 	/**
