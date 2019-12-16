@@ -155,6 +155,12 @@ crawler.start();
 ```
 <br/>
 
+ **状态监控** 
+
+风铃虫还提供了强大的状态监控和事件监控能力，通过 [状态监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)和[事件监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)，风铃虫让你对任务的运行情况了如指掌，实时掌控实例运行过程中遇到的各种问题，真正做到对任务的运行情况洞若观火，方便运维。
+
+<br/><br/>
+
  **风铃虫平台效果演示** 
 
 
