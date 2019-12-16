@@ -170,7 +170,7 @@ public class CrawlerProcessor extends Thread {
 			if (this.task.getStatu() != Statu.PAUSE) {
 				// 如果风铃虫不是暂停状态就默认其为运行状态
 				String url = this.scheduler.poll();
-				log.debug("new processing request is {} ", url);
+				log.debug("The new processing request for the crawler instance {} is {}", this.task.getName(), url);
 				if (StringUtils.isBlank(url)) {
 					// 再次等待一段时间
 					this.waitNewUrl(sleepSeconds);
@@ -382,7 +382,6 @@ public class CrawlerProcessor extends Thread {
 		}
 		return randomSleepTime;
 	}
-
 
 	/**
 	 * 获取到风铃虫线程池里最大活跃的线程数
