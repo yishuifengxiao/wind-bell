@@ -108,11 +108,7 @@
 			<version>${spring-data-redis.version}</version><!--$NO-MVN-MAN-VER$ -->
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>${fastjson.version}</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>io.swagger</groupId>
