@@ -31,8 +31,8 @@
 
         //创建一个提取规则
         //该提取规则标识使用 XPATH提取器进行提取，
-        //该XPATH提取器的XPATH表达式为 //h1[@class='topic-_XJ6ViSR']/text() ， 该提取提取器的作用顺序是0
-        FieldExtractRule extractRule = new FieldExtractRule(Rule.XPATH, "//h1[@class='topic-_XJ6ViSR']/text()", "", 0);
+        //该XPATH提取器的XPATH表达式为 //h1/text() ， 该提取提取器的作用顺序是0
+        FieldExtractRule extractRule = new FieldExtractRule(Rule.XPATH, "//h1/text()", "", 0);
 
         //创建一个提取项
         ContentItem contentItem = new ContentItem();
@@ -43,14 +43,14 @@
 
         //创建一个风铃虫实例
         Crawler crawler = CrawlerBuilder.create()
-                .startUrl("https://news.ifeng.com/c/7sMchCLy5se") //风铃虫的起始链接
+                .startUrl("https://finance.ifeng.com/") //风铃虫的起始链接
                 // 风铃虫会将每次请求的网页的内容中的URL先全部提取出来，然后将完全匹配此规则的链接放入链接池
                 // 如果不设置则表示提取链接中所有包含域名关键字（例如此例中的ifeng）的链接放入链接池
                 //链接池里的链接会作为下次抓取请求的种子链接
-                .addLinkRule("http[s]?://news\\.ifeng\\.com/.*")//链接提取规则，多以添加多个链接提取规则，
+                .addLinkRule("http[s]?://.*.ifeng.com/.*")//链接提取规则，多以添加多个链接提取规则，
                 //可以设置多个内容页的规则，多个内容页规则之间用半角逗号隔开
                 //只要内容页URL中完全匹配此规则就进行内容提取，如果不设置标识提取域名下所有的链接
-                .extractUrl("https://news\\.ifeng\\.com/c/[A-Za-z0-9]+") //内容页的规则，
+                .extractUrl("https://.*.ifeng.com/c/[A-Za-z0-9]+") //内容页的规则，
                 //风铃虫可以设置多个提取项，这里为了演示只设置了一个提取项
                 .addExtractItem(contentItem) //增加一个提取项
                 //如果不设置则使用默认时间10秒，此值是为了防止抓取频率太高被服务器封杀

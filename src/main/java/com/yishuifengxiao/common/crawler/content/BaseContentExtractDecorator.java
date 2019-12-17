@@ -38,6 +38,7 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 			// 判断是否符合解析规则
 			boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
 			log.debug("Whether the web page [{}] matches the content page parsing rule is {}", page.getUrl(), match);
+			page.setSkip(!match);
 			if (match) {
 				// 开始真正的内容解析操作
 				this.contentExtract.extract(page);
