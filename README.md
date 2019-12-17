@@ -25,7 +25,7 @@
 
 **简单使用**
 
-提取凤凰新闻的内容页的新闻标题
+提取雅虎财经的内容页的电子货币的名字
 
 ```
 
@@ -38,23 +38,23 @@
         ContentItem contentItem = new ContentItem();
         contentItem
                 .setFiledName("name") //提取项代码，不能为空
-                .setName("新闻标题") //提取项名字，可以不设置
+                .setName("加密电子货币名字") //提取项名字，可以不设置
                 .setRules(Arrays.asList(extractRule)); //设置提取规则
 
         //创建一个风铃虫实例
         Crawler crawler = CrawlerBuilder.create()
-                .startUrl("https://finance.ifeng.com/") //风铃虫的起始链接
+                .startUrl("https://hk.finance.yahoo.com/cryptocurrencies") //风铃虫的起始链接
                 // 风铃虫会将每次请求的网页的内容中的URL先全部提取出来，然后将完全匹配此规则的链接放入链接池
                 // 如果不设置则表示提取链接中所有包含域名关键字（例如此例中的ifeng）的链接放入链接池
                 //链接池里的链接会作为下次抓取请求的种子链接
-                .addLinkRule("http[s]?://.*.ifeng.com/.*")//链接提取规则，多以添加多个链接提取规则，
+                .addLinkRule("https://hk.finance.yahoo.com/quote/.+")//链接提取规则，多以添加多个链接提取规则，
                 //可以设置多个内容页的规则，多个内容页规则之间用半角逗号隔开
                 //只要内容页URL中完全匹配此规则就进行内容提取，如果不设置标识提取域名下所有的链接
-                .extractUrl("https://.*.ifeng.com/c/[A-Za-z0-9]+") //内容页的规则，
+                .extractUrl("https://hk.finance.yahoo.com/quote/.+") //内容页的规则，
                 //风铃虫可以设置多个提取项，这里为了演示只设置了一个提取项
                 .addExtractItem(contentItem) //增加一个提取项
                 //如果不设置则使用默认时间10秒，此值是为了防止抓取频率太高被服务器封杀
-                .interval(30)//每次进行爬取时的平均间隔时间，单位为秒，
+                .interval(3)//每次进行爬取时的平均间隔时间，单位为秒，
                 .creatCrawler();
         //启动爬虫实例
         crawler.start();
@@ -72,7 +72,7 @@
 ```
 
 
-上述例子的作用提取凤凰新闻的标题，如果用户想要提取其他信息，只需要按照规则配置好其他的提取规则即可。
+上述例子的作用提取雅虎财经的内容页的电子货币的名字，如果用户想要提取其他信息，只需要按照规则配置好其他的提取规则即可。
 
 >  **注意** 上述示例仅供学习演示所用，风铃虫使用者在抓取网页内容请严格遵守相关的法律规定和目标网站的蜘蛛协议
 
