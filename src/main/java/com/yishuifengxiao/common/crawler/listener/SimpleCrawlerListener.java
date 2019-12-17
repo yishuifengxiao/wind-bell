@@ -49,4 +49,10 @@ public class SimpleCrawlerListener implements CrawlerListener {
 		
 	}
 
+	@Override
+	public void onNullRquest(Task task) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

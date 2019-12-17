@@ -11,6 +11,11 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
  * @version 1.0.0
  */
 public interface CrawlerListener {
+	/**
+	 * 获取的调度命令的请求的url为空时触发 
+	 * @param task  当前任务信息
+	 */
+	void onNullRquest(final Task task);
 
 	/**
 	 * 下载页面失败的消息
