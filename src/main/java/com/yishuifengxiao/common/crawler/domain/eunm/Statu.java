@@ -15,9 +15,5 @@ public enum Statu {
 	/**
 	 * 运行中
 	 */
-	RUNNING,
-	/**
-	 * 已暂停
-	 */
-	PAUSE
+	RUNNING
 }

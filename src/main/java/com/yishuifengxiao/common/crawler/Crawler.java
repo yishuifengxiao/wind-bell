@@ -111,23 +111,13 @@ public class Crawler implements Task, StatuObserver {
 
 	/**
 	 * 停止运行<br/>
-	 * <b>停止运行后会清空风铃虫示例</b>
+	 * 
 	 */
 	public void stop() {
 		statu = Statu.STOP;
 		log.info("The crawler instance {} has been manually stopped", this.getName());
 		this.statuChange();
 	};
-
-	/**
-	 * 暂停运行<br/>
-	 * <b>停止运行后不会清空风铃虫示例</b>
-	 */
-	public void pause() {
-		statu = Statu.PAUSE;
-		log.info("The crawler instance {} has been manually suspended", this.getName());
-		this.statuChange();
-	}
 
 	/**
 	 * 清空数据
@@ -433,7 +423,8 @@ public class Crawler implements Task, StatuObserver {
 
 	/**
 	 * 获取所有的任务总数<br/>
-	 *  注意此数量是在变化的，且应该在任务启动时调用
+	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 
 	 * @return
 	 */
 	@Override
@@ -444,16 +435,18 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 获取已经解析成功的网页的数量<br/>
 	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 
 	 * @return
 	 */
 	@Override
 	public long getExtractedTaskCount() {
 		return this.processor.taskCount.get();
 	}
-	
+
 	/**
 	 * 获取已经解析失败的网页的数量<br/>
 	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 
 	 * @return
 	 */
 	@Override

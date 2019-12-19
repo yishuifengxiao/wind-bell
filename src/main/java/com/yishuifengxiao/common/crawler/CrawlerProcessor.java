@@ -171,22 +171,20 @@ public class CrawlerProcessor extends Thread {
 				break;
 			}
 
-			if (this.task.getStatu() != Statu.PAUSE) {
-				// 如果风铃虫不是暂停状态就默认其为运行状态
-				String url = this.scheduler.poll();
-				log.debug("The new processing request for the crawler instance {} is {}", this.task.getName(), url);
-				if (StringUtils.isBlank(url)) {
-					this.crawlerListener.onNullRquest(this.task);
-					// 再次等待一段时间
-					this.waitNewUrl(sleepSeconds);
-					this.stat.addAndGet(sleepSeconds * 2);
+			// 如果风铃虫不是停止状态就默认其为运行状态
+			String url = this.scheduler.poll();
+			log.debug("The new processing request for the crawler instance {} is {}", this.task.getName(), url);
+			if (StringUtils.isBlank(url)) {
+				this.crawlerListener.onNullRquest(this.task);
+				// 再次等待一段时间
+				this.waitNewUrl(sleepSeconds);
+				this.stat.addAndGet(sleepSeconds * 2);
 
-				} else {
-					// 每次新的请求时，需要记得将阀值归零
-					this.stat.set(0);
-					// 处理新的资源
-					this.work(url);
-				}
+			} else {
+				// 每次新的请求时，需要记得将阀值归零
+				this.stat.set(0);
+				// 处理新的资源
+				this.work(url);
 			}
 
 		}
