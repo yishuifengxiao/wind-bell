@@ -840,6 +840,18 @@ public class CrawlerBuilder {
 	 * @return
 	 */
 	public CrawlerRule build() {
+
+		if (null == this.interval || this.interval <= 0) {
+			this.interval = SiteConstant.REQUEST_INTERVAL_TIME;
+		}
+
+		if (null == this.waitTime || this.waitTime <= 0) {
+			this.waitTime = SiteConstant.WAIT_TIME_FOR_CLOSE;
+		}
+		if (null == this.threadNum || this.threadNum <= 0) {
+			this.threadNum = SiteConstant.DEFAULT_THREAD_NUM;
+		}
+
 		// 检查请求头规则
 		if (null == this.headers) {
 			this.headers = new ArrayList<>();
@@ -869,7 +881,7 @@ public class CrawlerBuilder {
 
 		this.setExtractItems(contentItems);
 
-		CrawlerRule crawlerRule = new CrawlerRule(this.interval, this.waitTime, this.interceptCount, this.site(),
+		CrawlerRule crawlerRule = new CrawlerRule(this.interval, this.waitTime, this.threadNum, this.site(),
 				this.link(), this.content());
 		return crawlerRule;
 	}
