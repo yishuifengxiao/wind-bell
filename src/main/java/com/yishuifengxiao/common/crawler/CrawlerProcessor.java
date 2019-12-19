@@ -143,6 +143,10 @@ public class CrawlerProcessor extends Thread {
 					new ThreadPoolExecutor.CallerRunsPolicy());
 		}
 
+		// 注入起始链接
+		this.scheduler.push(StringUtils
+				.splitByWholeSeparatorPreserveAllTokens(this.task.getCrawlerRule().getLink().getStartUrl(), ","));
+
 	}
 
 	@Override

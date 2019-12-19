@@ -3,7 +3,6 @@ package com.yishuifengxiao.common.crawler;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -230,10 +229,6 @@ public class Crawler implements Task, StatuObserver {
 		// 资源调度器
 		this.scheduler = new SchedulerDecorator(this.requestCache,
 				this.scheduler == null ? new SimpleScheduler() : this.scheduler);
-
-		// 注入起始链接
-		this.scheduler.push(
-				StringUtils.splitByWholeSeparatorPreserveAllTokens(this.crawlerRule.getLink().getStartUrl(), ","));
 
 		if (this.crawlerListener == null) {
 			this.crawlerListener = new SimpleCrawlerListener();

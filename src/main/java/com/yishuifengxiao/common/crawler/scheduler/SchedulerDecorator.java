@@ -33,7 +33,7 @@ public class SchedulerDecorator implements Scheduler {
 	public void push(String... urls) {
 
 		if (urls != null) {
-			Arrays.asList(urls).parallelStream().filter(t -> t != null).filter(t -> this.needStore(t)).forEach(t -> {
+			Arrays.asList(urls).parallelStream().filter(t -> t != null).filter(t -> needStore(t)).forEach(t -> {
 
 				// 存储到待抓取集合中
 				this.scheduler.push(t);
