@@ -5,6 +5,8 @@ import java.util.WeakHashMap;
 
 import org.springframework.util.Assert;
 
+import com.yishuifengxiao.common.crawler.Task;
+
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,9 +31,18 @@ public class ResultData {
 	 */
 	private Map<String, Object> data = new WeakHashMap<>();
 	/**
+	 * 当前输出数据所属的任务的信息
+	 */
+	private Task task;
+	/**
 	 * 请求网页的地址
 	 */
 	private String url;
+	
+	/**
+	 * 具备重定向功能的下载器在请求时重定向之后的地址,可能会为空
+	 */
+	private String redirectUrl;
 	/**
 	 * 是否为正常结果，如果为正常解析结果则为true,默认为true
 	 */
@@ -190,9 +201,13 @@ public class ResultData {
 		return this;
 	}
 
+	
+		
 	public ResultData(String url, boolean normal) {
 		this.url = url;
 		this.normal = normal;
 	}
 
+	
+	
 }

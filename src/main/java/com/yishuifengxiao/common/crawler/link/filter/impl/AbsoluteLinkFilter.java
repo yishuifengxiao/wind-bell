@@ -24,7 +24,7 @@ public class AbsoluteLinkFilter extends BaseLinkFilter {
 
 		if (StringUtils.startsWith(url, RuleConstant.ABSOLUTE_ADDR_LINK)) {
 			// 绝对地址
-
+			// 保证地址的形式为 / 开头，而不是//开头
 			return new StringBuffer(LinkUtils.extractProtocolAndHost(path)).append(url).toString();
 		}
 		return this.next != null ? this.next.handle(path, url) : null;

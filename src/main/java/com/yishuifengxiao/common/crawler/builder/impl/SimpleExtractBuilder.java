@@ -13,6 +13,7 @@ import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.extractor.ExtractorFactory;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
+import com.yishuifengxiao.common.crawler.extractor.content.impl.CharsetContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.content.impl.DescpContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.content.impl.KeywordContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.content.impl.TitleContentExtractor;
@@ -23,6 +24,7 @@ import com.yishuifengxiao.common.crawler.link.LinkExtractProxy;
 import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
 import com.yishuifengxiao.common.crawler.link.filter.impl.AbsoluteLinkFilter;
 import com.yishuifengxiao.common.crawler.link.filter.impl.HttpLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.IllegalLinkFilter;
 import com.yishuifengxiao.common.crawler.link.filter.impl.NotLinkFilter;
 import com.yishuifengxiao.common.crawler.link.filter.impl.RelativeLinkFilter;
 
@@ -96,7 +98,12 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	 * @return
 	 */
 	private List<ContentExtractor> buildCommonExtractor() {
-		return Arrays.asList(new DescpContentExtractor(), new KeywordContentExtractor(), new TitleContentExtractor());
+		return Arrays.asList(
+				new DescpContentExtractor(), 
+				new KeywordContentExtractor(), 
+				new TitleContentExtractor(),
+				new CharsetContentExtractor()
+				);
 	}
 
 	/**
@@ -121,7 +128,8 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		AbsoluteLinkFilter absoluteLinkFilter = new AbsoluteLinkFilter(relativeLinkFilter);
 		HttpLinkFilter httpLinkFilter = new HttpLinkFilter(absoluteLinkFilter);
 		NotLinkFilter notLinkFilter = new NotLinkFilter(httpLinkFilter);
-		return notLinkFilter;
+		IllegalLinkFilter illegalLinkFilter = new IllegalLinkFilter(notLinkFilter);
+		return illegalLinkFilter;
 	}
 
 }

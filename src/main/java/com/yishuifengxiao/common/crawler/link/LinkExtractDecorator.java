@@ -34,7 +34,7 @@ public class LinkExtractDecorator implements LinkExtract {
 	/**
 	 * 链接转换器,将提取的链接统一转成网络地址形式
 	 */
-	private BaseLinkFilter  linkFilter;
+	private BaseLinkFilter linkFilter;
 	/**
 	 * 链接提取器
 	 */
@@ -52,21 +52,22 @@ public class LinkExtractDecorator implements LinkExtract {
 		}
 
 		//将提取出来的链接根据链接提取规则过滤
-	   List<String>	urls=this.fliter(page.getUrl(),new HashSet<>(page.getLinks()));
+	   List<String>	urls=this.fliter(StringUtils.isNotBlank(page.getRedirectUrl())? page.getRedirectUrl():  page.getUrl(),new HashSet<>(page.getLinks()));
 		page.setLinks(urls);
 		//@formatter:on  
 	}
 
 	/**
 	 * 从所有的超链接里提取出符合配置规则的链接
-	 *
-	 * @param urls
+	 * 
+	 * @param path 当前正在解析的网页内容的地址
+	 * @param urls 从当前网页内容里提取出来的链接集合
 	 * @return
 	 */
 	private List<String> fliter(final String path, Set<String> urls) {
 		//@formatter:off 
 		// 链接统一转换成网络地址形式
-		Set<String> links = urls.parallelStream().map(t -> linkFilter.handle(path, t)).collect(Collectors.toSet());
+		Set<String> links = urls.parallelStream().filter(t -> null!=t).map(t -> linkFilter.handle(path, t.toLowerCase())).collect(Collectors.toSet());
 		urls.clear();
 		linkExtractors.parallelStream().map(t -> t.extract(new ArrayList<>(links))).forEach(urls::addAll);
 

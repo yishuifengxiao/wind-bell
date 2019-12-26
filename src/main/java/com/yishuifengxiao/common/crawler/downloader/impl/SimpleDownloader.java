@@ -41,18 +41,18 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class SimpleDownloader implements Downloader {
-	private SiteRule siteRule;
+
 	private Map<String, String> cookies = null;
 
 	@Override
-	public Page down(String url) throws ServiceException{
+	public Page down(final SiteRule siteRule, final String url) throws ServiceException {
 		Page page = new Page(url);
 		Response response = null;
 		try {
-			response = execute(url);
+			response = execute(siteRule, url);
 			log.debug("Download page successfully ,the page is {}", url);
-			// 替换cookie信息
-			this.cookies = response.cookies();
+			//设置真实的请求地址
+			page.setRedirectUrl(response.url().toString());
 			page.setCode(response.statusCode());
 			page.setRawTxt(response.body());
 		} catch (IOException e) {
@@ -63,13 +63,39 @@ public class SimpleDownloader implements Downloader {
 		return page;
 	}
 
-	private Response execute(String url) throws IOException {
-		return this.execute(url, "get", siteRule.getConnectTimeout() < 0 ? 0 : siteRule.getConnectTimeout(),
-				siteRule.getAllHeaders(), this.cookies);
+	/**
+	 * 执行下载请求
+	 * 
+	 * @param siteRule
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	private Response execute(SiteRule siteRule, String url) throws IOException {
+		Connection connection = this.connection(url, "get",
+				siteRule.getConnectTimeout() < 0 ? 0 : siteRule.getConnectTimeout(), siteRule.getAutoUserAgent(),
+				StringUtils.isNotBlank(siteRule.getReferrer()) ? siteRule.getReferrer() : url, siteRule.getAllHeaders(),
+				this.cookies);
+		Response response = connection.execute();
+		// 替换cookie信息
+		this.cookies = response.cookies();
+		return response;
 	}
 
-	private Response execute(String url, String method, int timeOut, Map<String, String> headers,
-			Map<String, String> cookies) throws IOException {
+	/**
+	 * 根据参数构建出请求连接
+	 * 
+	 * @param url       请求的目标URL
+	 * @param method    请求类型
+	 * @param timeOut   连接超时时间
+	 * @param userAgent 浏览器标识
+	 * @param referrer  流量来源页
+	 * @param headers   请求头
+	 * @param cookies
+	 * @return 请求连接
+	 */
+	private Connection connection(String url, String method, int timeOut, String userAgent, String referrer,
+			Map<String, String> headers, Map<String, String> cookies) {
 
 		Assert.notNull(url, "请求的url不能为空");
 
@@ -90,18 +116,23 @@ public class SimpleDownloader implements Downloader {
 			});
 
 			// 浏览器标识
-			connection.userAgent(siteRule.getAutoUserAgent());
+			connection.userAgent(userAgent);
 			// 用于指明当前流量的来源参考页面
-			connection.referrer(StringUtils.isNotBlank(siteRule.getReferrer()) ? siteRule.getReferrer() : url);
+			connection.referrer(referrer);
 		}
 		if (null != cookies && !cookies.isEmpty()) {
 			connection.cookies(cookies);
 		}
-		Response response = connection.execute();
-		return response;
+		return connection;
 
 	};
 
+	/**
+	 * 获取请求类型
+	 * 
+	 * @param methodStr
+	 * @return
+	 */
 	private Method getMethod(String methodStr) {
 		if (StringUtils.isBlank(methodStr)) {
 			return Method.GET;
@@ -129,20 +160,22 @@ public class SimpleDownloader implements Downloader {
 	private void getTrust() {
 		try {
 			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                @Override
+				@Override
 				public boolean verify(String hostname, SSLSession session) {
 					return true;
 				}
 			});
 			SSLContext context = SSLContext.getInstance("TLS");
 			context.init(null, new X509TrustManager[] { new X509TrustManager() {
-				 @Override
+				@Override
 				public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 				}
-				 @Override
+
+				@Override
 				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 				}
-				 @Override
+
+				@Override
 				public X509Certificate[] getAcceptedIssuers() {
 					return new X509Certificate[0];
 				}
@@ -154,18 +187,9 @@ public class SimpleDownloader implements Downloader {
 		}
 	}
 
-	public SimpleDownloader(SiteRule siteRule) {
-		this.cookies = siteRule.getCookiValues();
-		this.siteRule = siteRule;
-	}
+	@Override
+	public void close() {
 
-	public SiteRule getSiteRule() {
-		return siteRule;
-	}
-
-	public void setSiteRule(SiteRule siteRule) {
-		this.cookies = siteRule.getAllHeaders();
-		this.siteRule = siteRule;
 	}
 
 }

@@ -35,9 +35,13 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	public void extract(Page page) throws ServiceException {
 
 		if (null != page && HttpStatus.SC_OK == page.getCode()) {
-			// 判断是否符合解析规则
+			// 判断是否符合内容页规则
 			boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
 			log.debug("Whether the web page [{}] matches the content page parsing rule is {}", page.getUrl(), match);
+			if (match && null != page.getRedirectUrl()) {
+				// 判断重定向之后的页面是否满足内容也规则
+				match = this.matchContentExtractRule(this.contentExtractRules, page.getRedirectUrl());
+			}
 			page.setSkip(!match);
 			if (match) {
 				// 开始真正的内容解析操作

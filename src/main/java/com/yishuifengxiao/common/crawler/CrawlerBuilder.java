@@ -32,14 +32,14 @@ import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 public class CrawlerBuilder {
 
 	/**
-	 * 每次请求的间隔时间，单位为秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
+	 * 每次请求的间隔时间，单位为毫秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
 	 * 防止因频繁请求而导致服务器封杀
 	 */
-	private Integer interval = SiteConstant.REQUEST_INTERVAL_TIME;
+	private Long interval = SiteConstant.REQUEST_INTERVAL_TIME;
 	/**
-	 * 超时等待时间，单位为秒,默认为300,连续间隔多长时间后没有新的请求任务表明此任务已经结束
+	 * 超时等待时间，单位为毫秒,默认为300000毫秒(300秒),连续间隔多长时间后没有新的请求任务表明此任务已经结束
 	 */
-	private Integer waitTime = SiteConstant.WAIT_TIME_FOR_CLOSE;
+	private Long waitTime = SiteConstant.WAIT_TIME_FOR_CLOSE;
 
 	/**
 	 * 风铃虫解析时线程数
@@ -170,24 +170,24 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 获取每次请求的间隔时间，单位为秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
+	 * 获取每次请求的间隔时间，单位为毫秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
 	 * 防止因频繁请求而导致服务器封杀
 	 * 
-	 * @return 每次请求的间隔时间，单位为秒
+	 * @return 每次请求的间隔时间，单位为毫秒
 	 */
-	public int interval() {
+	public long interval() {
 		return this.interval;
 	}
 
 	/**
-	 * 设置每次请求的间隔时间，单位为秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
+	 * 设置每次请求的间隔时间，单位为毫秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
 	 * 防止因频繁请求而导致服务器封杀
 	 * 
-	 * @param intervalInSeconds 每次请求的间隔时间，单位为秒，必须大于0
+	 * @param intervalInSeconds 每次请求的间隔时间，单位为毫秒，必须不小于0
 	 * @return
 	 */
-	public CrawlerBuilder interval(int intervalInSeconds) {
-		if (intervalInSeconds <= 0) {
+	public CrawlerBuilder interval(long intervalInSeconds) {
+		if (intervalInSeconds < 0) {
 			intervalInSeconds = SiteConstant.REQUEST_INTERVAL_TIME;
 		}
 		this.interval = intervalInSeconds;
@@ -195,21 +195,21 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 获取超时等待时间，单位为秒,默认为300,连续间隔多长时间后没有新的请求任务表明此任务已经结束
+	 * 获取超时等待时间，单位为毫秒,默认为300000毫秒(300秒),连续间隔多长时间后没有新的请求任务表明此任务已经结束
 	 * 
-	 * @return 超时等待时间，单位为秒
+	 * @return 超时等待时间，单位为毫秒
 	 */
-	public int waitTime() {
+	public long waitTime() {
 		return this.waitTime;
 	}
 
 	/**
-	 * 设置超时等待时间，单位为秒,默认为300,连续间隔多长时间后没有新的请求任务表明此任务已经结束
+	 * 设置超时等待时间，单位为毫秒,默认为300000毫秒(300秒),连续间隔多长时间后没有新的请求任务表明此任务已经结束
 	 * 
-	 * @param waitTimeInSeconds 超时等待时间，单位为秒，必须大于0
+	 * @param waitTimeInSeconds 超时等待时间，单位为毫秒，必须大于0
 	 * @return
 	 */
-	public CrawlerBuilder waitTime(int waitTimeInSeconds) {
+	public CrawlerBuilder waitTime(long waitTimeInSeconds) {
 		if (waitTimeInSeconds <= 0) {
 			waitTimeInSeconds = SiteConstant.WAIT_TIME_FOR_CLOSE;
 		}
@@ -841,7 +841,7 @@ public class CrawlerBuilder {
 	 */
 	public CrawlerRule build() {
 
-		if (null == this.interval || this.interval <= 0) {
+		if (null == this.interval || this.interval < 0) {
 			this.interval = SiteConstant.REQUEST_INTERVAL_TIME;
 		}
 

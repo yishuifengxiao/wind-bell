@@ -27,6 +27,10 @@ public class Page {
 	 */
 	private String url;
 	/**
+	 * 具备重定向功能的下载器在请求时重定向之后的地址
+	 */
+	private String redirectUrl;
+	/**
 	 * 对应的页面的原始文本
 	 */
 	private String rawTxt;
@@ -147,6 +151,24 @@ public class Page {
 	}
 
 	/**
+	 * 获取具备重定向功能的下载器在请求时重定向之后的地址
+	 * 
+	 * @return
+	 */
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+
+	/**
+	 * 设置 具备重定向功能的下载器在请求时重定向之后的地址
+	 * 
+	 * @param redirectUrl
+	 */
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+
+	/**
 	 * 增加输出数据
 	 * 
 	 * @param key
@@ -172,7 +194,6 @@ public class Page {
 	public Map<String, Object> getAllResultItem() {
 		return this.outData;
 	}
-
 
 	public Page(String url) {
 		this.url = url;

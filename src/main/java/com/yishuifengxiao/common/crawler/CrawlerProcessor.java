@@ -3,7 +3,6 @@ package com.yishuifengxiao.common.crawler;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -52,7 +51,7 @@ public class CrawlerProcessor extends Thread {
 	/**
 	 * 未获得新的请求任务的连续总时间
 	 */
-	private AtomicInteger stat = new AtomicInteger(0);
+	private AtomicLong stat = new AtomicLong(0);
 	/**
 	 * 解析成功的任务数据
 	 */
@@ -163,7 +162,7 @@ public class CrawlerProcessor extends Thread {
 			}
 
 			// 先休眠一段时间
-			int sleepSeconds = this.sleep();
+			long sleepSeconds = this.sleep();
 
 			if (this.task.getStatu() == Statu.STOP) {
 				// 风铃虫处于停止状态
@@ -232,7 +231,7 @@ public class CrawlerProcessor extends Thread {
 
 			// 处理请求
 			// 下载下载后的page信息里包含request信息
-			page = this.downloader.down(url);
+			page = this.downloader.down(this.task.getCrawlerRule().getSite(), url);
 			if (page == null) {
 				throw new ServiceException(
 						new StringBuffer("Web page (").append(url).append(" ) download results are empty").toString());
@@ -295,9 +294,8 @@ public class CrawlerProcessor extends Thread {
 			public void run() {
 				try {
 					LocalCrawler.put(task);
-					// 解析数据
-					linkExtract.extract(page);
-					extracted(page);
+					// 进行真正的网页内容解析操作
+					extractPage();
 					// 解析成功任务数
 					taskCount.incrementAndGet();
 					// 解析成功消息
@@ -315,7 +313,15 @@ public class CrawlerProcessor extends Thread {
 
 			}
 
-			private void extracted(final Page page) throws ServiceException {
+			/**
+			 * 解析网页内容数据
+			 * 
+			 * @param page
+			 * @throws ServiceException
+			 */
+			private void extractPage() throws ServiceException {
+				// 解析链接数据
+				linkExtract.extract(page);
 				// 存储链接
 				page.getLinks().parallelStream().forEach(scheduler::push);
 				// 抽取内容
@@ -323,7 +329,12 @@ public class CrawlerProcessor extends Thread {
 				// 输出数据
 				if (!page.isSkip()) {
 					// 输出数据
-					pipeline.recieve(new ResultData().setData(page.getAllResultItem()).setUrl(page.getUrl()));
+					ResultData resultData = new ResultData()
+							.setData(page.getAllResultItem())
+							.setUrl(page.getUrl())
+							.setRedirectUrl(page.getRedirectUrl())
+							.setTask(task);
+					pipeline.recieve(resultData);
 				}
 			}
 
@@ -333,14 +344,16 @@ public class CrawlerProcessor extends Thread {
 
 	/**
 	 * 等待新的处理资源
+	 * 
+	 * @param sleepSeconds 单位毫秒
 	 */
-	private void waitNewUrl(int sleepSeconds) {
+	private void waitNewUrl(long sleepSeconds) {
 		newUrlLock.lock();
 		try {
 			if (this.threadPool.getActiveCount() == 0) {
 				return;
 			}
-			newUrlCondition.await(sleepSeconds, TimeUnit.SECONDS);
+			newUrlCondition.await(sleepSeconds, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
@@ -371,15 +384,20 @@ public class CrawlerProcessor extends Thread {
 	}
 
 	/**
-	 * 休眠一段时间
+	 * 休眠一段时间并返回休眠的时间
+	 * 
+	 * @return 休眠的时间,单位毫秒
 	 */
-	private int sleep() {
-		// 休眠时间为秒
+	private long sleep() {
+		if (this.task.getCrawlerRule().getInterval() == 0) {
+			return 0;
+		}
+		// 休眠时间为毫秒
 		// 休眠时间为 sleepTime 的0倍到两倍 之间的一个随机值
 		// 用来模仿自然请求，防止封杀
-		int randomSleepTime = RandomUtils.nextInt(0, this.task.getCrawlerRule().getInterval() * 2);
+		long randomSleepTime = RandomUtils.nextLong(0, this.task.getCrawlerRule().getInterval() * 2);
 		try {
-			Thread.sleep(1000 * randomSleepTime);
+			Thread.sleep(randomSleepTime);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
