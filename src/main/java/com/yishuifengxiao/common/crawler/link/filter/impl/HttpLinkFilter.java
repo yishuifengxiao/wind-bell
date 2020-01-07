@@ -4,7 +4,9 @@ import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
 import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
 /**
- * 网络地址链接处理器
+ * 
+ * 网络地址链接过滤器<br/>
+ * 处理网络地址链接，直接将其输出
  * 
  * @author yishui
  * @version 1.0.0
@@ -17,14 +19,14 @@ public class HttpLinkFilter extends BaseLinkFilter {
 	}
 
 	@Override
-	public String handle(String path, String url) {
+	public String doFilter(BaseLinkFilter next, String path, String url) {
 
 		if (LinkUtils.matchHttpRequest(url)) {
-			// 绝对地址
+			// 网络地址
 
 			return url;
 		}
-		return this.next != null ? this.next.handle(path, url) : null;
+		return next.doFilter(path, url);
 	}
 
 }

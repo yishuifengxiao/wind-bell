@@ -1,6 +1,7 @@
 package com.yishuifengxiao.common.crawler.scheduler;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,15 +34,7 @@ public class SchedulerDecorator implements Scheduler {
 	public void push(String... urls) {
 
 		if (urls != null) {
-			Arrays.asList(urls).parallelStream().filter(t -> t != null).filter(t -> needStore(t)).forEach(t -> {
-
-				// 存储到待抓取集合中
-				this.scheduler.push(t);
-				// 存储在历史记录集之中
-				this.requestCache.save(CrawlerConstant.REQUEST_HOSTORY + this.getName(), t);
-
-			});
-
+			Arrays.asList(urls).parallelStream().filter(Objects::nonNull).filter(this::needStore).forEach(this::accept);
 		}
 
 	}
@@ -75,6 +68,19 @@ public class SchedulerDecorator implements Scheduler {
 	public void clear() {
 		this.scheduler.clear();
 
+	}
+
+	/**
+	 * 存储调度资源
+	 * 
+	 * @param url 资源url
+	 */
+	private void accept(String url) {
+		// 存储到待抓取集合中
+		this.scheduler.push(url);
+		// 存储在历史记录集之中
+		this.requestCache.save(new StringBuffer(CrawlerConstant.REQUEST_HOSTORY).append(this.getName()).toString(),
+				url);
 	}
 
 	public SchedulerDecorator(RequestCache requestCache, Scheduler scheduler) {

@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 测试输出数据
+ * 模拟结果数据
  * 
  * @author yishui
  * @date 2019年11月26日
  * @version 1.0.0
  */
-@ApiModel(value = "测试输出数据")
+@ApiModel(value = " 模拟结果数据")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -37,9 +37,8 @@ public class SimulatorData implements Serializable {
 	 */
 	private Boolean success;
 	/**
-	 * 输出数据，success为true时表示的是输出数据，success为false表示异常原因
+	 * 输出数据，success为true时表示的是输出数据，若success为false表示异常原因
 	 */
 	private Object data;
-
 
 }

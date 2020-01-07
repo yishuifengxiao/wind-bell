@@ -129,10 +129,24 @@ public class LinkUtils {
 		return null;
 	}
 
+	/**
+	 * 从url中提取出协议
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String extractProtocol(String url) {
+		Matcher matcher = PATTERN_PROTOCOL_AND_HOST.matcher(url);
+		if (matcher.find()) {
+			String protocolAndDomian = matcher.group();
+			return StringUtils.substringBefore(protocolAndDomian, ":");
+		}
+		return null;
+	}
+
 	public static void main(String[] args) {
 		String str = "https://c.run.oob.com.cn/front-end/854";
-		System.out.println(extractShortDomain(str));
-		;
+		System.out.println(extractProtocol(str));
 	}
 
 }

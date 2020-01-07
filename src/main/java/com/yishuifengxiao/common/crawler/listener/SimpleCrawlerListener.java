@@ -14,45 +14,39 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
 public class SimpleCrawlerListener implements CrawlerListener {
 
 	@Override
-	public void onDownError(final Task task,Page page, Exception e) {
-		// TODO Auto-generated method stub
+	public void onDownError(final Task task, Page page, Exception e) {
 
 	}
 
 	@Override
-	public void onDownSuccess(final Task task,Page page) {
-		// TODO Auto-generated method stub
+	public void onDownSuccess(final Task task, final String url, final String redirectUrl, final int code,
+			final String rawTxt) {
 
 	}
 
 	@Override
-	public void onExtractError(final Task task,Page page, Exception e) {
-		// TODO Auto-generated method stub
+	public void onExtractError(final Task task, Page page, Exception e) {
 
 	}
 
 	@Override
-	public void onExtractSuccess(final Task task,Page page) {
-		// TODO Auto-generated method stub
+	public void onExtractSuccess(final Task task, Page page) {
 
 	}
 
 	@Override
 	public void exitOnBlock(Task task) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void exitOnFinish(Task task) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onNullRquest(Task task) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -3,7 +3,8 @@ package com.yishuifengxiao.common.crawler.pipeline;
 import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
 
 /**
- * 信息输出器
+ * 信息输出器<br/>
+ * 输出解析出来的数据
  * 
  * @author yishui
  * @date 2019年11月20日

@@ -1,9 +1,13 @@
 package com.yishuifengxiao.common.crawler.content.decorator;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.content.BaseContentExtractDecorator;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
+import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.macther.PathMatcher;
 import com.yishuifengxiao.common.crawler.macther.impl.SimplePathMatcher;
 
@@ -20,10 +24,6 @@ public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
 	 * 路径匹配工具
 	 */
 	private PathMatcher pathMatcher = new SimplePathMatcher();
-
-	public SimpleContentExtractDecorator(String filterUrls, ContentExtract contentExtract) {
-		super(filterUrls, contentExtract);
-	}
 
 	/**
 	 * 判断是否符合提取页规则
@@ -43,14 +43,13 @@ public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
 		}
 
 		String[] urls = StringUtils.splitByWholeSeparatorPreserveAllTokens(contentExtractRules, ",");
-		for (String str : urls) {
-			// 判断表达式是否符合选取所有
-			if (this.pathMatcher.match(str, url)) {
-				return true;
-			}
+		// 判断表达式是否符合选取所有
+		return Arrays.stream(urls).anyMatch(str -> this.pathMatcher.match(str, url));
+	}
 
-		}
-		return false;
+	public SimpleContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract,
+			List<ContentExtractor> contentExtractors) {
+		super(contentExtractRules, contentExtract, contentExtractors);
 	}
 
 }

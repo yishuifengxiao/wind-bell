@@ -22,7 +22,6 @@ public class InMemoryRequestCache implements RequestCache {
 
 	}
 
-
 	@Override
 	public boolean lookAndCache(String cacheName, String value) {
 

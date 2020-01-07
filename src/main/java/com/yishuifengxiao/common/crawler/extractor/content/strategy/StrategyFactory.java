@@ -13,6 +13,7 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.NumStra
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.RegexStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.RemoveStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ReplaceStrategy;
+import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.ScriptStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.SystemStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.UrlStrategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.XpathStrategy;
@@ -27,7 +28,7 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.XpathSt
 public class StrategyFactory {
 
 	/**
-	 * 根据规则生成内容提取器
+	 * 根据规则生成提取策略
 	 * 
 	 * @param rule
 	 * @return
@@ -79,6 +80,9 @@ public class StrategyFactory {
 			break;
 		case ARRAY:
 			strategy = new ArrayStrategy();
+			break;
+		case SCRIPT:
+			strategy = new ScriptStrategy();
 			break;
 		default:
 			break;

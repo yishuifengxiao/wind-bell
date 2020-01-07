@@ -1,8 +1,12 @@
 package com.yishuifengxiao.common.crawler.content;
 
+import java.util.List;
+
 import org.apache.http.HttpStatus;
 
+import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
+import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,39 +31,63 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	protected String contentExtractRules;
 
 	/**
-	 * 风铃虫处理器，负责解析下载后的网页内容
+	 * 根据风铃虫内容解析规则创建的内容解析器
+	 */
+	protected ContentExtract simpleContentExtract;
+	/**
+	 * 用户自定义的内容解析器
 	 */
 	protected ContentExtract contentExtract;
 
 	@Override
-	public void extract(Page page) throws ServiceException {
+	public void extract(final Page page) throws ServiceException {
+		if (null == page) {
+			return;
+		}
 
-		if (null != page && HttpStatus.SC_OK == page.getCode()) {
-			// 判断是否符合解析规则
-			boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
-			log.debug("Whether the web page [{}] matches the content page parsing rule is {}", page.getUrl(), match);
-			page.setSkip(!match);
-			if (match) {
-				// 开始真正的内容解析操作
+		if (HttpStatus.SC_OK != page.getCode()) {
+			page.setSkip(true);
+			log.debug("Page {} has a response code of {} and will not extract data from it", page.getUrl(),
+					page.getCode());
+			return;
+		}
+
+		// 判断是否符合内容页规则
+		boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
+
+		if (match && null != page.getRedirectUrl()) {
+			// 判断重定向之后的页面是否满足内容也规则
+			match = this.matchContentExtractRule(this.contentExtractRules, page.getRedirectUrl());
+		}
+
+		log.debug("Whether the web page [{}] matches the content page parsing rule is {}", page.getUrl(), match);
+
+		page.setSkip(!match);
+
+		if (match) {
+			// 开始真正的内容解析操作
+			this.simpleContentExtract.extract(page);
+			if (null != this.contentExtract) {
 				this.contentExtract.extract(page);
 			}
-
 		}
 
 	}
 
 	/**
-	 * 是否符合内容页解析规则
+	 * 是否符合内容页规则
 	 * 
 	 * @param contentExtractRules 内容页规则
 	 * @param url                 需要提取的目标页面的地址
-	 * @return
+	 * @return 符合内容页规则则返回为true，否则为false
 	 */
 	protected abstract boolean matchContentExtractRule(String contentExtractRules, String url);
 
-	public BaseContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract) {
+	public BaseContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract,
+			List<ContentExtractor> contentExtractors) {
 		this.contentExtractRules = contentExtractRules;
 		this.contentExtract = contentExtract;
+		this.simpleContentExtract = new SimpleContentExtract(contentExtractors);
 	}
 
 }

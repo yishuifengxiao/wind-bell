@@ -159,7 +159,8 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
-	 * 测试内容提取规则
+	 * 测试内容提取规则<br/>
+	 * 使用默认下载器
 	 * 
 	 * @param url                测试网页的地址
 	 * @param siteRule           站点规则
@@ -167,18 +168,47 @@ public class Crawler implements Task, StatuObserver {
 	 * @return
 	 */
 	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentItem contentExtractRule) {
-		return new SimpleSimulator().extract(url, siteRule, contentExtractRule);
+		return new SimpleSimulator().extract(url, siteRule, contentExtractRule, null);
 	}
 
 	/**
-	 * 测试链接提取规则
+	 * 测试内容提取规则<br/>
+	 * 使用自定义下载器
+	 * 
+	 * @param url                测试网页的地址
+	 * @param siteRule           站点规则
+	 * @param contentExtractRule 内容提取规则
+	 * @param downloader         网页下载器
+	 * @return
+	 */
+	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentItem contentExtractRule,
+			Downloader downloader) {
+		return new SimpleSimulator().extract(url, siteRule, contentExtractRule, downloader);
+	}
+
+	/**
+	 * 测试链接提取规则 <br/>
+	 * 使用默认下载器
 	 * 
 	 * @param siteRule 站点规则
 	 * @param linkRule 链接提取规则
 	 * @return
 	 */
 	public final static SimulatorData testLink(SiteRule siteRule, LinkRule linkRule) {
-		return new SimpleSimulator().link(siteRule, linkRule);
+		return new SimpleSimulator().link(siteRule, linkRule, null);
+	}
+
+	/**
+	 * 测试链接提取规则<br/>
+	 * 使用自定义下载器
+	 * 
+	 * @param siteRule   站点规则
+	 * @param linkRule   链接提取规则
+	 * @param downloader 网页下载器
+	 * @return
+	 */
+	public final static SimulatorData testLink(SiteRule siteRule, LinkRule linkRule, Downloader downloader) {
+		return new SimpleSimulator().link(siteRule, linkRule, downloader);
 	}
 
 	/**
@@ -210,7 +240,7 @@ public class Crawler implements Task, StatuObserver {
 		}
 
 		if (this.downloader == null) {
-			this.downloader = new SimpleDownloader(this.crawlerRule.getSite());
+			this.downloader = new SimpleDownloader();
 		}
 		if (this.requestCache == null) {
 			this.requestCache = new InMemoryRequestCache();
@@ -423,7 +453,7 @@ public class Crawler implements Task, StatuObserver {
 
 	/**
 	 * 获取所有的任务总数<br/>
-	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
 	 * @return
 	 */
@@ -433,8 +463,8 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
-	 * 获取已经解析成功的网页的数量<br/>
-	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 获取本实例已经解析成功的网页的数量<br/>
+	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
 	 * @return
 	 */
@@ -444,8 +474,8 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
-	 * 获取已经解析失败的网页的数量<br/>
-	 * 注意此数量是在变化的，且应该在任务启动时调用
+	 * 获取本实例已经解析失败的网页的数量<br/>
+	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
 	 * @return
 	 */
@@ -491,6 +521,10 @@ public class Crawler implements Task, StatuObserver {
 	public void update(Task task, Statu statu) {
 		this.statu = statu;
 		this.statuChange();
+		// 实例停止运行时关闭下载器，释放资源
+		if (Statu.STOP == statu) {
+			this.downloader.close();
+		}
 	}
 
 }

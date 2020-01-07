@@ -19,11 +19,11 @@ public abstract class AbstractContentExtractor implements ContentExtractor {
 	protected ContentItem contentRule;
 
 	/**
-	 * 获取所有的属性处理规则
+	 * 获取所有的属性处理规则，并对属性处理规则进行排序
 	 *
 	 * @return
 	 */
-	protected List<FieldExtractRule> getFieldExtractRules() {
+	private List<FieldExtractRule> getFieldExtractRules() {
 		return contentRule.getRules().stream().map(t -> {
 			if (t.getSort() == null) {
 				t.setSort(0);
@@ -33,6 +33,12 @@ public abstract class AbstractContentExtractor implements ContentExtractor {
 		}).sorted(Comparator.comparing(FieldExtractRule::getSort)).collect(Collectors.toList());
 	}
 
+	/**
+	 * 提取数据
+	 * 
+	 * @param input 原始的未提取的数据
+	 * @return 提取后的数据
+	 */
 	@Override
 	public Object extract(String input) {
 		return extract(input, this.getFieldExtractRules());

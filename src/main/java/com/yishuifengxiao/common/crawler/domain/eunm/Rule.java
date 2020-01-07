@@ -9,7 +9,7 @@ package com.yishuifengxiao.common.crawler.domain.eunm;
  */
 public enum Rule {
 	/**
-	 * 原始提取器
+	 * 原文提取器
 	 */
 	ALL,
 	/**
@@ -17,7 +17,7 @@ public enum Rule {
 	 */
 	CSS,
 	/**
-	 * CSS模式文本提取器
+	 * CSS文本提取器
 	 */
 	TEXT,
 	/**
@@ -68,6 +68,10 @@ public enum Rule {
 	 * 数组截取提取器
 	 */
 	ARRAY,
+	/**
+	 * 脚本提取器
+	 */
+	SCRIPT,
 	/**
 	 * URL提取器
 	 */

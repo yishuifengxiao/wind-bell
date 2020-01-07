@@ -18,7 +18,11 @@ import org.springframework.util.Assert;
  */
 public class Page {
 	/**
-	 * 风铃虫下载页面是的响应码
+	 * 该页面里所有提取出来的数据
+	 */
+	private Map<String, Object> outData = new WeakHashMap<>();
+	/**
+	 * 响应码
 	 */
 	private int code;
 
@@ -26,6 +30,10 @@ public class Page {
 	 * 对应页面的请求信息
 	 */
 	private String url;
+	/**
+	 * 具备重定向功能的下载器在请求时重定向之后的地址
+	 */
+	private String redirectUrl;
 	/**
 	 * 对应的页面的原始文本
 	 */
@@ -35,13 +43,9 @@ public class Page {
 	 */
 	private List<String> links;
 	/**
-	 * 该页面里所有提取出来的数据
-	 */
-	private Map<String, Object> outData = new WeakHashMap<>();
-	/**
 	 * 是否跳过该页面的解析
 	 */
-	private boolean isSkip;
+	private boolean isSkip = true;
 
 	public int getCode() {
 		return code;
@@ -147,6 +151,24 @@ public class Page {
 	}
 
 	/**
+	 * 获取具备重定向功能的下载器在请求时重定向之后的地址
+	 * 
+	 * @return
+	 */
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+
+	/**
+	 * 设置 具备重定向功能的下载器在请求时重定向之后的地址
+	 * 
+	 * @param redirectUrl
+	 */
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+
+	/**
 	 * 增加输出数据
 	 * 
 	 * @param key
@@ -159,20 +181,36 @@ public class Page {
 		return this;
 	}
 
+	/**
+	 * 根据键获取对应的解析出来的值
+	 * 
+	 * @param key 键值
+	 * @return 对应的解析出来的值
+	 */
 	public Object getResultItem(String key) {
 		Assert.notNull(key, "输出结果的键值不能为空");
 		return this.outData.get(key);
 	}
 
+	/**
+	 * 该页面里所有提取出来的数据是否包含对应的键
+	 * 
+	 * @param key 键值
+	 * @return 包含返回为true,否则为false
+	 */
 	public boolean containResultItem(String key) {
 		Assert.notNull(key, "输出结果的键值不能为空");
 		return this.outData.containsKey(key);
 	}
 
+	/**
+	 * 获取该页面里所有提取出来的数据
+	 * 
+	 * @return 该页面里所有提取出来的数据
+	 */
 	public Map<String, Object> getAllResultItem() {
 		return this.outData;
 	}
-
 
 	public Page(String url) {
 		this.url = url;

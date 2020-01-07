@@ -15,7 +15,7 @@ public final class CrawlerConstant {
 	public final static String WAIT_DOWN = "WAIT_DOWN_";
 
 	/**
-	 * 所有请求的请求的集合
+	 * 所有请求的集合
 	 */
 	public final static String REQUEST_HOSTORY = "REQUEST_HOSTORY_";
 
@@ -23,9 +23,4 @@ public final class CrawlerConstant {
 	 * 提取时出现多条数据拼接的标识符
 	 */
 	public final static String SEPARATOR = "[@<yishui>@]";
-
-	/**
-	 * 左斜杠
-	 */
-	public final static String LEFT_SALASH = "/";
 }

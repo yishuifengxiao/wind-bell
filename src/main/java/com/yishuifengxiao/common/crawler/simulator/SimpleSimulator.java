@@ -33,13 +33,13 @@ public class SimpleSimulator implements Simulator {
 	private ExtractBuilder extractBuilder = new SimpleExtractBuilder();
 
 	@Override
-	public SimulatorData extract(String url, SiteRule siteRule, ContentItem contentExtractRule) {
+	public SimulatorData extract(String url, SiteRule siteRule, ContentItem contentExtractRule, Downloader downloader) {
 
 		SimulatorData simulatorData = null;
 		try {
 			ContentRule content = check(url, contentExtractRule);
 
-			Page page = this.download(siteRule, url);
+			Page page = this.download(siteRule, url, downloader);
 			// 内容解析器
 			ContentExtract contentExtract = extractBuilder.createContentExtract(content, null);
 			// 解析内容
@@ -54,13 +54,13 @@ public class SimpleSimulator implements Simulator {
 	}
 
 	@Override
-	public SimulatorData link(SiteRule siteRule, LinkRule linkRule) {
+	public SimulatorData link(SiteRule siteRule, LinkRule linkRule, Downloader downloader) {
 
 		SimulatorData simulatorData = null;
 		try {
 			check(linkRule);
 
-			Page page = this.download(siteRule, linkRule.getStartUrl());
+			Page page = this.download(siteRule, linkRule.getStartUrl(), downloader);
 
 			// 内容解析器
 			LinkExtract linkExtract = extractBuilder.createLinkExtract(linkRule, null);
@@ -78,15 +78,16 @@ public class SimpleSimulator implements Simulator {
 	/**
 	 * 下载网页
 	 * 
-	 * @param siteRule
-	 * @param url
-	 * @return
+	 * @param siteRule   站点规则信息
+	 * @param url        目标URL
+	 * @param downloader 下载器
+	 * @return 网页对象
 	 * @throws Exception
 	 */
-	private Page download(SiteRule siteRule, String url) throws Exception {
+	private Page download(SiteRule siteRule, String url, Downloader downloader) throws Exception {
 		siteRule = siteRule == null ? new SiteRule().setHeaders(new ArrayList<>()) : siteRule;
-		Downloader downloader = new SimpleDownloader(siteRule);
-		Page page = downloader.down(url);
+		downloader = null != downloader ? downloader : new SimpleDownloader();
+		Page page = downloader.down(siteRule, url);
 		if (null == page) {
 			throw new Exception("下载失败");
 		}
@@ -140,7 +141,5 @@ public class SimpleSimulator implements Simulator {
 		ContentRule content = new ContentRule().setContents(Arrays.asList(contentExtractRule));
 		return content;
 	}
-
-
 
 }

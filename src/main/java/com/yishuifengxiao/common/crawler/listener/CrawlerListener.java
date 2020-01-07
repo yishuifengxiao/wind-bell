@@ -4,7 +4,9 @@ import com.yishuifengxiao.common.crawler.Task;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 
 /**
- * 风铃虫处理事件监听器
+ * 风铃虫处理事件监听器<br/>
+ * 监听风铃虫处理过程中的各种消息时间<br/>
+ * 注意此监听器是同步的，请勿在此进行任务可能会导致风铃虫阻塞的操作
  * 
  * @author yishui
  * @date 2019年11月28日
@@ -12,8 +14,9 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
  */
 public interface CrawlerListener {
 	/**
-	 * 获取的调度命令的请求的url为空时触发 
-	 * @param task  当前任务信息
+	 * 获取的调度命令的请求的url为空时触发
+	 * 
+	 * @param task 当前任务信息
 	 */
 	void onNullRquest(final Task task);
 
@@ -29,10 +32,14 @@ public interface CrawlerListener {
 	/**
 	 * 下载页面成功的消息
 	 * 
-	 * @param task 当前任务信息
-	 * @param page 原始的页面信息
+	 * @param task        当前任务信息
+	 * @param url         对应页面的请求信息
+	 * @param redirectUrl 具备重定向功能的下载器在请求时重定向之后的地址
+	 * @param code        风铃虫下载页面的响应码
+	 * @param rawTxt      对应的页面的原始文本
 	 */
-	void onDownSuccess(final Task task, final Page page);
+	void onDownSuccess(final Task task, final String url, final String redirectUrl, final int code,
+			final String rawTxt);
 
 	/**
 	 * 解析页面失败的消息

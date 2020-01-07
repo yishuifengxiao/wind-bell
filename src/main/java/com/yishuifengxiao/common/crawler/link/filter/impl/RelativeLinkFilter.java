@@ -2,12 +2,12 @@ package com.yishuifengxiao.common.crawler.link.filter.impl;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
 
 /**
- * 相对地址链接处理器
+ * 相对地址链接过滤器<br/>
+ * 将抽取出来的相对地址转换成网络地址形式
  * 
  * @author yishui
  * @version 1.0.0
@@ -21,19 +21,19 @@ public class RelativeLinkFilter extends BaseLinkFilter {
 	}
 
 	@Override
-	public String handle(String path, String url) {
+	public String doFilter(BaseLinkFilter next, String path, String url) {
 
 		if (!StringUtils.startsWithAny(url, RuleConstant.ABSOLUTE_ADDR_LINK, RuleConstant.NETWORK_ADDR_LINK)) {
 
 			// 不是网络地址和绝对地址
 			StringBuffer sb = new StringBuffer(path);
-			if (!StringUtils.endsWith(path, CrawlerConstant.LEFT_SALASH)) {
-				sb.append(CrawlerConstant.LEFT_SALASH);
+			if (!StringUtils.endsWith(path, RuleConstant.ABSOLUTE_ADDR_LINK)) {
+				sb.append(RuleConstant.ABSOLUTE_ADDR_LINK);
 			}
 			return sb.append(url).toString();
 
 		}
-		return this.next != null ? this.next.handle(path, url) : null;
+		return next.doFilter(path, url);
 	}
 
 }

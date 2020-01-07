@@ -6,7 +6,8 @@ import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
 
 /**
- * 解析器构造者
+ * 解析器构造者<br/>
+ * 根据不同的处理规则构造出对应的解析器
  * 
  * @author yishui
  * @date 2019年12月10日
@@ -16,9 +17,9 @@ public interface ExtractBuilder {
 	/**
 	 * 构建一个链接解析器
 	 * 
-	 * @param link        链接解析规则
+	 * @param link        链接处理规则
 	 * @param linkExtract 自定义链接解析器，允许为空
-	 * @return
+	 * @return 链接解析器
 	 */
 	LinkExtract createLinkExtract(LinkRule link, LinkExtract linkExtract);
 
@@ -27,7 +28,7 @@ public interface ExtractBuilder {
 	 * 
 	 * @param content        内容解析规则
 	 * @param contentExtract 自定义内容解析器，允许为空
-	 * @return
+	 * @return 内容解析器
 	 */
 	ContentExtract createContentExtract(ContentRule content, ContentExtract contentExtract);
 

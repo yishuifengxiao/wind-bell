@@ -14,8 +14,8 @@ import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
 
 /**
- * 使用css规则提取<br/>
- * 此规则下提取出来的数据会包含html标签
+ * css提取策略<br/>
+ * 根据css选择器和属性按照CSS提取模式从输入数据里提取出对应区域的数据(可能是HTML片段)
  * 
  * @author yishui
  * @version 1.0.0
@@ -24,6 +24,14 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
 public class CssStrategy implements Strategy {
 	private final static Logger log = LoggerFactory.getLogger(CssStrategy.class);
 
+	/**
+	 * 根据css选择器和属性按照CSS提取模式从输入数据里提取出对应区域的数据(可能是HTML片段)
+	 *
+	 * @param input  输入数据
+	 * @param param1 第一个参数，必填，css选择器表达式
+	 * @param param2 第二个参数 ，选填，希望提取的属性的名字
+	 * @return 输出数据，注意可能是null或空字符串
+	 */
 	@Override
 	public String extract(String input, String param1, String param2) {
 		if (!StringUtils.isNoneBlank(input, param1)) {
@@ -36,7 +44,7 @@ public class CssStrategy implements Strategy {
 			if (elements == null) {
 				return "";
 			}
-		
+
 			elements.forEach(e -> {
 				if (StringUtils.isBlank(param2)) {
 					out.add(e.outerHtml());

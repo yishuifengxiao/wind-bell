@@ -31,7 +31,7 @@ public class LinkExtractProxy implements LinkExtract {
 	private Strategy strategy = StrategyFactory.get(Rule.XPATH);
 
 	@Override
-	public synchronized void extract(Page page) throws ServiceException {
+	public  void extract(final Page page) throws ServiceException {
 
 		// 先提取出所有的链接
 		List<String> urls = this.extractAllLinks(page.getRawTxt());

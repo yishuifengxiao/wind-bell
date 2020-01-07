@@ -3,6 +3,7 @@ package com.yishuifengxiao.common.crawler.link;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,44 +35,51 @@ public class LinkExtractDecorator implements LinkExtract {
 	/**
 	 * 链接转换器,将提取的链接统一转成网络地址形式
 	 */
-	private BaseLinkFilter  linkFilter;
+	private BaseLinkFilter linkFilter;
 	/**
 	 * 链接提取器
 	 */
 	private List<LinkExtractor> linkExtractors;
 
 	@Override
-	public void extract(Page page) throws ServiceException {
+	public void extract(final Page page) throws ServiceException {
 		//@formatter:off 
+
 		// 调用实际处理类对信息进行处理
 		this.linkExtractProxy.extract(page);
 
-		//自定义解析数据
-		if(this.linkExtract!=null) {
+		// 自定义解析数据
+		if (this.linkExtract != null) {
 			this.linkExtract.extract(page);
 		}
 
-		//将提取出来的链接根据链接提取规则过滤
-	   List<String>	urls=this.fliter(page.getUrl(),new HashSet<>(page.getLinks()));
+		// 将提取出来的链接根据链接提取规则过滤
+		List<String> urls = this.fliter(
+				StringUtils.isNotBlank(page.getRedirectUrl()) ? page.getRedirectUrl() : page.getUrl(),
+				new HashSet<>(page.getLinks()));
 		page.setLinks(urls);
 		//@formatter:on  
 	}
 
 	/**
 	 * 从所有的超链接里提取出符合配置规则的链接
-	 *
-	 * @param urls
+	 * 
+	 * @param path 当前正在解析的网页内容的地址
+	 * @param urls 从当前网页内容里提取出来的链接集合
 	 * @return
 	 */
 	private List<String> fliter(final String path, Set<String> urls) {
 		//@formatter:off 
 		// 链接统一转换成网络地址形式
-		Set<String> links = urls.parallelStream().map(t -> linkFilter.handle(path, t)).collect(Collectors.toSet());
+		Set<String> links = urls.parallelStream().filter(Objects::nonNull)
+				.map(t -> linkFilter.doFilter(path, t.toLowerCase())).collect(Collectors.toSet());
 		urls.clear();
-		linkExtractors.parallelStream().map(t -> t.extract(new ArrayList<>(links))).forEach(urls::addAll);
+		// 再从转换后的地址里提取出所有符合要求的链接
+		linkExtractors.parallelStream().filter(Objects::nonNull).map(t -> t.extract(new ArrayList<>(links)))
+				.forEach(urls::addAll);
 
 		//@formatter:on  
-		return urls.parallelStream().filter(t -> StringUtils.isNotBlank(t)).collect(Collectors.toList());
+		return urls.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, BaseLinkFilter linkFilter,

@@ -29,29 +29,42 @@ public final class RuleConstant {
 	/**
 	 * 绝对地址标志
 	 */
-	public final static String ABSOLUTE_ADDR_LINK="/";
-	
+	public final static String ABSOLUTE_ADDR_LINK = "/";
+
+	/**
+	 * 简单地址标志
+	 */
+	public final static String SHORT_ADDR_LINK = "//";
+
 	/**
 	 * 网络地址标志
 	 */
-	public final static String NETWORK_ADDR_LINK="http";
+	public final static String NETWORK_ADDR_LINK = "http";
 	/**
 	 * a标签中非link的表达式
 	 */
-	public final static String NOT_LINK="javascript";
-	
+	public final static String NOT_LINK = "javascript";
+
 	/**
 	 * 提取协议和域名
 	 */
-	public final static String REGEX_PROTOCOL_AND_HOST="http[s]?://[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
-	
+	public final static String REGEX_PROTOCOL_AND_HOST = "http[s]?://[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
+
 	/**
 	 * 提取域名
 	 */
-	public final static String REGEX_DOMAIN="[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
+	public final static String REGEX_DOMAIN = "[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
 	/**
 	 * com.cn域名表达式
 	 */
-	public final static String CN_COM_DOMAIN="com.cn";
+	public final static String CN_COM_DOMAIN = "com.cn";
+	/**
+	 * 非法表达式的匹配规则
+	 */
+	public final static String ILLEGAL_LINKS_SUFFIX = ".+\\.((gif)|(png)|(css)|(js)|(jpg)|(jpeg)|(ico)|(svg)|(woff2)|(exe)|(zip))+";
 
+	/**
+	 * 哈希链接地址的标志
+	 */
+	public final static String HASH_ADDR = "#";
 }

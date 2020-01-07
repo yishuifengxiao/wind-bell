@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 /**
+ * 请求头参数配置信息
+ * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-11
@@ -22,12 +24,18 @@ import javax.validation.constraints.Pattern;
 @Accessors(chain = true)
 public class HeaderRule {
 
-	@ApiModelProperty("请求头的名字")
+	/**
+	 * 请求头参数的名字,不能为中文
+	 */
+	@ApiModelProperty("请求头参数的名字,不能为中文")
 	@NotBlank(message = "请求头的名字不能为空")
 	@Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "请求头的名字必须是数字或字母")
 	private String headerName;
 
-	@ApiModelProperty("请求头的值")
+	/**
+	 * 请求头参数的值,不能为中文
+	 */
+	@ApiModelProperty("请求头参数的值,不能为中文")
 	@NotBlank(message = "请求头的值不能为空")
 	@Pattern(regexp = "^[A-Za-z0-9_-/,]+$", message = "请求头的值必须是数字或字母")
 	private String headerValue;

@@ -1,7 +1,8 @@
 package com.yishuifengxiao.common.crawler.pool;
 
-import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
+
+import org.apache.commons.lang3.RandomUtils;
 
 /**
  * 线程工厂
@@ -17,7 +18,7 @@ public class SimpleThreadFactory implements ThreadFactory {
 	@Override
 	public Thread newThread(Runnable r) {
 		Thread thread = new Thread(r);
-		thread.setName(this.name + UUID.randomUUID().toString());
+		thread.setName(new StringBuffer(this.name).append(":").append(RandomUtils.nextInt()).toString());
 		return thread;
 	}
 
