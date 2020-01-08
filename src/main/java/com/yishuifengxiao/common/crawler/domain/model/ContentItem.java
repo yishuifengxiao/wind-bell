@@ -17,14 +17,14 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 内容提取项<br/>
- * 内容解析规则由内容页url的规则 和 一组内容提取项组成
+ * 内容提取规则<br/>
+ * 内容解析规则由内容页url的规则 和 一组内容提取规则组成
  * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "内容提取项")
+@ApiModel(value = "内容提取规则")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -41,21 +41,21 @@ public class ContentItem implements Serializable {
 	/**
 	 * 需要提取的属性的名字
 	 */
-	@ApiModelProperty("内容提取项名字")
-	@NotBlank(message = "内容提取项的名字不能为空")
+	@ApiModelProperty("内容提取规则名字")
+	@NotBlank(message = "内容提取规则的名字不能为空")
 	private String name;
 
 	/**
 	 * 需要提取的属性的编码
 	 */
-	@ApiModelProperty("内容提取项代码")
-	@NotBlank(message = "内容提取项代码不能为空")
-	@Pattern(regexp = "^[A-Za-z0-9]+$", message = "内容提取项代码必须是数字或字母")
+	@ApiModelProperty("内容提取规则代码")
+	@NotBlank(message = "内容提取规则代码不能为空")
+	@Pattern(regexp = "^[A-Za-z0-9]+$", message = "内容提取规则代码必须是数字或字母")
 	private String filedName;
 	/**
 	 * 需要提取的属性的描述
 	 */
-	@ApiModelProperty("内容提取项的描述")
+	@ApiModelProperty("内容提取规则的描述")
 	private String descp;
 
 	/**

@@ -1,5 +1,6 @@
 package com.yishuifengxiao.common.crawler.domain.entity;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -25,7 +26,11 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class ResultData {
+public class ResultData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7545122886076123689L;
 	/**
 	 * 页面里存储的数据
 	 */

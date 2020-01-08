@@ -128,7 +128,7 @@ public class CrawlerBuilder {
 	 */
 	private String extractUrl;
 	/**
-	 * 内容提取项
+	 * 内容提取规则
 	 */
 	private Map<String, ContentItem> extractItems = new HashMap<>();
 
@@ -465,22 +465,22 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 获取链接处理规则
+	 * 获取链接解析规则
 	 * 
-	 * @return 链接处理规则
+	 * @return 链接解析规则
 	 */
 	public LinkRule link() {
 		return new LinkRule().setStartUrl(this.startUrl).setRules(this.linkRules);
 	}
 
 	/**
-	 * 设置链接处理规则
+	 * 设置链接解析规则
 	 * 
-	 * @param link 链接处理规则
+	 * @param link 链接解析规则
 	 * @return
 	 */
 	public CrawlerBuilder link(LinkRule link) {
-		Assert.notNull(link, "链接提取规则不能为空");
+		Assert.notNull(link, "链接解析规则不能为空");
 		this.startUrl(link.getStartUrl());
 		this.setLinkRules(link.getRules());
 		return this;
@@ -556,18 +556,18 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 获取内容处理规则
+	 * 获取内容解析规则
 	 * 
-	 * @return 设置内容处理规则
+	 * @return 设置内容解析规则
 	 */
 	public ContentRule content() {
 		return new ContentRule().setExtractUrl(this.extractUrl).setContents(this.extractItems());
 	}
 
 	/**
-	 * 设置内容处理规则
+	 * 设置内容解析规则
 	 * 
-	 * @param content 内容处理规则
+	 * @param content 内容解析规则
 	 * @return
 	 */
 	public CrawlerBuilder content(ContentRule content) {
@@ -686,18 +686,18 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 获取所有的内容提取项
+	 * 获取所有的内容提取规则
 	 * 
-	 * @return 所有的内容提取项
+	 * @return 所有的内容提取规则
 	 */
 	public List<ContentItem> extractItems() {
 		return this.extractItems.values().stream().collect(Collectors.toList());
 	}
 
 	/**
-	 * 增加内容提取项
+	 * 增加内容提取规则
 	 * 
-	 * @param list 内容提取项
+	 * @param list 内容提取规则
 	 * @return
 	 */
 	public CrawlerBuilder addExtractItems(List<ContentItem> list) {
@@ -710,9 +710,10 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 设置 内容提取项
+	 * 设置 内容提取规则<br/>
+	 * 会清空原始的内容提取规则
 	 * 
-	 * @param list 内容提取项
+	 * @param list 内容提取规则
 	 * @return
 	 */
 	public CrawlerBuilder setExtractItems(List<ContentItem> list) {
@@ -724,37 +725,37 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 根据内容提取项的代码获取 内容提取项
+	 * 根据内容提取规则的编码获取 内容提取规则
 	 * 
-	 * @param key 内容提取项的代码获取
-	 * @return 内容提取项
+	 * @param key 内容提取规则的编码获取
+	 * @return 内容提取规则
 	 */
 	public ContentItem extractItem(String key) {
-		Assert.notNull(key, "内容提取项的代码不能为空");
+		Assert.notNull(key, "内容提取规则的编码不能为空");
 		return this.extractItems.get(key);
 	}
 
 	/**
-	 * 增加内容提取项
+	 * 增加内容提取规则
 	 * 
-	 * @param contentItem 内容提取项
+	 * @param contentItem 内容提取规则
 	 * @return
 	 */
 	public CrawlerBuilder addExtractItem(ContentItem contentItem) {
-		Assert.notNull(contentItem, "内容提取项不能为空");
-		Assert.notNull(contentItem.getFiledName(), "内容提取项的代码不能为空");
+		Assert.notNull(contentItem, "内容提取规则不能为空");
+		Assert.notNull(contentItem.getFiledName(), "内容提取规则的编码不能为空");
 		this.extractItems.put(contentItem.getFiledName(), contentItem);
 		return this;
 	}
 
 	/**
-	 * 根据内容提取项的代码获取该内容提取项的提取规则
+	 * 根据内容提取规则的编码获取该内容提取规则的提取规则
 	 * 
-	 * @param key 内容提取项的代码
-	 * @return 该内容提取项的提取规则
+	 * @param key 内容提取规则的编码
+	 * @return 该内容提取规则的提取规则
 	 */
 	public List<FieldExtractRule> extractRule(String key) {
-		Assert.notNull(key, "内容提取项的代码不能为空");
+		Assert.notNull(key, "内容提取规则的编码不能为空");
 		ContentItem contentItem = this.extractItem(key);
 		if (null != contentItem) {
 			return contentItem.getRules();
@@ -763,14 +764,14 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 根据内容提取项的代码增加该内容提取项的提取规则
+	 * 根据内容提取规则的编码增加该内容提取规则的提取规则
 	 * 
-	 * @param key  内容提取项的代码
-	 * @param list 该内容提取项的提取规则
+	 * @param key  内容提取规则的编码
+	 * @param list 该内容提取规则的提取规则
 	 * @return
 	 */
 	public CrawlerBuilder addExtractRules(String key, List<FieldExtractRule> list) {
-		Assert.notNull(list, "内容提取项的提取规则不能为空");
+		Assert.notNull(list, "内容提取规则的提取规则不能为空");
 		ContentItem contentItem = this.extractItem(key);
 		if (null != contentItem) {
 			List<FieldExtractRule> rules = contentItem.getRules();
@@ -782,14 +783,14 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 根据内容提取项的代码增加该内容提取项的提取规则
+	 * 根据内容提取规则的编码增加该内容提取规则的提取规则
 	 * 
-	 * @param key              内容提取项的代码
-	 * @param fieldExtractRule 该内容提取项的提取规则
+	 * @param key              内容提取规则的编码
+	 * @param fieldExtractRule 该内容提取规则的提取规则
 	 * @return
 	 */
 	public CrawlerBuilder addExtractRule(String key, FieldExtractRule fieldExtractRule) {
-		Assert.notNull(fieldExtractRule, "内容提取项的提取规则不能为空");
+		Assert.notNull(fieldExtractRule, "内容提取规则的提取规则不能为空");
 
 		ContentItem contentItem = this.extractItem(key);
 		if (null != contentItem) {
@@ -802,10 +803,10 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 根据内容提取项的代码设置该内容提取项的提取规则
+	 * 根据内容提取规则的编码设置该内容提取规则的提取规则
 	 * 
-	 * @param key  内容提取项的代码
-	 * @param list 该内容提取项的提取规则
+	 * @param key  内容提取规则的编码
+	 * @param list 该内容提取规则的提取规则
 	 * @return
 	 */
 	public CrawlerBuilder setExtractRules(String key, List<FieldExtractRule> list) {

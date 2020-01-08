@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -22,7 +24,12 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class HeaderRule {
+public class HeaderRule implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5229074282610578282L;
 
 	/**
 	 * 请求头参数的名字,不能为中文

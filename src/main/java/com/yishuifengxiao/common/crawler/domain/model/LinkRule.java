@@ -17,13 +17,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 链接处理规则
+ * 链接解析规则
  *
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "链接处理规则")
+@ApiModel(value = "链接解析规则")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -43,10 +43,10 @@ public class LinkRule implements Serializable {
 	private String startUrl;
 
 	/**
-	 * 链接的提取规则,正则表达式
+	 * 链接提取规则,正则表达式
 	 */
-	@ApiModelProperty("链接的提取规则,正则表达式")
-	@NotEmpty(message = "请至少配置一个链接提取规则")
+	@ApiModelProperty(" 链接提取规则,正则表达式")
+	@NotEmpty(message = "请至少配置一个 链接提取规则")
 	private Set<String> rules;
 
 }

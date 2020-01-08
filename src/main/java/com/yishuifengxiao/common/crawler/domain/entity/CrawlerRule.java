@@ -65,16 +65,16 @@ public class CrawlerRule implements Serializable {
 	private SiteRule site;
 
 	/**
-	 * 链接处理规则
+	 * 链接解析规则
 	 */
-	@ApiModelProperty("链接处理规则")
+	@ApiModelProperty("链接解析规则")
 	@Valid
 	private LinkRule link;
 
 	/**
-	 * 内容处理规则
+	 * 内容解析规则
 	 */
-	@ApiModelProperty("内容处理规则")
+	@ApiModelProperty("内容解析规则")
 	@Valid
 	private ContentRule content;
 

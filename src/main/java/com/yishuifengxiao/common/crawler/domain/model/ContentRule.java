@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 内容解析规则<br/>
- * 内容解析规则由内容页url的规则 和 一组内容提取项组成
+ * 内容解析规则由内容页url的规则 和 一组内容提取规则组成
  * 
  * @author yishui
  * @version 1.0.0
@@ -44,10 +44,10 @@ public class ContentRule implements Serializable {
 	private String extractUrl;
 
 	/**
-	 * 内容提取项
+	 * 内容提取规则
 	 */
-	@ApiModelProperty("内容提取项")
-	@NotEmpty(message = "请至少配置一个内容提取项")
+	@ApiModelProperty("内容提取规则")
+	@NotEmpty(message = "请至少配置一组内容提取规则")
 	@Valid
 	private List<ContentItem> contents;
 

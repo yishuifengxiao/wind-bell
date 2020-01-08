@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "内容页中的属性提取规则")
+@ApiModel(value = "属性提取规则")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

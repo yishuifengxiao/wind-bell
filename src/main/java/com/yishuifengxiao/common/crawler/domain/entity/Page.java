@@ -1,5 +1,6 @@
 package com.yishuifengxiao.common.crawler.domain.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,11 @@ import org.springframework.util.Assert;
  * @date 2019年11月26日
  * @version 1.0.0
  */
-public class Page {
+public class Page implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2146316828212720052L;
 	/**
 	 * 该页面里所有提取出来的数据
 	 */
