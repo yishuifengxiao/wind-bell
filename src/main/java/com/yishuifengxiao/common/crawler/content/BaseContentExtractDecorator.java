@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 
+import com.yishuifengxiao.common.crawler.content.detector.ContentDetector;
 import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
@@ -28,7 +29,7 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	/**
 	 * 内容页url的规则，只有满足此规则的网页才会被解析
 	 */
-	protected String contentExtractRules;
+	protected String contentPageRules;
 
 	/**
 	 * 根据风铃虫内容解析规则创建的内容解析器
@@ -38,6 +39,10 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	 * 用户自定义的内容解析器
 	 */
 	protected ContentExtract contentExtract;
+	/**
+	 * 内容侦测器
+	 */
+	protected ContentDetector contentDetector;
 
 	@Override
 	public void extract(final Page page) throws ServiceException {
@@ -53,11 +58,15 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 		}
 
 		// 判断是否符合内容页规则
-		boolean match = this.matchContentExtractRule(this.contentExtractRules, page.getUrl());
+		boolean match = this.matchContentExtractRule(this.contentPageRules, page.getUrl());
 
 		if (match && null != page.getRedirectUrl()) {
 			// 判断重定向之后的页面是否满足内容也规则
-			match = this.matchContentExtractRule(this.contentExtractRules, page.getRedirectUrl());
+			match = this.matchContentExtractRule(this.contentPageRules, page.getRedirectUrl());
+		}
+
+		if (match) {
+			match = contentDetector.match(page.getRawTxt());
 		}
 
 		log.debug("Whether the web page [{}] matches the content page parsing rule is {}", page.getUrl(), match);
@@ -83,9 +92,10 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	 */
 	protected abstract boolean matchContentExtractRule(String contentExtractRules, String url);
 
-	public BaseContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract,
+	public BaseContentExtractDecorator(String contentPageRules, ContentDetector contentDetector,ContentExtract contentExtract,
 			List<ContentExtractor> contentExtractors) {
-		this.contentExtractRules = contentExtractRules;
+		this.contentPageRules = contentPageRules;
+		this.contentDetector = contentDetector;
 		this.contentExtract = contentExtract;
 		this.simpleContentExtract = new SimpleContentExtract(contentExtractors);
 	}

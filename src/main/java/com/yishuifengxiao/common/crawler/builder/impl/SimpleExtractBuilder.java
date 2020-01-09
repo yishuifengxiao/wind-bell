@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.yishuifengxiao.common.crawler.builder.ExtractBuilder;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.content.decorator.SimpleContentExtractDecorator;
+import com.yishuifengxiao.common.crawler.content.detector.SimpleContentDetector;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.extractor.ExtractorFactory;
@@ -84,7 +85,8 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 		// 添加系统内置的抽取器
 		contentExtractors.addAll(this.buildCommonExtractor());
 		// 构建一个内容解析装饰器
-		return new SimpleContentExtractDecorator(content.getExtractUrl(), contentExtract, contentExtractors);
+		return new SimpleContentExtractDecorator(content.getExtractUrl(),
+				new SimpleContentDetector(content.getDetect()), contentExtract, contentExtractors);
 	}
 
 	/**

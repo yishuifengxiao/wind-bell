@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.content.BaseContentExtractDecorator;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
+import com.yishuifengxiao.common.crawler.content.detector.ContentDetector;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.macther.PathMatcher;
 import com.yishuifengxiao.common.crawler.macther.impl.SimplePathMatcher;
@@ -20,6 +21,7 @@ import com.yishuifengxiao.common.crawler.macther.impl.SimplePathMatcher;
  * @version 1.0.0
  */
 public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
+
 	/**
 	 * 路径匹配工具
 	 */
@@ -47,9 +49,8 @@ public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
 		return Arrays.stream(urls).anyMatch(str -> this.pathMatcher.match(str, url));
 	}
 
-	public SimpleContentExtractDecorator(String contentExtractRules, ContentExtract contentExtract,
-			List<ContentExtractor> contentExtractors) {
-		super(contentExtractRules, contentExtract, contentExtractors);
+	public SimpleContentExtractDecorator(String contentPageRules, ContentDetector contentDetector,
+			ContentExtract contentExtract, List<ContentExtractor> contentExtractors) {
+		super(contentPageRules, contentDetector, contentExtract, contentExtractors);
 	}
-
 }
