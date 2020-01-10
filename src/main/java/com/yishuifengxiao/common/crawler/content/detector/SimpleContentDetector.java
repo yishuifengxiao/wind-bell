@@ -51,7 +51,7 @@ public class SimpleContentDetector implements ContentDetector {
 			}
 		}
 
-		return match == contentDetect.getContained();
+		return match == contentDetect.getMode();
 	}
 
 	/**

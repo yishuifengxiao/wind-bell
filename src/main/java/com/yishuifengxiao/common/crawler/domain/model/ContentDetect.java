@@ -58,10 +58,10 @@ public class ContentDetect implements Serializable {
 	private String target;
 
 	/**
-	 * 匹配类型，true表示必须包含期待匹配参数，false标识不能包含期待匹配参数
+	 * 匹配模式，true表示必须包含期待匹配参数，false标识不能包含期待匹配参数
 	 */
-	@ApiModelProperty("匹配类型")
-	private Boolean contained = true;
+	@ApiModelProperty("匹配模式")
+	private Boolean mode = true;
 
 	/**
 	 * 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 true

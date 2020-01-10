@@ -14,6 +14,8 @@ import org.springframework.util.Assert;
 import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
+import com.yishuifengxiao.common.crawler.domain.eunm.Type;
+import com.yishuifengxiao.common.crawler.domain.model.ContentDetect;
 import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.FieldExtractRule;
@@ -127,6 +129,37 @@ public class CrawlerBuilder {
 	 * 内容页规则，多个规则之间用半角逗号隔开
 	 */
 	private String extractUrl;
+
+	/**
+	 * 内容侦测类型
+	 */
+	private Type detectType;
+
+	/**
+	 * 内容侦测参数
+	 */
+	private String detectPattern;
+
+	/**
+	 * 期待匹配参数
+	 */
+	private String detectTarget;
+
+	/**
+	 * 匹配模式，true表示必须包含期待匹配参数，false标识不能包含期待匹配参数
+	 */
+	private Boolean detectMode = true;
+
+	/**
+	 * 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 true
+	 */
+	private Boolean detectCaseSensitive = true;
+
+	/**
+	 * 是否为模糊匹配，默认为true
+	 */
+	private Boolean detectFuzzy = true;
+
 	/**
 	 * 内容提取规则
 	 */
@@ -561,7 +594,35 @@ public class CrawlerBuilder {
 	 * @return 设置内容解析规则
 	 */
 	public ContentRule content() {
-		return new ContentRule().setExtractUrl(this.extractUrl).setContents(this.extractItems());
+		return new ContentRule().setExtractUrl(this.extractUrl).setDetect(this.contentDetect())
+				.setContents(this.extractItems());
+	}
+
+	/**
+	 * 获取内容侦测规则
+	 * 
+	 * @return 内容侦测规则
+	 */
+	public ContentDetect contentDetect() {
+		return new ContentDetect(this.detectType, this.detectPattern, this.detectTarget, this.detectMode,
+				this.detectCaseSensitive, this.detectFuzzy);
+	}
+
+	/**
+	 * 设置内容侦测规则
+	 * 
+	 * @param contentDetect 内容侦测规则
+	 * @return
+	 */
+	public CrawlerBuilder contentDetect(ContentDetect contentDetect) {
+		contentDetect = null == contentDetect ? new ContentDetect() : contentDetect;
+		this.detectType(contentDetect.getType());
+		this.detectPattern(contentDetect.getPattern());
+		this.detectTarget(contentDetect.getTarget());
+		this.detectMode(contentDetect.getMode());
+		this.detectCaseSensitive(contentDetect.getCaseSensitive());
+		this.detectFuzzy(contentDetect.getFuzzy());
+		return this;
 	}
 
 	/**
@@ -573,6 +634,7 @@ public class CrawlerBuilder {
 	public CrawlerBuilder content(ContentRule content) {
 		Assert.notNull(content, "内容提取规则不能为空");
 		this.extractUrl(content.getExtractUrl());
+		this.contentDetect(content.getDetect());
 		this.setExtractItems(content.getContents());
 		return this;
 	}
@@ -596,6 +658,126 @@ public class CrawlerBuilder {
 	 */
 	public CrawlerBuilder extractUrl(String extractUrl) {
 		this.extractUrl = extractUrl;
+		return this;
+	}
+
+	/**
+	 * 获取内容侦测类型
+	 * 
+	 * @return 侦测类型
+	 */
+	public Type detectType() {
+		return this.detectType;
+	}
+
+	/**
+	 * 设置内容侦测类型
+	 * 
+	 * @param detectType
+	 * @return
+	 */
+	public CrawlerBuilder detectType(Type detectType) {
+		this.detectType = detectType;
+		return this;
+	}
+
+	/**
+	 * 获取 内容侦测参数
+	 * 
+	 * @return 内容侦测参数
+	 */
+	public String detectPattern() {
+		return this.detectPattern;
+	}
+
+	/**
+	 * 设置内容侦测参数
+	 * 
+	 * @param detectPattern 内容侦测参数
+	 * @return
+	 */
+	public CrawlerBuilder detectPattern(String detectPattern) {
+		this.detectPattern = detectPattern;
+		return this;
+	}
+
+	/**
+	 * 获取期待匹配参数
+	 * 
+	 * @return 期待匹配参数
+	 */
+	public String detectTarget() {
+		return this.detectTarget;
+	}
+
+	/**
+	 * 设置 期待匹配参数
+	 * 
+	 * @param detectTarget 期待匹配参数
+	 * @return
+	 */
+	public CrawlerBuilder detectTarget(String detectTarget) {
+		this.detectTarget = detectTarget;
+		return this;
+	}
+
+	/**
+	 * 获取匹配模式
+	 * 
+	 * @return true表示必须包含期待匹配参数，false标识不能包含期待匹配参数
+	 */
+	public Boolean detectMode() {
+		return this.detectMode;
+	}
+
+	/**
+	 * 设置匹配模式
+	 * 
+	 * @param detectMode true表示必须包含期待匹配参数，false标识不能包含期待匹配参数
+	 * @return
+	 */
+	public CrawlerBuilder detectMode(Boolean detectMode) {
+		this.detectMode = detectMode;
+		return this;
+	}
+
+	/**
+	 * 获取侦测时是否大小写敏感
+	 * 
+	 * @return 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 true
+	 */
+	public Boolean detectCaseSensitive() {
+		return this.detectCaseSensitive;
+	}
+
+	/**
+	 * 设置侦测时是否大小写敏感
+	 * 
+	 * @param detectCaseSensitive 是否大小写敏感，true表示敏感
+	 * @return
+	 */
+	public CrawlerBuilder detectCaseSensitive(Boolean detectCaseSensitive) {
+		this.detectCaseSensitive = detectCaseSensitive;
+		return this;
+	}
+
+	/**
+	 * 侦测时是否为模糊匹配
+	 * 
+	 * @return true表示为模糊匹配
+	 */
+	public Boolean detectFuzzy() {
+		return this.detectFuzzy;
+	}
+
+	/**
+	 * 设置侦测时是否为模糊匹配
+	 * 
+	 * @param detectFuzzy true表示为模糊匹配
+	 * @return
+	 */
+	public CrawlerBuilder detectFuzzy(Boolean detectFuzzy) {
+		this.detectFuzzy = detectFuzzy;
 		return this;
 	}
 
