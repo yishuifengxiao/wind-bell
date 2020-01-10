@@ -46,8 +46,8 @@ public class ContentRule implements Serializable {
 	/**
 	 * 根据网页的内容判断此网页是否需要进行内容提取操作，可与 内容页规则 参数配合使用
 	 */
-	@ApiModelProperty("内容侦测规则")
-	private ContentDetect detect;
+	@ApiModelProperty("内容匹配规则")
+	private MatcherRule matcher;
 
 	/**
 	 * 内容提取规则

@@ -4,7 +4,7 @@
 package com.yishuifengxiao.common.crawler.domain.eunm;
 
 /**
- * 内容侦测策略
+ * 内容匹配策略
  * 
  * @author yishui
  * @date 2019年11月20日
@@ -12,23 +12,23 @@ package com.yishuifengxiao.common.crawler.domain.eunm;
  */
 public enum Type {
 	/**
-	 * 文本侦测策略
+	 * 文本匹配策略
 	 */
 	ALL,
 	/**
-	 * XPATH侦测策略
+	 * XPATH匹配策略
 	 */
 	XPATH,
 	/**
-	 * CSS侦测策略
+	 * CSS匹配策略
 	 */
 	CSS,
 	/**
-	 * 正则侦测策略
+	 * 正则匹配策略
 	 */
 	REGEX,
 	/**
-	 * 脚本侦测策略
+	 * 脚本匹配策略
 	 */
 	SCRIPT
 }

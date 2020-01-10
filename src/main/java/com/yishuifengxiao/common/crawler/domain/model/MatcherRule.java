@@ -17,21 +17,21 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 内容侦测规则<br/>
- * 内容侦测规则表明根据抓取内容判断该页面是否需要进行内容提取操作
+ * 内容匹配规则<br/>
+ * 内容匹配规则表明根据抓取内容判断该页面是否需要进行内容提取操作
  * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "内容侦测规则")
+@ApiModel(value = "内容匹配规则")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
 @Validated
 @Valid
-public class ContentDetect implements Serializable {
+public class MatcherRule implements Serializable {
 
 	/**
 	 * 
@@ -39,22 +39,22 @@ public class ContentDetect implements Serializable {
 	private static final long serialVersionUID = -8353534130930776695L;
 
 	/**
-	 * 内容侦测类型
+	 * 内容匹配类型
 	 */
-	@ApiModelProperty("内容侦测类型")
+	@ApiModelProperty("内容匹配类型")
 	private Type type;
 
 	/**
-	 * 内容侦测参数
+	 * 内容匹配参数
 	 */
-	@ApiModelProperty("内容侦测参数")
-	@NotBlank(message = "内容侦测参数不能为空")
+	@ApiModelProperty("内容匹配参数")
+	@NotBlank(message = "内容匹配参数不能为空")
 	private String pattern;
 
 	/**
-	 * 期待匹配参数
+	 * 期待匹配值
 	 */
-	@ApiModelProperty("期待匹配参数")
+	@ApiModelProperty("期待匹配值")
 	private String target;
 
 	/**

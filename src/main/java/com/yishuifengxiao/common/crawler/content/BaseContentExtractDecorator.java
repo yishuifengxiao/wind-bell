@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 
-import com.yishuifengxiao.common.crawler.content.detector.ContentDetector;
 import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
+import com.yishuifengxiao.common.crawler.content.matcher.ContentMatcher;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
@@ -40,9 +40,9 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	 */
 	protected ContentExtract contentExtract;
 	/**
-	 * 内容侦测器
+	 * 内容匹配器
 	 */
-	protected ContentDetector contentDetector;
+	protected ContentMatcher contentMatcher;
 
 	@Override
 	public void extract(final Page page) throws ServiceException {
@@ -66,7 +66,7 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 		}
 
 		if (match) {
-			match = contentDetector.match(page.getRawTxt());
+			match = this.contentMatcher.match(page.getRawTxt());
 		}
 
 		log.debug("Whether the web page [{}] matches the content page parsing rule is {}", page.getUrl(), match);
@@ -92,10 +92,10 @@ public abstract class BaseContentExtractDecorator implements ContentExtract {
 	 */
 	protected abstract boolean matchContentExtractRule(String contentExtractRules, String url);
 
-	public BaseContentExtractDecorator(String contentPageRules, ContentDetector contentDetector,ContentExtract contentExtract,
-			List<ContentExtractor> contentExtractors) {
+	public BaseContentExtractDecorator(String contentPageRules, ContentMatcher contentMatcher,
+			ContentExtract contentExtract, List<ContentExtractor> contentExtractors) {
 		this.contentPageRules = contentPageRules;
-		this.contentDetector = contentDetector;
+		this.contentMatcher = contentMatcher;
 		this.contentExtract = contentExtract;
 		this.simpleContentExtract = new SimpleContentExtract(contentExtractors);
 	}
