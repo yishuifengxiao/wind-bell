@@ -41,16 +41,16 @@ public class SimpleExtractBuilder implements ExtractBuilder {
 	/**
 	 * 提取器生成工厂
 	 */
-	private ExtractorFactory factory = new ExtractorFactory();
+	private final ExtractorFactory factory = new ExtractorFactory();
 	/**
 	 * 链接过滤器
 	 */
-	private BaseLinkFilter linkFilter = this.createLinkFilter();
+	private final BaseLinkFilter linkFilter = this.createLinkFilter();
 
 	/**
 	 * 真实的链接解析器，负责从网页里提取出所有的原始的超链接
 	 */
-	private LinkExtractProxy linkExtractProxy = new LinkExtractProxy();
+	private final LinkExtractProxy linkExtractProxy = new LinkExtractProxy();
 
 	/**
 	 * 构建一个链接解析器

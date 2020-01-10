@@ -15,6 +15,7 @@ import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
 import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
+import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.downloader.impl.SimpleDownloader;
@@ -187,28 +188,57 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
+	 * 内容匹配测试
+	 * 
+	 * @param url         测试目标地址
+	 * @param siteRule    站点规则
+	 * @param matcherRule 匹配规则
+	 * @return
+	 */
+	public final static SimulatorData testMatcher(String url, SiteRule siteRule, MatcherRule matcherRule) {
+		return new SimpleSimulator().match(url, siteRule, matcherRule, null);
+	}
+
+	/**
+	 * 内容匹配测试
+	 * 
+	 * @param url         测试目标地址
+	 * @param siteRule    站点规则
+	 * @param matcherRule 匹配规则
+	 * @param downloader  下载器
+	 * @return
+	 */
+	public final static SimulatorData testMatcher(String url, SiteRule siteRule, MatcherRule matcherRule,
+			Downloader downloader) {
+		return new SimpleSimulator().match(url, siteRule, matcherRule, downloader);
+	}
+
+	/**
 	 * 测试链接提取规则 <br/>
 	 * 使用默认下载器
 	 * 
+	 * @param url      测试目标地址
 	 * @param siteRule 站点规则
 	 * @param linkRule 链接提取规则
 	 * @return
 	 */
-	public final static SimulatorData testLink(SiteRule siteRule, LinkRule linkRule) {
-		return new SimpleSimulator().link(siteRule, linkRule, null);
+	public final static SimulatorData testLink(String url, SiteRule siteRule, LinkRule linkRule) {
+		return new SimpleSimulator().link(url, siteRule, linkRule, null);
 	}
 
 	/**
 	 * 测试链接提取规则<br/>
 	 * 使用自定义下载器
 	 * 
+	 * @param url        测试目标地址
 	 * @param siteRule   站点规则
 	 * @param linkRule   链接提取规则
 	 * @param downloader 网页下载器
 	 * @return
 	 */
-	public final static SimulatorData testLink(SiteRule siteRule, LinkRule linkRule, Downloader downloader) {
-		return new SimpleSimulator().link(siteRule, linkRule, downloader);
+	public final static SimulatorData testLink(String url, SiteRule siteRule, LinkRule linkRule,
+			Downloader downloader) {
+		return new SimpleSimulator().link(url, siteRule, linkRule, downloader);
 	}
 
 	/**

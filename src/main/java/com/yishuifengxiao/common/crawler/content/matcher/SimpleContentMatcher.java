@@ -20,38 +20,33 @@ public class SimpleContentMatcher implements ContentMatcher {
 	/**
 	 * 内容匹配规则
 	 */
-	private MatcherRule contentDetect;
+	private MatcherRule matcherRule;
 
 	@Override
 	public boolean match(String input) {
 		if (StringUtils.isBlank(input)) {
 			return false;
 		}
-		if (null == contentDetect || null == contentDetect.getType()) {
+		if (null == matcherRule || null == matcherRule.getType()) {
 			return true;
 		}
-		String extract = extract(input, contentDetect.getType(), contentDetect.getPattern());
-		boolean match = StringUtils.isNotBlank(extract);
+		String extract = extract(input, matcherRule.getType(), matcherRule.getPattern());
+		boolean match = StringUtils.isBlank(extract);
+		if (!match) {
+			if (matcherRule.getFuzzy()) {
+				// 模糊匹配
+				match = matcherRule.getCaseSensitive() ? StringUtils.contains(extract, matcherRule.getTarget())
+						: StringUtils.containsIgnoreCase(extract, matcherRule.getTarget());
 
-		if (contentDetect.getFuzzy()) {
-			// 模糊匹配
-			if (contentDetect.getCaseSensitive()) {
-				// 大小写敏感
-				match = StringUtils.contains(extract, contentDetect.getTarget());
 			} else {
-				match = StringUtils.containsIgnoreCase(extract, contentDetect.getTarget());
-			}
-		} else {
-			// 精准匹配
-			if (contentDetect.getCaseSensitive()) {
-				// 大小写敏感
-				match = StringUtils.equals(extract, contentDetect.getTarget());
-			} else {
-				match = StringUtils.equalsIgnoreCase(extract, contentDetect.getTarget());
+				// 精准匹配
+				match = matcherRule.getCaseSensitive() ? StringUtils.equals(extract, matcherRule.getTarget())
+						: StringUtils.equalsIgnoreCase(extract, matcherRule.getTarget());
+
 			}
 		}
 
-		return match == contentDetect.getMode();
+		return match == matcherRule.getMode();
 	}
 
 	/**
@@ -69,8 +64,8 @@ public class SimpleContentMatcher implements ContentMatcher {
 		return strategy.extract(input, pattern, null);
 	}
 
-	public SimpleContentMatcher(MatcherRule contentDetect) {
-		this.contentDetect = contentDetect;
+	public SimpleContentMatcher(MatcherRule matcherRule) {
+		this.matcherRule = matcherRule;
 	}
 
 }

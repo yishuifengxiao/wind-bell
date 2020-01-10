@@ -25,7 +25,7 @@ public class SimpleContentExtractDecorator extends BaseContentExtractDecorator {
 	/**
 	 * 路径匹配工具
 	 */
-	private PathMatcher pathMatcher = new SimplePathMatcher();
+	private final PathMatcher pathMatcher = new SimplePathMatcher();
 
 	/**
 	 * 判断是否符合提取页规则

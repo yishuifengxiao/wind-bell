@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LinkExtractProxy implements LinkExtract {
 
-	private Strategy strategy = StrategyFactory.get(Rule.XPATH);
+	private final Strategy strategy = StrategyFactory.get(Rule.XPATH);
 
 	@Override
 	public  void extract(final Page page) throws ServiceException {

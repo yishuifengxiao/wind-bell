@@ -37,7 +37,11 @@ public class SimulatorData implements Serializable {
 	 */
 	private Boolean success;
 	/**
-	 * 输出数据，success为true时表示的是输出数据，若success为false表示异常原因
+	 * 提示信息
+	 */
+	private String msg;
+	/**
+	 * 结果数据
 	 */
 	private Object data;
 

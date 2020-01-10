@@ -11,12 +11,14 @@ import org.apache.http.HttpStatus;
 import com.yishuifengxiao.common.crawler.builder.ExtractBuilder;
 import com.yishuifengxiao.common.crawler.builder.impl.SimpleExtractBuilder;
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
+import com.yishuifengxiao.common.crawler.content.matcher.SimpleContentMatcher;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
 import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.FieldExtractRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
+import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.downloader.impl.SimpleDownloader;
@@ -30,7 +32,50 @@ import com.yishuifengxiao.common.crawler.link.LinkExtract;
  * @version 1.0.0
  */
 public class SimpleSimulator implements Simulator {
-	private ExtractBuilder extractBuilder = new SimpleExtractBuilder();
+	private final ExtractBuilder extractBuilder = new SimpleExtractBuilder();
+
+	@Override
+	public SimulatorData link(String url, SiteRule siteRule, LinkRule linkRule, Downloader downloader) {
+
+		SimulatorData simulatorData = null;
+		try {
+			check(linkRule);
+
+			Page page = this.download(siteRule, url, downloader);
+
+			// 内容解析器
+			LinkExtract linkExtract = extractBuilder.createLinkExtract(linkRule, null);
+			// 解析链接
+			linkExtract.extract(page);
+
+			simulatorData = new SimulatorData(true, "链接解析成功", page.getLinks());
+
+		} catch (Exception e) {
+			simulatorData = new SimulatorData(false, "链接解析失败", e.getMessage());
+		}
+		return simulatorData;
+	}
+
+	@Override
+	public SimulatorData match(String url, SiteRule siteRule, MatcherRule matcherRule, Downloader downloader) {
+		SimulatorData simulatorData = null;
+		try {
+			Page page = this.download(siteRule, url, downloader);
+			if (null == page || null == page.getRawTxt()) {
+				return new SimulatorData(false, "下载结果为空", null);
+			}
+			if (null == matcherRule || matcherRule.getType() == null) {
+				simulatorData = new SimulatorData(true, "匹配通过", "匹配规则为空时直接通过");
+			} else {
+				boolean match = new SimpleContentMatcher(matcherRule).match(page.getRawTxt());
+				simulatorData = new SimulatorData(match, match ? "匹配通过" : "匹配失败", null);
+			}
+
+		} catch (Exception e) {
+			simulatorData = new SimulatorData(false, "匹配过程出现异常", e.getMessage());
+		}
+		return simulatorData;
+	}
 
 	@Override
 	public SimulatorData extract(String url, SiteRule siteRule, ContentItem contentExtractRule, Downloader downloader) {
@@ -45,32 +90,10 @@ public class SimpleSimulator implements Simulator {
 			// 解析内容
 			contentExtract.extract(page);
 			Object data = page.getResultItem(contentExtractRule.getFiledName());
-			simulatorData = new SimulatorData(true, data);
+			simulatorData = new SimulatorData(true, "提取成功", data);
 
 		} catch (Exception e) {
-			simulatorData = new SimulatorData(false, e.getMessage());
-		}
-		return simulatorData;
-	}
-
-	@Override
-	public SimulatorData link(SiteRule siteRule, LinkRule linkRule, Downloader downloader) {
-
-		SimulatorData simulatorData = null;
-		try {
-			check(linkRule);
-
-			Page page = this.download(siteRule, linkRule.getStartUrl(), downloader);
-
-			// 内容解析器
-			LinkExtract linkExtract = extractBuilder.createLinkExtract(linkRule, null);
-			// 解析链接
-			linkExtract.extract(page);
-
-			simulatorData = new SimulatorData(true, page.getLinks());
-
-		} catch (Exception e) {
-			simulatorData = new SimulatorData(false, e.getMessage());
+			simulatorData = new SimulatorData(false, e.getMessage(), null);
 		}
 		return simulatorData;
 	}
