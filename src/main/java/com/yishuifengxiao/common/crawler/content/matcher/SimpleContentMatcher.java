@@ -30,12 +30,14 @@ public class SimpleContentMatcher implements ContentMatcher {
 		if (null == matcherRule || null == matcherRule.getType()) {
 			return true;
 		}
-		boolean match = StringUtils.isBlank(this.matcherRule.getTarget());
+
+		String extract = extract(input, matcherRule.getType(), matcherRule.getPattern());
+		if (StringUtils.isBlank(extract)) {
+			return false;
+		}
+
+		boolean match = StringUtils.isBlank(matcherRule.getTarget());
 		if (!match) {
-			String extract = extract(input, matcherRule.getType(), matcherRule.getPattern());
-			if (StringUtils.isBlank(extract)) {
-				return false;
-			}
 
 			if (matcherRule.getFuzzy()) {
 				// 模糊匹配

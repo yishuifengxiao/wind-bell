@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -53,7 +52,6 @@ public class ContentRule implements Serializable {
 	 * 内容提取规则
 	 */
 	@ApiModelProperty("内容提取规则")
-	@NotEmpty(message = "请至少配置一组内容提取规则")
 	@Valid
 	private List<ContentItem> contents;
 
