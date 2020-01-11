@@ -30,9 +30,13 @@ public class SimpleContentMatcher implements ContentMatcher {
 		if (null == matcherRule || null == matcherRule.getType()) {
 			return true;
 		}
-		String extract = extract(input, matcherRule.getType(), matcherRule.getPattern());
-		boolean match = StringUtils.isBlank(extract);
+		boolean match = StringUtils.isBlank(this.matcherRule.getTarget());
 		if (!match) {
+			String extract = extract(input, matcherRule.getType(), matcherRule.getPattern());
+			if (StringUtils.isBlank(extract)) {
+				return false;
+			}
+
 			if (matcherRule.getFuzzy()) {
 				// 模糊匹配
 				match = matcherRule.getCaseSensitive() ? StringUtils.contains(extract, matcherRule.getTarget())
@@ -44,6 +48,7 @@ public class SimpleContentMatcher implements ContentMatcher {
 						: StringUtils.equalsIgnoreCase(extract, matcherRule.getTarget());
 
 			}
+
 		}
 
 		return match == matcherRule.getMode();
