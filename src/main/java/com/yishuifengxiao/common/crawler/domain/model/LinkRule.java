@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -46,7 +45,6 @@ public class LinkRule implements Serializable {
 	 * 链接提取规则,正则表达式
 	 */
 	@ApiModelProperty(" 链接提取规则,正则表达式")
-	@NotEmpty(message = "请至少配置一个 链接提取规则")
 	private Set<String> rules;
 
 }
