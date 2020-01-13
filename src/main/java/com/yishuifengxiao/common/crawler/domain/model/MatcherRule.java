@@ -64,10 +64,10 @@ public class MatcherRule implements Serializable {
 	private Boolean mode = true;
 
 	/**
-	 * 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 true
+	 * 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 false
 	 */
 	@ApiModelProperty("是否大小写敏感")
-	private Boolean caseSensitive = true;
+	private Boolean caseSensitive = false;
 
 	/**
 	 * 是否为模糊匹配，默认为true

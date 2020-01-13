@@ -151,9 +151,9 @@ public class CrawlerBuilder {
 	private Boolean matcherMode = true;
 
 	/**
-	 * 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 true
+	 * 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 false
 	 */
-	private Boolean matcherCaseSensitive = true;
+	private Boolean matcherCaseSensitive = false;
 
 	/**
 	 * 是否为模糊匹配，默认为true
@@ -744,7 +744,7 @@ public class CrawlerBuilder {
 	/**
 	 * 获取匹配时是否大小写敏感
 	 * 
-	 * @return 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 true
+	 * @return 是否大小写敏感，即进行匹配时是否为大小写敏感，默认为 false
 	 */
 	public Boolean matcherCaseSensitive() {
 		return this.matcherCaseSensitive;
