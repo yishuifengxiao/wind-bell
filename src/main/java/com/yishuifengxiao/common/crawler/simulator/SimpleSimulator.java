@@ -35,6 +35,20 @@ public class SimpleSimulator implements Simulator {
 	private final ExtractBuilder extractBuilder = new SimpleExtractBuilder();
 
 	@Override
+	public SimulatorData down(String url, SiteRule siteRule, Downloader downloader) {
+		downloader = null == downloader ? new SimpleDownloader() : downloader;
+		SimulatorData simulatorData = null;
+		try {
+			Page page = this.download(siteRule, url, downloader);
+			simulatorData = (null == page || null == page.getRawTxt()) ? new SimulatorData(false, "下载的结果为空", null)
+					: new SimulatorData(true, "下载成功", page.getRawTxt());
+		} catch (Exception e) {
+			simulatorData = new SimulatorData(false, "下载失败", e.getMessage());
+		}
+		return simulatorData;
+	}
+
+	@Override
 	public SimulatorData link(String url, SiteRule siteRule, LinkRule linkRule, Downloader downloader) {
 
 		SimulatorData simulatorData = null;

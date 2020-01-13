@@ -16,6 +16,17 @@ import com.yishuifengxiao.common.crawler.downloader.Downloader;
  * @version 1.0.0
  */
 public interface Simulator {
+
+	/**
+	 * 测试网页下载功能
+	 * 
+	 * @param url        测试目标地址
+	 * @param siteRule   站点规则
+	 * @param downloader 下载器
+	 * @return 下载的网页数据
+	 */
+	SimulatorData down(String url, SiteRule siteRule, Downloader downloader);
+
 	/**
 	 * 测试链接提取
 	 * 
@@ -30,10 +41,10 @@ public interface Simulator {
 	/**
 	 * 测试内容匹配
 	 * 
-	 * @param url 测试目标地址
-	 * @param siteRule  站点规则
+	 * @param url         测试目标地址
+	 * @param siteRule    站点规则
 	 * @param matcherRule 匹配规则
-	 * @param downloader 下载器
+	 * @param downloader  下载器
 	 * @return 模拟结果数据
 	 */
 	SimulatorData match(String url, SiteRule siteRule, MatcherRule matcherRule, Downloader downloader);

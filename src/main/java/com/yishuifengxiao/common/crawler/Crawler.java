@@ -160,13 +160,38 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	/**
+	 * 测试网页下载器<br/>
+	 * 使用默认下载器
+	 * 
+	 * @param url      测试网页的地址
+	 * @param siteRule 站点规则
+	 * @return 测试结果
+	 */
+	public final static SimulatorData testDown(String url, SiteRule siteRule) {
+		return new SimpleSimulator().down(url, siteRule, null);
+	}
+
+	/**
+	 * 测试网页下载器<br/>
+	 * 使用自定义下载器
+	 * 
+	 * @param url        测试网页的地址
+	 * @param siteRule   站点规则
+	 * @param downloader 网页下载器
+	 * @return 测试结果
+	 */
+	public final static SimulatorData testDown(String url, SiteRule siteRule, Downloader downloader) {
+		return new SimpleSimulator().down(url, siteRule, downloader);
+	}
+
+	/**
 	 * 测试内容提取规则<br/>
 	 * 使用默认下载器
 	 * 
 	 * @param url                测试网页的地址
 	 * @param siteRule           站点规则
 	 * @param contentExtractRule 内容提取规则
-	 * @return
+	 * @return 测试结果
 	 */
 	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentItem contentExtractRule) {
 		return new SimpleSimulator().extract(url, siteRule, contentExtractRule, null);
@@ -180,7 +205,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param siteRule           站点规则
 	 * @param contentExtractRule 内容提取规则
 	 * @param downloader         网页下载器
-	 * @return
+	 * @return 测试结果
 	 */
 	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentItem contentExtractRule,
 			Downloader downloader) {
@@ -193,7 +218,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param url         测试目标地址
 	 * @param siteRule    站点规则
 	 * @param matcherRule 匹配规则
-	 * @return
+	 * @return 测试结果
 	 */
 	public final static SimulatorData testMatcher(String url, SiteRule siteRule, MatcherRule matcherRule) {
 		return new SimpleSimulator().match(url, siteRule, matcherRule, null);
@@ -206,7 +231,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param siteRule    站点规则
 	 * @param matcherRule 匹配规则
 	 * @param downloader  下载器
-	 * @return
+	 * @return 测试结果
 	 */
 	public final static SimulatorData testMatcher(String url, SiteRule siteRule, MatcherRule matcherRule,
 			Downloader downloader) {
@@ -220,7 +245,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param url      测试目标地址
 	 * @param siteRule 站点规则
 	 * @param linkRule 链接提取规则
-	 * @return
+	 * @return 测试结果
 	 */
 	public final static SimulatorData testLink(String url, SiteRule siteRule, LinkRule linkRule) {
 		return new SimpleSimulator().link(url, siteRule, linkRule, null);
@@ -234,7 +259,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param siteRule   站点规则
 	 * @param linkRule   链接提取规则
 	 * @param downloader 网页下载器
-	 * @return
+	 * @return 测试结果
 	 */
 	public final static SimulatorData testLink(String url, SiteRule siteRule, LinkRule linkRule,
 			Downloader downloader) {
