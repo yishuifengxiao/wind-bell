@@ -23,6 +23,7 @@ import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.downloader.impl.SimpleDownloader;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
+import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
 /**
  * 简单的模拟提取器
@@ -36,7 +37,6 @@ public class SimpleSimulator implements Simulator {
 
 	@Override
 	public SimulatorData down(String url, SiteRule siteRule, Downloader downloader) {
-		downloader = null == downloader ? new SimpleDownloader() : downloader;
 		SimulatorData simulatorData = null;
 		try {
 			Page page = this.download(siteRule, url, downloader);
@@ -96,13 +96,14 @@ public class SimpleSimulator implements Simulator {
 
 		SimulatorData simulatorData = null;
 		try {
-			ContentRule content = check(url, contentExtractRule);
+			ContentRule content = check(contentExtractRule);
 
 			Page page = this.download(siteRule, url, downloader);
 			// 内容解析器
 			ContentExtract contentExtract = extractBuilder.createContentExtract(content, null);
 			// 解析内容
 			contentExtract.extract(page);
+			// 解析出来的内容
 			Object data = page.getResultItem(contentExtractRule.getFiledName());
 			simulatorData = new SimulatorData(true, "提取成功", data);
 
@@ -122,6 +123,12 @@ public class SimpleSimulator implements Simulator {
 	 * @throws Exception
 	 */
 	private Page download(SiteRule siteRule, String url, Downloader downloader) throws Exception {
+		if (StringUtils.isBlank(url)) {
+			throw new Exception("测试网址不能为空");
+		}
+		if (!LinkUtils.matchHttpRequest(url)) {
+			throw new Exception("请输入正确的测试地址");
+		}
 		siteRule = siteRule == null ? new SiteRule().setHeaders(new ArrayList<>()) : siteRule;
 		downloader = null != downloader ? downloader : new SimpleDownloader();
 		Page page = downloader.down(siteRule, url);
@@ -134,6 +141,12 @@ public class SimpleSimulator implements Simulator {
 		return page;
 	}
 
+	/**
+	 * 校验链接解析规则
+	 * 
+	 * @param linkRule 链接解析规则
+	 * @throws Exception
+	 */
 	private void check(LinkRule linkRule) throws Exception {
 		if (linkRule == null) {
 			throw new Exception("链接提取规则不能为空");
@@ -147,35 +160,30 @@ public class SimpleSimulator implements Simulator {
 	}
 
 	/**
-	 * 数据校验
+	 * 校验内容提取规则
 	 * 
-	 * @param url
-	 * @param contentExtractRule
+	 * @param contentItem 内容提取规则
 	 * @return
 	 * @throws Exception
 	 */
-	private ContentRule check(String url, ContentItem contentExtractRule) throws Exception {
+	private ContentRule check(ContentItem contentItem) throws Exception {
 
-		if (StringUtils.isBlank(url)) {
-			throw new Exception("测试网址不能为空");
-		}
-
-		if (contentExtractRule == null) {
+		if (contentItem == null) {
 			throw new Exception("提取规则不能为空");
 		}
 
-		if (StringUtils.isBlank(contentExtractRule.getName()) || contentExtractRule.getRules() == null
-				|| contentExtractRule.getRules().isEmpty()) {
-			throw new Exception("请配置正确的提取规则");
+		if (StringUtils.isBlank(contentItem.getName()) || contentItem.getRules() == null
+				|| contentItem.getRules().isEmpty()) {
+			throw new Exception("请配置正确的内容提取规则");
 		}
-		List<FieldExtractRule> rules = contentExtractRule.getRules().parallelStream().filter(t -> t.getRule() != null)
+		List<FieldExtractRule> rules = contentItem.getRules().parallelStream().filter(t -> t.getRule() != null)
 				.collect(Collectors.toList());
 		if (rules == null || rules.isEmpty()) {
-			throw new Exception("请至少配置一个正确的提取规则");
+			throw new Exception("请至少配置一个正确的属性提取规则");
 		}
-		contentExtractRule.setRules(rules);
+		contentItem.setRules(rules);
 
-		ContentRule content = new ContentRule().setContents(Arrays.asList(contentExtractRule));
+		ContentRule content = new ContentRule().setContents(Arrays.asList(contentItem));
 		return content;
 	}
 
