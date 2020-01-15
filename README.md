@@ -1,67 +1,72 @@
-# 风铃虫
+# wind-bell
 
-#### 介绍
-风铃虫是一款轻量级的爬虫工具，似风铃一样灵敏，如蜘蛛一般敏捷，能感知任何细小的风吹草动，轻松抓取互联网上的内容。它是一款对目标服务器相对友好的蜘蛛程序，内置了二十余种常见或不常见的浏览器标识，能够自动处理cookie和网页来源信息，轻松绕过服务器限制，智能调整请求间隔时间，动态调整请求频率，防止对目标服务器造成干扰。此外，风铃虫还是一款对普通用户十分友好的工具，它提供的大量链接提取器和内容提取器让用户可以随心所欲地快速配置，甚至于只要提供一个开始请求地址就能配置出自己爬虫程序。同时，风铃虫也开放了许多自定义接口，让高级用户能够根据需要自定义爬虫功能。最后，风铃虫还天然支持分布式和集群功能，让你突破单机环境的束缚，释放出你的爬虫能力。可以说，风铃虫几乎能抓取目前所有的网站里的绝大部分内容。
+#### Introduction
+Wind-bell is a lightweight reptile tool that is as sensitive as a wind chime. It is agile like a spider. It is a spider program that is relatively friendly to the target server. It has more than 20 common or uncommon browser identifiers built in. It can automatically process cookies and webpage source information, easily bypass server restrictions, intelligently adjust request interval time, and dynamic. Adjust the request frequency to prevent interference with the target server. In addition, wind-bell is a tool that is very friendly to ordinary users. It provides a large number of link extractors and content extractors to allow users to quickly configure as they wish, and even configure their own crawlers by providing a starting request address. . At the same time, wind-bell has also opened many custom interfaces, allowing advanced users to customize the crawler function as needed. Finally, wind-bell also naturally supports distributed and cluster functions, allowing you to break through the constraints of a single machine environment and release your crawling capabilities. It can be said that wind-bell can crawl most of the content on all current websites.
 
-**【声明】
-请勿将风铃虫应用到任何可能会违反法律规定和道德约束的工作中,请友善使用风铃虫，遵守蜘蛛协议，不要将风铃虫用于任何非法用途。如您选择使用风铃虫即代表您遵守此协议，作者不承担任何由于您违反此协议带来任何的法律风险和损失，一切后果由您承担。**
+**【Notice】
+Do not apply wind-bell to any work that may violate legal requirements and ethical constraints. Please use wind-bell amicably, abide by the spider agreement, and do not use wind-bell for any illegal purpose. If you choose to use wind-bell, you are complying with this agreement. The author is not responsible for any legal risks and losses caused by your breach of this agreement. All consequences shall be borne by you.。**
 
 <br/>
 
-**快速使用**
+**Quick start**
 
 
 ```
 <dependency>
     <groupId>com.yishuifengxiao.common</groupId>
     <artifactId>crawler</artifactId>
-    <version>替换为最新的版本号</version>
+    <version>Replace with the latest version number</version>
 </dependency>
 ```
 
+See the latest version [https://mvnrepository.com/artifact/com.yishuifengxiao.common/crawler](https://mvnrepository.com/artifact/com.yishuifengxiao.common/crawler)
 
-交流 QQ 群 :<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=a81681f687ced1bf514d6226d00463798cefc0a9559fc7d34f1e17e719ca8573"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="易水组件交流群" title="易水组件交流群"></a> (群号 624646260)
+
+Exchange QQ Group :<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=a81681f687ced1bf514d6226d00463798cefc0a9559fc7d34f1e17e719ca8573"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="易水组件交流群" title="易水组件交流群"></a> (群号 624646260)
 
 
-**简单使用**
+**sample**
 
-提取雅虎财经的内容页的电子货币的名字
+Extract the name of the electronic currency of the content page of Yahoo Finance
 
 ```
 
-        //创建一个提取规则
-        //该提取规则标识使用 XPATH提取器进行提取，
-        //该XPATH提取器的XPATH表达式为 //h1/text() ， 该提取提取器的作用顺序是0
+        //Create an extraction rule
+        //The extraction rule identifies the extraction using the XPATH extractor
+        //The XPATH expression of this XPATH extractor is //h1/text() ， The order of the extraction extractor is0
         FieldExtractRule extractRule = new FieldExtractRule(Rule.XPATH, "//h1/text()", "", 0);
 
-        //创建一个提取项
+        //Create an extract
         ContentItem contentItem = new ContentItem();
         contentItem
                 .setFiledName("name") //提取项代码，不能为空
-                .setName("加密电子货币名字") //提取项名字，可以不设置
+                .setName("Cryptocurrency_name") //提取项名字，可以不设置
                 .setRules(Arrays.asList(extractRule)); //设置提取规则
 
-        //创建一个风铃虫实例
+        //Create a wind-bell instance
         Crawler crawler = CrawlerBuilder.create()
-                .startUrl("https://hk.finance.yahoo.com/cryptocurrencies") //风铃虫的起始链接
-                // 风铃虫会将每次请求的网页的内容中的URL先全部提取出来，然后将完全匹配此规则的链接放入链接池
-                // 如果不设置则表示提取链接中所有包含域名关键字（例如此例中的ifeng）的链接放入链接池
-                //链接池里的链接会作为下次抓取请求的种子链接
-                .addLinkRule("https://hk.finance.yahoo.com/quote/.+")//链接提取规则，多以添加多个链接提取规则，
-                //可以设置多个内容页的规则，多个内容页规则之间用半角逗号隔开
-                //只要内容页URL中完全匹配此规则就进行内容提取，如果不设置标识提取域名下所有的链接
-                .extractUrl("https://hk.finance.yahoo.com/quote/.+") //内容页的规则，
-                //风铃虫可以设置多个提取项，这里为了演示只设置了一个提取项
-                .addExtractItem(contentItem) //增加一个提取项
-                //如果不设置则使用默认时间10秒，此值是为了防止抓取频率太高被服务器封杀
-                .interval(3)//每次进行爬取时的平均间隔时间，单位为秒，
+                 //wind-bell starting link
+                .startUrl("https://hk.finance.yahoo.com/cryptocurrencies") 
+                // wind-bell will first extract all the URLs in the content of the webpage for each request, and then put the links that exactly match this rule into the link pool
+                // If it is not set, it means that all links containing domain name keywords (such as yahoo in this example) are extracted into the link pool
+                //The links in the link pool will be used as the seed link for the next crawl request
+                //Link extraction rules, to add multiple link extraction rules
+                .addLinkRule("https://hk.finance.yahoo.com/quote/.+")
+                //You can set multiple content page rules. Multiple content page rules are separated by commas.
+                //As long as the content page URL exactly matches this rule, content extraction is performed. If no identifier is set, all links under the domain name are extracted.
+                .extractUrl("https://hk.finance.yahoo.com/quote/.+") //Content page rules
+                //Multiple extraction items can be set, here only one extraction item is set for demonstration
+                .addExtractItem(contentItem) //Add an extraction item
+                //If not set, the default time is 10 seconds. This value is to prevent the crawl frequency from being blocked by the server too high.
+                //The average interval time for each crawl, in milliseconds
+                .interval(3)
                 .creatCrawler();
-        //启动爬虫实例
+        //Start the crawler instance
         crawler.start();
-        // 这里没有设置信息输出器，表示使用默认的信息输出器
-        //默认的信息输出器使用的logback日志输出方法，因此需要看控制台信息
+        // No information output device is set here, which means the default information output device is used.
+        //The default logback log output method used by the information exporter, so you need to look at the console information
 
-        //由于风铃虫时异步运行的，所以演示时这里加入循环
+        //Since the wind-bell runs asynchronously, a loop is added here for demonstration
         while (Statu.STOP != crawler.getStatu()) {
             try {
                 Thread.sleep(1000 * 20);
@@ -72,64 +77,68 @@
 ```
 
 
-上述例子的作用提取雅虎财经的内容页的电子货币的名字，如果用户想要提取其他信息，只需要按照规则配置好其他的提取规则即可。
+The role of the above example is to extract the name of the electronic currency of the content page of Yahoo Finance. If the user wants to extract other information, he only needs to configure other extraction rules in accordance with the rules.。
 
->  **注意** 上述示例仅供学习演示所用，风铃虫使用者在抓取网页内容请严格遵守相关的法律规定和目标网站的蜘蛛协议
+>  **TIP** The above examples are for learning and demonstration purposes only. Users of wind-bell should strictly abide by relevant legal requirements and spider agreements of the target website when crawling webpage content.
 
 <br/>
 
 
 
- **风铃虫原理** 
+ **principle** 
 
-![风铃虫原理](https://images.gitee.com/uploads/images/2019/1208/213313_eb03a944_400404.png "原理图.png")
+![principle](https://images.gitee.com/uploads/images/2019/1208/213313_eb03a944_400404.png "原理图.png")
 
-风铃虫的原理极为简单，主要由 **资源调度器**、**网页下载器**、**链接解析器**、**内容解析器**、**信息输出器** 这极大部分组成。
 
-他们的作用与功能如下所示：
+The principle of bluebells is extremely simple, mainly consisting of  **Scheduler** 、**Downloader** 、**ContentExtract** 、**LinkExtract**   and **Pipeline** .
 
-- 资源调度器：负责风铃虫资源的调度过程，例如进行任务的储存、任务的调度和任务的管理
-- 网页下载器：负责根据调度器调度的任务下载网页资源
-- 链接解析器：负责解析网页下载器下载的网页内容，从网页内容中提取出所有符合要求的链接
-- 内容解析器：负责对网页下载器下载的网页内容进行内容解析
-- 信息输出器：输出内容解析器解析出来的数据
+Their functions and functions are shown below：
 
-其中的链接解析器是由一系列的链接提取器组合而成，目前链接提取器主要是支持正则提取。
+- Scheduler：Responsible for the resource scheduling process, such as task storage, task scheduling, and task management
+- Downloader：Responsible for downloading web resources based on tasks scheduled by the scheduler
+- LinkExtract：Responsible for parsing web page content downloaded by web page downloader, extract all qualified links from web page content
+- ContentExtract：Responsible for content analysis of web content downloaded by web downloader
+- Pipeline：Output the data parsed by the content parser
 
-内容解析器由一系列的内容提取器组合而成，不同的内容提取器功能不同，适用于不同的解析场景，支持多个提取器的重复、循环等多种组合形式。
+Among them, LinkExtract：Responsible is a combination of a series of link extractors. At present, the link extractor mainly supports regular extraction.。
 
-上述个组件均提供了自定义配置接口，使用户可以根据实际需要进行自定义配置，满足各种复杂乃至异常场景的要求。
+ContentExtract is composed of a series of content extractors. Different content extractors have different functions and are suitable for different parsing scenarios. It supports multiple combinations of multiple extractors, such as repeating and looping.
 
-**风铃虫内置的内容提取器有**：
-1. 原文提取器
-2. 中文提取器
-3. 常量提取器
-4. CSS内容提取器
-5. CSS文本提取器
-6. 邮箱提取器
-7. 数字提取器
-8. 正则提取器
-9. 字符删除提取器
-10. 字符替换提取器
-11. 字符串截取提取器
-12. XPATH提取器
-13. 数组截取
-14. ...
+
+
+Each of the above components provides a custom configuration interface, allowing users to customize the configuration according to actual needs to meet the requirements of various complex and even abnormal scenarios。
+
+**The built-in content extractor**：
+1. Text extractor
+2. Chinese Extractor
+3. Constant extractor
+4. CSS Content Extractor
+5. CSS text extractor
+6. Email extractor
+7. Number extractor
+8. Regex extractor
+9. Character deletion extractor
+10. Character replacement extractor
+11. String interception extractor
+12. XPATH extractor
+13. Array Truncation
+14. Script extractor
+15. ...
  
-在进行文本内容提取时，用户可以将这些提取器自由组合以提取出自己需要的内容,更多提取器的具体用法请参见 [内容提取器用法](https://gitee.com/zhiyubujian/wind-bell/wikis/%E6%88%AA%E5%8F%96%E6%8F%90%E5%8F%96%E5%99%A8?sort_id=1783680)。
+When extracting text content, users can freely combine these extractors to extract the content they need. For more specific usage of extractors, see [内容提取器用法](https://gitee.com/zhiyubujian/wind-bell/wikis/%E6%88%AA%E5%8F%96%E6%8F%90%E5%8F%96%E5%99%A8?sort_id=1783680)。
 
-**风铃虫内置的浏览器标识有**：
-1. 谷歌浏览器(windows版、linux版)
-2. Opera浏览器 (windows版、MAC版)
-3. 火狐浏览器(windows版、linux版、MAC版)
-4. IE浏览器(IE9、IE11)
-5. EDAG浏览器
-6. safari浏览器(windows版、MAC版)
+**The built-in browser agent **：
+1. Google Chrome(windows、linux)
+2. Opera browser(windows、MAC)
+3. Firefox browser(windows、linux、MAC)
+4. IE browser(IE9、IE11)
+5. EDAG browser
+6. safaribrowser(windows、MAC)
 8. ...
 
-**分布式支持**
+**Distributed support**
 
-核心代码如下:
+The core code is as follows:
 
 
 ```
@@ -155,64 +164,64 @@ crawler.start();
 ```
 <br/>
 
- **状态监控** 
+ **Condition monitoring** 
 
-风铃虫还提供了强大的状态监控和事件监控能力，通过 [状态监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)和[事件监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)，风铃虫让你对任务的运行情况了如指掌，实时掌控实例运行过程中遇到的各种问题，真正做到对任务的运行情况洞若观火，方便运维。
+Wind-bell also provides powerful status monitoring and event monitoring capabilities. With CrawlerListener  and StatuObserver  wind-bell, you can know the running status of the task, and control the various problems encountered during the running of the instance in real time. The operation situation is like watching the fire, which is convenient for operation and maintenance。
 
- **解析模拟器** 
+ **Emulator** 
 
-由于风铃虫的解析功能十分强大，规定定义十分灵活，为了直观地了解已配置的规则定义的作用，风铃虫提供了[解析模拟器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1797313&doc_id=471326)，让使用者能够快速了解自己设置的规则定义的效果是否符合预期目标，及时调整规则定义，方便风铃虫实例的配置。
+Because the analysis function of wind-bell is very powerful and the definition of rules is very flexible. In order to intuitively understand the role of the configured rule definitions, wind-bell provides XXX to allow users to quickly understand whether the effect of the rule definitions set by them is consistent with expectations Objectives, adjust rule definitions in time to facilitate configuration of wind-bell instances。
 
 
 <br/><br/>
 
- **风铃虫平台效果演示** 
+ **Effect demonstration** 
 
 
 
 
 
 
-1. 配置基本信息
+1. Configure basic information
 
->   配置爬虫的名字、使用的线程数量和超时停止时间
+>   Configure the crawler name, number of threads used, and timeout stop time
 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1207/221953_91be5498_400404.png "配置基本信息.png")
 
-2. 配置链接爬取信息
+2. Configure link crawling information
 
->     配置爬虫的起始种子链接和从网页里提取下一次抓取时的链接的提取规则
+>     Configure the crawler's initial seed link and extraction rules for extracting links from the webpage for the next crawl
 
 ![配置链接爬取信息](https://images.gitee.com/uploads/images/2019/1202/155432_8ab363a8_400404.png "配置链接爬取信息.png")
 
-3. 配置站点信息
+3. Configure site information
 
->     此步骤一般可以省略，但是对于某些会校验cookie和请求头参数的网站，此配置非常有用
+>     This step can generally be omitted, but this configuration is useful for some websites that verify cookies and request header parameters
 
 ![配置站点信息](https://images.gitee.com/uploads/images/2019/1202/155457_d4bf6e93_400404.png "配置站点信息.png")
 
-4. 提取项配置
+4. Extraction item configuration
 
->      配置需要从网站里提取出来的数据，例如新闻标题和网页正文等信息 
+>     Configure the data that needs to be extracted from the website, such as news headlines and web page information
 
 ![内容页配置](https://images.gitee.com/uploads/images/2019/1202/155524_c5e82fd9_400404.png "内容页配置.png")
 
-5. 属性提取配置
+5. Attribute extraction configuration
 
->      调用内容提取器进行任意组合，以根据需要提取出需要的数据
+>      Call the content extractor for any combination to extract the required data as needed
 
 ![属性提取配置](https://images.gitee.com/uploads/images/2019/1202/155554_15b869ae_400404.png "属性提取配置.png")
 
 <br/><br/>
 
-6. 属性提取测试
+6. Attribute extraction test
 
-提前检验提取项的配置是否正确，提取出来的数据是否符合预期目标
+Check in advance whether the configuration of the extracted items is correct and whether the extracted data meets the expected goals
 
 ![属性提取测试](https://images.gitee.com/uploads/images/2019/1209/163652_596bab35_400404.png "提取测试.png")
 
- **相关资源链接** 
+ **Related resource links** 
 
- **文档地址** :[https://gitee.com/zhiyubujian/wind-bell/wikis/pages](https://gitee.com/zhiyubujian/wind-bell/wikis/pages)
+ **wikis** :[https://gitee.com/zhiyubujian/wind-bell/wikis/pages](https://gitee.com/zhiyubujian/wind-bell/wikis/pages)
 
- **官方文档** :[http://doc.yishuifengxiao.com/windbell/)
+ **Official document** :[http://doc.yishuifengxiao.com/windbell/)
