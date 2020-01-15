@@ -118,7 +118,7 @@
 13. 数组截取
 14. ...
  
-在进行文本内容提取时，用户可以将这些提取器自由组合以提取出自己需要的内容,更多提取器的具体用法请参见 [内容提取器用法](https://gitee.com/zhiyubujian/wind-bell/wikis/%E6%88%AA%E5%8F%96%E6%8F%90%E5%8F%96%E5%99%A8?sort_id=1783680)。
+在进行文本内容提取时，用户可以将这些提取器自由组合以提取出自己需要的内容,更多提取器的具体用法请参见 [内容提取器用法](http://doc.yishuifengxiao.com/windbell/extractor.html#%E5%B8%B8%E9%87%8F%E6%8F%90%E5%8F%96%E5%99%A8)。
 
 **风铃虫内置的浏览器标识有**：
 1. 谷歌浏览器(windows版、linux版)
@@ -159,11 +159,11 @@ crawler.start();
 
  **状态监控** 
 
-风铃虫还提供了强大的状态监控和事件监控能力，通过 [状态监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)和[事件监听器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1793843&doc_id=471326)，风铃虫让你对任务的运行情况了如指掌，实时掌控实例运行过程中遇到的各种问题，真正做到对任务的运行情况洞若观火，方便运维。
+风铃虫还提供了强大的状态监控和事件监控能力，通过 [状态监听器](http://doc.yishuifengxiao.com/windbell/event.html#%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7%E5%99%A8)和[事件监听器](http://doc.yishuifengxiao.com/windbell/event.html#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8)，风铃虫让你对任务的运行情况了如指掌，实时掌控实例运行过程中遇到的各种问题，真正做到对任务的运行情况洞若观火，方便运维。
 
  **解析模拟器** 
 
-由于风铃虫的解析功能十分强大，规定定义十分灵活，为了直观地了解已配置的规则定义的作用，风铃虫提供了[解析模拟器](https://gitee.com/zhiyubujian/wind-bell/wikis/pages?sort_id=1797313&doc_id=471326)，让使用者能够快速了解自己设置的规则定义的效果是否符合预期目标，及时调整规则定义，方便风铃虫实例的配置。
+由于风铃虫的解析功能十分强大，规定定义十分灵活，为了直观地了解已配置的规则定义的作用，风铃虫提供了[解析模拟器](http://doc.yishuifengxiao.com/windbell/test.html#%E9%93%BE%E6%8E%A5%E6%8A%93%E5%8F%96%E5%8A%9F%E8%83%BD%E6%B5%8B%E8%AF%95)，让使用者能够快速了解自己设置的规则定义的效果是否符合预期目标，及时调整规则定义，方便风铃虫实例的配置。
 
 
 <br/><br/>

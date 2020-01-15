@@ -8,7 +8,7 @@ Do not apply wind-bell to any work that may violate legal requirements and ethic
 
 <br/>
 
-**Quick start**
+# Quick start
 
 
 ```
@@ -24,8 +24,8 @@ See the latest version [https://mvnrepository.com/artifact/com.yishuifengxiao.co
 
 Exchange QQ Group :<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=a81681f687ced1bf514d6226d00463798cefc0a9559fc7d34f1e17e719ca8573"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="易水组件交流群" title="易水组件交流群"></a> (群号 624646260)
 
-
-**sample**
+<br/>
+# sample
 
 Extract the name of the electronic currency of the content page of Yahoo Finance
 
@@ -84,8 +84,9 @@ The role of the above example is to extract the name of the electronic currency 
 <br/>
 
 
+<br/>
 
- **principle** 
+# principle
 
 ![principle](https://images.gitee.com/uploads/images/2019/1208/213313_eb03a944_400404.png "原理图.png")
 
@@ -108,7 +109,10 @@ ContentExtract is composed of a series of content extractors. Different content 
 
 Each of the above components provides a custom configuration interface, allowing users to customize the configuration according to actual needs to meet the requirements of various complex and even abnormal scenarios。
 
-**The built-in content extractor**：
+<br/>
+
+
+# The built-in content extractor
 1. Text extractor
 2. Chinese Extractor
 3. Constant extractor
@@ -125,9 +129,12 @@ Each of the above components provides a custom configuration interface, allowing
 14. Script extractor
 15. ...
  
-When extracting text content, users can freely combine these extractors to extract the content they need. For more specific usage of extractors, see [内容提取器用法](https://gitee.com/zhiyubujian/wind-bell/wikis/%E6%88%AA%E5%8F%96%E6%8F%90%E5%8F%96%E5%99%A8?sort_id=1783680)。
+When extracting text content, users can freely combine these extractors to extract the content they need. For more specific usage of extractors, see [extractors](http://doc.yishuifengxiao.com/windbell/extractor.html#%E5%B8%B8%E9%87%8F%E6%8F%90%E5%8F%96%E5%99%A8)。
 
-**The built-in browser agent **：
+<br/>
+
+#  The built-in browser agent
+
 1. Google Chrome(windows、linux)
 2. Opera browser(windows、MAC)
 3. Firefox browser(windows、linux、MAC)
@@ -136,46 +143,52 @@ When extracting text content, users can freely combine these extractors to extra
 6. safaribrowser(windows、MAC)
 8. ...
 
-**Distributed support**
+<br/>
+
+#  Distributed support
 
 The core code is as follows:
 
 
 ```
 ....
-//省略其他代码
+//Omit other code
 ....
-    //创建redis资源调度器
-    Scheduler scheduler=new RedisScheduler("唯一的名字",redisTemplate)
-    //创建一个redis资源缓存器
+    //create a redis Scheduler
+    Scheduler scheduler=new RedisScheduler("Unique name",redisTemplate)
+    //create a redis RequestCache
     RequestCache requestCache = new RedisRequestCache(redisTemplate);
 
      crawler     
-            .setRequestCache(requestCache) //设置使用redis资源缓存器
-            .setScheduler(scheduler); //设置使用redis资源调度器
+            .setRequestCache(requestCache) //apply
+            .setScheduler(scheduler); //apply
                  
 ....
-//省略其他代码
+//Omit other code
 ....
 
-//启动爬虫实例
+//start
 crawler.start();
 
 ```
 <br/>
 
- **Condition monitoring** 
+
+
+# Condition monitoring
 
 Wind-bell also provides powerful status monitoring and event monitoring capabilities. With CrawlerListener  and StatuObserver  wind-bell, you can know the running status of the task, and control the various problems encountered during the running of the instance in real time. The operation situation is like watching the fire, which is convenient for operation and maintenance。
 
- **Emulator** 
+<br/>
+
+# Emulator
 
 Because the analysis function of wind-bell is very powerful and the definition of rules is very flexible. In order to intuitively understand the role of the configured rule definitions, wind-bell provides XXX to allow users to quickly understand whether the effect of the rule definitions set by them is consistent with expectations Objectives, adjust rule definitions in time to facilitate configuration of wind-bell instances。
 
 
 <br/><br/>
 
- **Effect demonstration** 
+# Effect demonstration
 
 
 
