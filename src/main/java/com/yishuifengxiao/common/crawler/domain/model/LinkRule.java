@@ -16,8 +16,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 链接解析规则
- *
+ * 链接解析规则<br/>
+ * 确定起始页和需要提取哪些链接，即通过种子链接提出后续所有的列表页和内容页的连接
+ * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
@@ -42,9 +43,9 @@ public class LinkRule implements Serializable {
 	private String startUrl;
 
 	/**
-	 * 链接提取规则,正则表达式
+	 * 链接提取规则
 	 */
-	@ApiModelProperty(" 链接提取规则,正则表达式")
-	private Set<String> rules;
+	@ApiModelProperty("链接提取规则")
+	private Set<MatcherRule> rules;
 
 }

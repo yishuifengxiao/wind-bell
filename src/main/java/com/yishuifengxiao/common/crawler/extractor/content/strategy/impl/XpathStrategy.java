@@ -1,15 +1,16 @@
 package com.yishuifengxiao.common.crawler.extractor.content.strategy.impl;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
+import org.seimicrawler.xpath.JXDocument;
 
 import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
 
 import lombok.extern.slf4j.Slf4j;
-import us.codecraft.xsoup.Xsoup;
 
 /**
  * XPATH提取策略<br/>
@@ -36,9 +37,16 @@ public class XpathStrategy implements Strategy {
 			return "";
 		}
 
+		JXDocument jxDocument = JXDocument.create(input);
+
 		try {
-			List<String> list = Xsoup.compile(param1).evaluate(Jsoup.parse(input)).list();
-			return String.join(CrawlerConstant.SEPARATOR, list);
+			List<Object> nodes = jxDocument.sel(param1.trim());
+			if (null == nodes) {
+				return "";
+			}
+
+			return nodes.stream().filter(Objects::nonNull).map(t -> t.toString())
+					.collect(Collectors.joining(CrawlerConstant.SEPARATOR));
 		} catch (Exception e) {
 			log.info("使用【XPATH规则】 提取 {} 时出现问题，提取参数为 param1= {} ,param2 = {},问题为 {}", input, param1, param2,
 					e.getMessage());

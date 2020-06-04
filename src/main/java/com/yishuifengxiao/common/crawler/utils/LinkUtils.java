@@ -101,7 +101,7 @@ public class LinkUtils {
 	 * @param url
 	 * @return
 	 */
-	public static String extractShortDomain(String url) {
+	public static String keyword(String url) {
 
 		if (StringUtils.isBlank(url)) {
 			return null;

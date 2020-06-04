@@ -12,6 +12,10 @@ package com.yishuifengxiao.common.crawler.domain.eunm;
  */
 public enum Type {
 	/**
+	 * 不匹配
+	 */
+	NONE,
+	/**
 	 * 文本匹配策略
 	 */
 	ALL,

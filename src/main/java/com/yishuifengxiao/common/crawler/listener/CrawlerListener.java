@@ -32,14 +32,10 @@ public interface CrawlerListener {
 	/**
 	 * 下载页面成功的消息
 	 * 
-	 * @param task        当前任务信息
-	 * @param url         对应页面的请求信息
-	 * @param redirectUrl 具备重定向功能的下载器在请求时重定向之后的地址
-	 * @param code        风铃虫下载页面的响应码
-	 * @param rawTxt      对应的页面的原始文本
+	 * @param task 当前任务信息
+	 * @param page 原始的页面信息
 	 */
-	void onDownSuccess(final Task task, final String url, final String redirectUrl, final int code,
-			final String rawTxt);
+	void onDownSuccess(final Task task, final Page page);
 
 	/**
 	 * 解析页面失败的消息

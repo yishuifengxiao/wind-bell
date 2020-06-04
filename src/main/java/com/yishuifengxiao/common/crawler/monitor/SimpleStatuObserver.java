@@ -17,7 +17,7 @@ public class SimpleStatuObserver implements StatuObserver {
 
 	@Override
 	public void update(Task task, Statu statu) {
-		log.debug("风铃虫 {} 的状态发生变化了，变化之后的状态为 {}", task.getName(), statu);
+		log.debug("风铃虫 {} 的状态发生变化了，变化之后的状态为 {}", task.getUuid(), statu);
 
 	}
 

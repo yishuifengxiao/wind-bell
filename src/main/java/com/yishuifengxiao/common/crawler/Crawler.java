@@ -1,8 +1,10 @@
 package com.yishuifengxiao.common.crawler;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -13,9 +15,9 @@ import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
-import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
+import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
+import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
-import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.downloader.impl.SimpleDownloader;
@@ -29,6 +31,8 @@ import com.yishuifengxiao.common.crawler.pipeline.SimplePipeline;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 import com.yishuifengxiao.common.crawler.scheduler.SchedulerDecorator;
 import com.yishuifengxiao.common.crawler.scheduler.impl.SimpleScheduler;
+import com.yishuifengxiao.common.crawler.scheduler.remover.DuplicateRemover;
+import com.yishuifengxiao.common.crawler.scheduler.remover.SimpleDuplicateRemover;
 import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
 
 /**
@@ -40,6 +44,14 @@ import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
  */
 public class Crawler implements Task, StatuObserver {
 	private final static Logger log = LoggerFactory.getLogger(Crawler.class);
+	/**
+	 * 该实例的唯一ID
+	 */
+	private final String uuid = UUID.randomUUID().toString();
+	/**
+	 * 该实例的名字
+	 */
+	private String name;
 
 	/**
 	 * 风铃虫的启动时间
@@ -55,49 +67,57 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	private CrawlerRule crawlerRule;
 	/**
-	 * 风铃虫的网页下载器，负责下载网页内容
+	 * 请求去重器
 	 */
-	private Downloader downloader;
-	/**
-	 * 调度器，负责存取将要抓取的请求
-	 */
-	private Scheduler scheduler;
+	private DuplicateRemover duplicateRemover;
 	/**
 	 * 风铃虫处理器，负责解析下载后的网页内容
 	 */
 	private CrawlerProcessor processor;
-	/**
-	 * 链接提取器，负责从内容中解析处理符合要求的链接
-	 */
-	private LinkExtract linkExtract;
-	/**
-	 * 内容解析器，负责从内容中解析出需要提取的内容
-	 */
-	private ContentExtract contentExtract;
-	/**
-	 * 内容输出
-	 */
-	private Pipeline pipeline;
-	/**
-	 * 请求缓存器，负责缓存所有需要抓取的网页的URL(包括历史记录)和已经爬取的url集合
-	 */
-	private RequestCache requestCache;
-	/**
-	 * 风铃虫监听器
-	 */
-	private CrawlerListener crawlerListener;
+
 	/**
 	 * 运行的线程池
 	 */
 	private ThreadPoolExecutor threadPool;
 	/**
-	 * 风铃虫状态观察者
+	 * 风铃虫的网页下载器，负责下载网页内容
 	 */
-	private StatuObserver statuObserver;
+	Downloader downloader;
+	/**
+	 * 调度器，负责存取将要抓取的请求
+	 */
+	Scheduler scheduler;
 
 	/**
-	 * 启动一个一个风铃虫实例
+	 * 链接提取器，负责从内容中解析处理符合要求的链接
 	 */
+	LinkExtract linkExtract;
+	/**
+	 * 内容解析器，负责从内容中解析出需要提取的内容
+	 */
+	ContentExtract contentExtract;
+	/**
+	 * 内容输出
+	 */
+	Pipeline pipeline;
+	/**
+	 * 请求缓存器，负责缓存所有需要抓取的网页的URL(包括历史记录)和已经爬取的url集合
+	 */
+	RequestCache requestCache;
+	/**
+	 * 风铃虫监听器
+	 */
+	CrawlerListener crawlerListener;
+
+	/**
+	 * 风铃虫状态观察者
+	 */
+	StatuObserver statuObserver;
+
+	/**
+	 * 异步启动一个一个风铃虫实例
+	 */
+	@Override
 	public void start() {
 		// 组件初始化
 		this.initComponents();
@@ -111,12 +131,31 @@ public class Crawler implements Task, StatuObserver {
 	};
 
 	/**
+	 * 同步启动一个一个风铃虫实例
+	 */
+
+	public void run() {
+		// 组件初始化
+		this.start();
+		while (this.statu == Statu.RUNNING) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+	};
+
+	/**
 	 * 停止运行<br/>
 	 * 
 	 */
+	@Override
 	public void stop() {
 		statu = Statu.STOP;
-		log.info("The crawler instance {} has been manually stopped", this.getName());
+		log.info("【id:{} , name:{} 】   The crawler instance  has been manually stopped", this.getUuid(),
+				this.getName());
 		this.statuChange();
 	};
 
@@ -125,10 +164,10 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	public void clear() {
 		if (null != this.requestCache) {
-			this.requestCache.remove(this.getName());
+			this.requestCache.remove(this);
 		}
 		if (null != this.scheduler) {
-			this.scheduler.clear();
+			this.scheduler.clear(this);
 		}
 	}
 
@@ -193,7 +232,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param contentExtractRule 内容提取规则
 	 * @return 测试结果
 	 */
-	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentItem contentExtractRule) {
+	public final static SimulatorData testContent(String url, SiteRule siteRule, ExtractRule contentExtractRule) {
 		return new SimpleSimulator().extract(url, siteRule, contentExtractRule, null);
 	}
 
@@ -207,7 +246,7 @@ public class Crawler implements Task, StatuObserver {
 	 * @param downloader         网页下载器
 	 * @return 测试结果
 	 */
-	public final static SimulatorData testContent(String url, SiteRule siteRule, ContentItem contentExtractRule,
+	public final static SimulatorData testContent(String url, SiteRule siteRule, ExtractRule contentExtractRule,
 			Downloader downloader) {
 		return new SimpleSimulator().extract(url, siteRule, contentExtractRule, downloader);
 	}
@@ -215,27 +254,27 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 内容匹配测试
 	 * 
-	 * @param url         测试目标地址
-	 * @param siteRule    站点规则
-	 * @param matcherRule 匹配规则
+	 * @param url      测试目标地址
+	 * @param siteRule 站点规则
+	 * @param content  内容解析规则
 	 * @return 测试结果
 	 */
-	public final static SimulatorData testMatcher(String url, SiteRule siteRule, MatcherRule matcherRule) {
-		return new SimpleSimulator().match(url, siteRule, matcherRule, null);
+	public final static SimulatorData testMatcher(String url, SiteRule siteRule, ContentRule content) {
+		return new SimpleSimulator().match(url, siteRule, content, null);
 	}
 
 	/**
 	 * 内容匹配测试
 	 * 
-	 * @param url         测试目标地址
-	 * @param siteRule    站点规则
-	 * @param matcherRule 匹配规则
-	 * @param downloader  下载器
+	 * @param url        测试目标地址
+	 * @param siteRule   站点规则
+	 * @param content    内容解析规则
+	 * @param downloader 下载器
 	 * @return 测试结果
 	 */
-	public final static SimulatorData testMatcher(String url, SiteRule siteRule, MatcherRule matcherRule,
+	public final static SimulatorData testMatcher(String url, SiteRule siteRule, ContentRule content,
 			Downloader downloader) {
-		return new SimpleSimulator().match(url, siteRule, matcherRule, downloader);
+		return new SimpleSimulator().match(url, siteRule, content, downloader);
 	}
 
 	/**
@@ -301,9 +340,13 @@ public class Crawler implements Task, StatuObserver {
 			this.requestCache = new InMemoryRequestCache();
 		}
 
+		if (this.duplicateRemover == null) {
+			this.duplicateRemover = new SimpleDuplicateRemover();
+		}
+
 		// 资源调度器
 		this.scheduler = new SchedulerDecorator(this.requestCache,
-				this.scheduler == null ? new SimpleScheduler() : this.scheduler);
+				this.scheduler == null ? new SimpleScheduler() : this.scheduler, this.duplicateRemover);
 
 		if (this.crawlerListener == null) {
 			this.crawlerListener = new SimpleCrawlerListener();
@@ -315,8 +358,7 @@ public class Crawler implements Task, StatuObserver {
 		}
 
 		if (this.processor == null) {
-			this.processor = new CrawlerProcessor(this, this, this.downloader, this.scheduler, this.threadPool,
-					this.linkExtract, this.contentExtract, this.pipeline, this.crawlerListener);
+			this.processor = new CrawlerProcessor(this, this.threadPool);
 		}
 
 	}
@@ -514,7 +556,7 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	@Override
 	public long getAllTaskCount() {
-		return this.requestCache.getCount(this.getName());
+		return this.requestCache.getCount(this);
 	}
 
 	/**
@@ -541,11 +583,35 @@ public class Crawler implements Task, StatuObserver {
 
 	/**
 	 * 获取风铃虫实例的名字
+	 * 
+	 * @return 风铃虫实例的名字
 	 */
 	@Override
 	public String getName() {
+		if (StringUtils.isBlank(this.name)) {
+			return this.uuid;
+		}
 
-		return this.scheduler != null ? this.scheduler.getName() : null;
+		return this.name;
+	}
+
+	/**
+	 * 设置风铃虫实例的名字
+	 * 
+	 * @param name 风铃虫实例的名字
+	 * @return 风铃虫实例
+	 */
+	public Crawler setName(String name) {
+		this.name = name;
+		return this;
+	}
+
+	/**
+	 * 该实例唯一的标识符
+	 */
+	@Override
+	public String getUuid() {
+		return this.uuid;
 	}
 
 	/**
@@ -565,14 +631,6 @@ public class Crawler implements Task, StatuObserver {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Crawler [name=").append(this.getName()).append(",scheduler=").append(scheduler.getName())
-				.append("]");
-		return builder.toString();
-	}
-
-	@Override
 	public void update(Task task, Statu statu) {
 		this.statu = statu;
 		this.statuChange();
@@ -580,6 +638,37 @@ public class Crawler implements Task, StatuObserver {
 		if (Statu.STOP == statu) {
 			this.downloader.close();
 		}
+	}
+
+	/**
+	 * 获取请求去重器
+	 * 
+	 * @return 请求去重器
+	 */
+	public DuplicateRemover getDuplicateRemover() {
+		return duplicateRemover;
+	}
+
+	/**
+	 * 设置请求去重器
+	 * 
+	 * @param duplicateRemover 请求去重器
+	 * @return
+	 */
+	public Crawler setDuplicateRemover(DuplicateRemover duplicateRemover) {
+		this.duplicateRemover = duplicateRemover;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Crawler [uuid=");
+		builder.append(uuid);
+		builder.append(", name=");
+		builder.append(name);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

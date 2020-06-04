@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 属性提取规则
- *
+ * 属性提取规则<br/>
+ * 定义了如何提取数据
+ * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
@@ -23,7 +24,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class FieldExtractRule implements Serializable {
+public class ExtractFieldRule implements Serializable {
 
 	/**
 	 * 

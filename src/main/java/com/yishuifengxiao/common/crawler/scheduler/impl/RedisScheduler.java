@@ -1,11 +1,11 @@
 package com.yishuifengxiao.common.crawler.scheduler.impl;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import com.yishuifengxiao.common.crawler.Task;
 import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
+import com.yishuifengxiao.common.crawler.domain.entity.Request;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 
 /**
@@ -17,44 +17,33 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  */
 public class RedisScheduler implements Scheduler {
 
-	private String name;
-
 	private RedisTemplate<String, Object> redisTemplate;
 
 	@Override
-	public void push(String... urls) {
-		if (null != urls) {
-			for (String url : urls) {
-				this.getOperation().add(url);
-			}
-		}
+	public void push(final Task task, Request request) {
+		this.getOperation(task).add(request);
 
 	}
 
 	@Override
-	public String poll() {
+	public Request poll(final Task task) {
 
-		return (String) this.getOperation().pop();
+		return (Request) this.getOperation(task).pop();
 	}
 
-	
 	@Override
-	public void clear() {
-		this.getOperation().expire(1L, TimeUnit.MILLISECONDS);
-		
-	}
-	
-	@Override
-	public String getName() {
-		return this.name;
+	public void clear(final Task task) {
+
+		this.redisTemplate.delete(this.getKey(task));
+
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	private BoundSetOperations<String, Object> getOperation(final Task task) {
+		return redisTemplate.boundSetOps(this.getKey(task));
 	}
 
-	private BoundSetOperations<String, Object> getOperation() {
-		return redisTemplate.boundSetOps(CrawlerConstant.WAIT_DOWN + this.name);
+	private String getKey(final Task task) {
+		return CrawlerConstant.WAIT_DOWN + task.getName();
 	}
 
 	public RedisTemplate<String, Object> getRedisTemplate() {
@@ -65,11 +54,8 @@ public class RedisScheduler implements Scheduler {
 		this.redisTemplate = redisTemplate;
 	}
 
-	public RedisScheduler(String name, RedisTemplate<String, Object> redisTemplate) {
-		this.name = name;
+	public RedisScheduler(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 	}
-
-
 
 }

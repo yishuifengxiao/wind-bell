@@ -20,9 +20,14 @@ public final class SiteConstant {
 	public final static long REQUEST_INTERVAL_TIME = 10000L;
 
 	/**
-	 * 默认使用的线程数,默认值为 主机CPU的核心数
+	 * 默认使用的线程数,默认值为 1
 	 */
-	public final static int DEFAULT_THREAD_NUM = Runtime.getRuntime().availableProcessors();
+	public final static int DEFAULT_THREAD_NUM = 1;
+	/**
+	 * 默认的连接超时时间，30000毫秒(30秒)
+	 */
+	public final static int CONNECTION_TIME_OUT = 30000;
+
 	/**
 	 * 连续多长时间没有新的求表明任务已经完成，单位为毫秒,默认值为300000毫秒(300秒)
 	 */
@@ -69,6 +74,15 @@ public final class SiteConstant {
 	 * 页面加载时的超时时间。因为WebDriver会等页面加载完毕再进行后面的操作，所以如果页面超过设置时间依然没有加载完成，那么WebDriver就会抛出异常。单位毫秒。
 	 */
 	public static final long PAGE_LOAD_SCRIPT_TIME_OUT_MILLIS = 30000L;
+	/**
+	 * 默认的请求深度
+	 */
+	public static final long DEFAULT_REQUEST_DEPTH = 0L;
+	
+	/**
+	 * 默认的最大请求深度
+	 */
+	public static final long MAX_REQUEST_DEPTH = 0L;
 	/**
 	 * 浏览器标识符集合
 	 */

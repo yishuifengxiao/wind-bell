@@ -1,6 +1,6 @@
 package com.yishuifengxiao.common.crawler.pipeline;
 
-import com.yishuifengxiao.common.crawler.domain.entity.ResultData;
+import com.yishuifengxiao.common.crawler.domain.entity.CrawlerData;
 
 /**
  * 信息输出器<br/>
@@ -14,7 +14,7 @@ public interface Pipeline {
 	/**
 	 * 输出解析出来的数据
 	 * 
-	 * @param resultData 风铃虫的输出数据
+	 * @param crawlerData 风铃虫的输出数据
 	 */
-	void recieve(final ResultData resultData);
+	void recieve(final CrawlerData crawlerData);
 }

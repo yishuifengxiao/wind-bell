@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.yishuifengxiao.common</groupId>
 	<artifactId>crawler</artifactId>
-	<version>1.2.0</version>
+	<version>BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -60,16 +60,17 @@
 		<junit.version>4.12</junit.version>
 		<swagger.v3.version>1.5.22</swagger.v3.version>
 		<fastjson.version>1.2.62</fastjson.version>
-		<jsoup.version>1.10.3</jsoup.version>
-		<common-tool.version>2.0.2</common-tool.version>
+		<jsoup.version>1.13.1</jsoup.version>
+		<common-tool.version>3.0.0</common-tool.version>
 		<selenium-java.version>3.141.59</selenium-java.version>
+		<htmlcleaner.version>2.24</htmlcleaner.version>
+		<JsoupXpath.version>2.3.2</JsoupXpath.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version><!--$NO-MVN-MAN-VER$ -->
 			<scope>provided</scope>
 		</dependency>
 
@@ -113,10 +114,12 @@
 		</dependency>
 
 		<dependency>
-			<groupId>us.codecraft</groupId>
-			<artifactId>xsoup</artifactId>
-			<version>${xsoup.version}</version>
+			<groupId>cn.wanghaomiao</groupId>
+			<artifactId>JsoupXpath</artifactId>
+			<version>${JsoupXpath.version}</version>
 		</dependency>
+
+
 
 		<dependency>
 			<groupId>org.jsoup</groupId>

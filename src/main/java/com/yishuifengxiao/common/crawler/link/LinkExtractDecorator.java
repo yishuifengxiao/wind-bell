@@ -1,7 +1,5 @@
 package com.yishuifengxiao.common.crawler.link;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -10,9 +8,21 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
-import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
+import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
+import com.yishuifengxiao.common.crawler.extractor.ExtractorFactory;
 import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.AbsoluteLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.HashLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.HttpLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.IllegalLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.RelativeLinkFilter;
+import com.yishuifengxiao.common.crawler.link.filter.impl.ShortLinkFilter;
+import com.yishuifengxiao.common.crawler.macther.MatcherFactory;
+import com.yishuifengxiao.common.crawler.macther.PathMatcher;
+import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 简单链接解析器<br/>
@@ -24,70 +34,91 @@ import com.yishuifengxiao.common.tool.exception.ServiceException;
  * @date 2019年11月26日
  * @version 1.0.0
  */
+@Slf4j
 public class LinkExtractDecorator implements LinkExtract {
 
 	/**
-	 * 链接提取器代理器
+	 * 提取器生成工厂
 	 */
-	private LinkExtract linkExtractProxy;
+	private final ExtractorFactory factory = new ExtractorFactory();
+	/**
+	 * 匹配器工厂
+	 */
+	private final MatcherFactory matcherFactory = new MatcherFactory();
+	/**
+	 * 链接过滤器
+	 */
+	private final BaseLinkFilter linkFilter = this.createLinkFilter();
 
 	private LinkExtract linkExtract;
-	/**
-	 * 链接转换器,将提取的链接统一转成网络地址形式
-	 */
-	private BaseLinkFilter linkFilter;
-	/**
-	 * 链接提取器
-	 */
-	private List<LinkExtractor> linkExtractors;
 
 	@Override
-	public void extract(final Page page) throws ServiceException {
-		//@formatter:off 
+	public void extract(final LinkRule linkRule, final Page page) throws ServiceException {
 
 		// 调用实际处理类对信息进行处理
-		this.linkExtractProxy.extract(page);
+		List<String> links = this.factory.getLinkExtractor().extract(page);
+		// 放入提取出来的链接
+		page.setLinks(links);
 
 		// 自定义解析数据
 		if (this.linkExtract != null) {
-			this.linkExtract.extract(page);
+			this.linkExtract.extract(linkRule, page);
 		}
+		// 当前请求的真实路径
+		String path = StringUtils.isNotBlank(page.getRedirectUrl()) ? page.getRedirectUrl()
+				: page.getRequest().getUrl();
+		// 将链接统一转换成网络地址形式
+		Set<String> urls = page.getLinks().stream().filter(Objects::nonNull).map(t -> linkFilter.doFilter(path, t))
+				.collect(Collectors.toSet());
+		// 过滤出来所有符合要求的连接
+		links = this.fliter(linkRule, path, urls);
+		// 放入提取出来的链接
+		page.setLinks(links);
 
-		// 将提取出来的链接根据链接提取规则过滤
-		List<String> urls = this.fliter(
-				StringUtils.isNotBlank(page.getRedirectUrl()) ? page.getRedirectUrl() : page.getUrl(),
-				new HashSet<>(page.getLinks()));
-		page.setLinks(urls);
-		//@formatter:on  
+		log.debug("【id:{} , name:{} 】 The actual address of request {} is [ {} ], and the extracted link is {}",
+				LocalCrawler.get().getUuid(), LocalCrawler.get().getName(), page.getRequest().getUrl(),
+				page.getRedirectUrl(), page.getLinks());
+		// @formatter:off
+		// @formatter:on
 	}
 
 	/**
 	 * 从所有的超链接里提取出符合配置规则的链接
 	 * 
-	 * @param path 当前正在解析的网页内容的地址
-	 * @param urls 从当前网页内容里提取出来的链接集合
+	 * @param linkRule 链接解析规则
+	 * @param path     当前正在解析的网页内容的地址
+	 * @param urls     从当前网页内容里提取出来的链接集合
 	 * @return
 	 */
-	private List<String> fliter(final String path, Set<String> urls) {
-		//@formatter:off 
-		// 链接统一转换成网络地址形式
-		Set<String> links = urls.parallelStream().filter(Objects::nonNull)
-				.map(t -> linkFilter.doFilter(path, t.toLowerCase())).collect(Collectors.toSet());
-		urls.clear();
-		// 再从转换后的地址里提取出所有符合要求的链接
-		linkExtractors.parallelStream().filter(Objects::nonNull).map(t -> t.extract(new ArrayList<>(links)))
-				.forEach(urls::addAll);
+	private List<String> fliter(final LinkRule linkRule, final String path, Set<String> urls) {
 
-		//@formatter:on  
-		return urls.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
+		List<PathMatcher> matchers = linkRule.getRules().stream().filter(Objects::nonNull)
+				.filter(t -> t.getPattern() != null).map(matcherFactory::getMatcher).collect(Collectors.toList());
+
+		return urls.stream().filter(Objects::nonNull).filter(t -> {
+			return matchers.stream().anyMatch(v -> {
+				return v.match(t);
+			});
+		}).collect(Collectors.toList());
 	}
 
-	public LinkExtractDecorator(LinkExtract linkExtractProxy, LinkExtract linkExtract, BaseLinkFilter linkFilter,
-			List<LinkExtractor> linkExtractors) {
-		this.linkExtractProxy = linkExtractProxy;
+	/**
+	 * 构建链接过滤器链
+	 * 
+	 * @return 链接过滤器链
+	 */
+	private BaseLinkFilter createLinkFilter() {
+		RelativeLinkFilter relativeLinkFilter = new RelativeLinkFilter(null);
+		HashLinkFilter hashLinkFilter = new HashLinkFilter(relativeLinkFilter);
+		AbsoluteLinkFilter absoluteLinkFilter = new AbsoluteLinkFilter(hashLinkFilter);
+		HttpLinkFilter httpLinkFilter = new HttpLinkFilter(absoluteLinkFilter);
+		ShortLinkFilter shortLinkFilter = new ShortLinkFilter(httpLinkFilter);
+		IllegalLinkFilter illegalLinkFilter = new IllegalLinkFilter(shortLinkFilter);
+		return illegalLinkFilter;
+	}
+
+	public LinkExtractDecorator(LinkExtract linkExtract) {
 		this.linkExtract = linkExtract;
-		this.linkFilter = linkFilter;
-		this.linkExtractors = linkExtractors;
 	}
 
 }

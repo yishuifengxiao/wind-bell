@@ -14,11 +14,28 @@ import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
  */
 public interface Task {
 	/**
-	 * 获取任务的名字
+	 * 获取到风铃虫实例的唯一ID
 	 * 
-	 * @return
+	 * @return 实例的唯一ID
+	 */
+	String getUuid();
+
+	/**
+	 * 获取风铃虫实例的名字
+	 * 
+	 * @return 实例的名字
 	 */
 	String getName();
+
+	/**
+	 * 异步启动风铃虫实例
+	 */
+	void start();
+
+	/**
+	 * 停止风铃虫实例
+	 */
+	void stop();
 
 	/**
 	 * 获取任务的状态

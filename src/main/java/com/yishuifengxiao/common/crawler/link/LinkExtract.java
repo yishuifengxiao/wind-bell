@@ -1,6 +1,7 @@
 package com.yishuifengxiao.common.crawler.link;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
+import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 /**
@@ -15,8 +16,9 @@ public interface LinkExtract {
 	/**
 	 * 提取出网页里所有的链接
 	 * 
-	 * @param page 网页对象
+	 * @param linkRule 链接解析规则
+	 * @param page     网页对象
 	 * @throws ServiceException
 	 */
-	void extract(final Page page) throws ServiceException;
+	void extract(final LinkRule linkRule, final Page page) throws ServiceException;
 }

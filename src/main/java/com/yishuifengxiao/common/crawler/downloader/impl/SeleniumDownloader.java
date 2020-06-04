@@ -7,7 +7,7 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
-import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
+import com.yishuifengxiao.common.crawler.domain.entity.Request;
 import com.yishuifengxiao.common.crawler.downloader.BaseDownloader;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
@@ -50,23 +50,25 @@ public class SeleniumDownloader extends BaseDownloader {
 	}
 
 	@Override
-	public Page down(WebDriver driver, String url) throws ServiceException {
-		Page page = new Page(url);
-		try {
-			driver.get(url);
-			// 等待一段时间
-			this.waitRender();
-			// 设置真实的请求地址
-			page.setRedirectUrl(driver.getCurrentUrl());
-			page.setCode(HttpStatus.SC_OK);
-			page.setRawTxt(driver.getPageSource());
-		} catch (Exception e) {
-			log.info("An error occurred while downloading the page {}, the problem is {}", url, e.getMessage());
-			page.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-			page.setRawTxt(e.getMessage());
-		}
+	public Page down(WebDriver driver, final Request request) throws ServiceException {
+		synchronized (SimpleDownloader.class) {
+			Page page = new Page(request);
+			try {
+				driver.get(request.getUrl());
+				// 等待一段时间
+				this.waitRender();
+				// 设置真实的请求地址
+				page.setRedirectUrl(driver.getCurrentUrl());
+				page.setCode(HttpStatus.SC_OK);
+				page.setRawTxt(driver.getPageSource());
+			} catch (Exception e) {
+				log.info("An error occurred while downloading the page {}, the problem is {}", request, e.getMessage());
+				page.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+				page.setRawTxt(e.getMessage());
+			}
 
-		return page;
+			return page;
+		}
 	}
 
 	/**
@@ -86,14 +88,14 @@ public class SeleniumDownloader extends BaseDownloader {
 	}
 
 	@Override
-	protected void preHandle(final SiteRule siteRule, final WebDriver driver) {
+	protected void preHandle(Request request, final WebDriver driver) {
 		if (!hasDone) {
-			if (siteRule.getConnectTimeout() > 0) {
+			if (request.getConnectTimeout() > 0) {
 				// 识别对象时的超时时间。过了这个时间如果对象还没找到的话就会抛出NoSuchElement异常。单位毫秒。
-				driver.manage().timeouts().implicitlyWait(siteRule.getConnectTimeout(), TimeUnit.MILLISECONDS);
+				driver.manage().timeouts().implicitlyWait(request.getConnectTimeout(), TimeUnit.MILLISECONDS);
 			}
 
-			siteRule.getCookiValues().forEach((k, v) -> {
+			request.getCookies().forEach((k, v) -> {
 				driver.manage().addCookie(new Cookie(k, v));
 			});
 			hasDone = true;

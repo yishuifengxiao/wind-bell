@@ -36,7 +36,7 @@ public class HeaderRule implements Serializable {
 	 */
 	@ApiModelProperty("请求头参数的名字,不能为中文")
 	@NotBlank(message = "请求头的名字不能为空")
-	@Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "请求头的名字必须是数字或字母")
+	@Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "请求头的值必须为非中文")
 	private String headerName;
 
 	/**
@@ -44,6 +44,6 @@ public class HeaderRule implements Serializable {
 	 */
 	@ApiModelProperty("请求头参数的值,不能为中文")
 	@NotBlank(message = "请求头的值不能为空")
-	@Pattern(regexp = "^[A-Za-z0-9_-/,]+$", message = "请求头的值必须是数字或字母")
+	@Pattern(regexp = "^[A-Za-z0-9_-/,]+$", message = "请求头的值必须为非中文")
 	private String headerValue;
 }

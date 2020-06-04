@@ -19,8 +19,7 @@ public class SimpleCrawlerListener implements CrawlerListener {
 	}
 
 	@Override
-	public void onDownSuccess(final Task task, final String url, final String redirectUrl, final int code,
-			final String rawTxt) {
+	public void onDownSuccess(final Task task, final Page page) {
 
 	}
 

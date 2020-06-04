@@ -1,6 +1,7 @@
 package com.yishuifengxiao.common.crawler.extractor.content.impl;
 
 import com.yishuifengxiao.common.crawler.domain.constant.NestConstant;
+import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.eunm.Rule;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFactory;
@@ -24,8 +25,8 @@ public class CharsetContentExtractor implements ContentExtractor {
 	}
 
 	@Override
-	public Object extract(String rawText) {
-		String extract = StrategyFactory.get(Rule.XPATH).extract(rawText, XPATH_STR, "");
+	public Object extract(Page page) {
+		String extract = StrategyFactory.get(Rule.XPATH).extract(page.getRawTxt(), XPATH_STR, "");
 
 		return extract;
 	}

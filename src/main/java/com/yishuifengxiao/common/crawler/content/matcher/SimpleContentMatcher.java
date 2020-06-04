@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.eunm.Rule;
 import com.yishuifengxiao.common.crawler.domain.eunm.Type;
-import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
+import com.yishuifengxiao.common.crawler.domain.model.PageRule;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFactory;
 
@@ -17,43 +17,38 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFact
  */
 public class SimpleContentMatcher implements ContentMatcher {
 
-	/**
-	 * 内容匹配规则
-	 */
-	private MatcherRule matcherRule;
-
 	@Override
-	public boolean match(String input) {
+	public boolean match(PageRule pageRule, String input) {
 		if (StringUtils.isBlank(input)) {
 			return false;
 		}
-		if (null == matcherRule || null == matcherRule.getType()) {
+		if (null == pageRule || null == pageRule.getType() || pageRule.getType() == Type.NONE) {
 			return true;
 		}
 
-		String extract = extract(input, matcherRule.getType(), matcherRule.getPattern());
+		String extract = extract(input, pageRule.getType(), pageRule.getPattern());
 		if (StringUtils.isBlank(extract)) {
 			return false;
 		}
 
-		boolean match = StringUtils.isBlank(matcherRule.getTarget());
+		boolean match = StringUtils.isBlank(pageRule.getTarget());
 		if (!match) {
 
-			if (matcherRule.getFuzzy()) {
+			if (pageRule.getFuzzy()) {
 				// 模糊匹配
-				match = matcherRule.getCaseSensitive() ? StringUtils.contains(extract, matcherRule.getTarget())
-						: StringUtils.containsIgnoreCase(extract, matcherRule.getTarget());
+				match = pageRule.getCaseSensitive() ? StringUtils.contains(extract, pageRule.getTarget())
+						: StringUtils.containsIgnoreCase(extract, pageRule.getTarget());
 
 			} else {
 				// 精准匹配
-				match = matcherRule.getCaseSensitive() ? StringUtils.equals(extract, matcherRule.getTarget())
-						: StringUtils.equalsIgnoreCase(extract, matcherRule.getTarget());
+				match = pageRule.getCaseSensitive() ? StringUtils.equals(extract, pageRule.getTarget())
+						: StringUtils.equalsIgnoreCase(extract, pageRule.getTarget());
 
 			}
 
 		}
 
-		return match == matcherRule.getMode();
+		return match == pageRule.getMode();
 	}
 
 	/**
@@ -69,10 +64,6 @@ public class SimpleContentMatcher implements ContentMatcher {
 		Strategy strategy = StrategyFactory.get(Rule.valueOf(type.toString()));
 
 		return strategy.extract(input, pattern, null);
-	}
-
-	public SimpleContentMatcher(MatcherRule matcherRule) {
-		this.matcherRule = matcherRule;
 	}
 
 }

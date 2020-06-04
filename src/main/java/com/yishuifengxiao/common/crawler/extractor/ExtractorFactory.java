@@ -1,6 +1,6 @@
 package com.yishuifengxiao.common.crawler.extractor;
 
-import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
+import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.content.SimpleContentExtractor;
 import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
@@ -23,8 +23,8 @@ public class ExtractorFactory extends AbstractExtractorFactory {
 	 * @return 链接提取器
 	 */
 	@Override
-	public LinkExtractor getLinkExtractor(String regex) {
-		return new SimpleLinkExtractor(regex);
+	public LinkExtractor getLinkExtractor() {
+		return new SimpleLinkExtractor();
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class ExtractorFactory extends AbstractExtractorFactory {
 	 * @return 内容提取器
 	 */
 	@Override
-	public ContentExtractor getContentExtractor(ContentItem contentRule) {
+	public ContentExtractor getContentExtractor(ExtractRule contentRule) {
 		return new SimpleContentExtractor(contentRule);
 	}
 }

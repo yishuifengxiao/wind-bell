@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 import javax.validation.Valid;
@@ -23,13 +24,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 站点规则信息
+ * 站点规则
  * 
  * @author yishui
  * @version 1.0.0
  * @date 2019-11-5
  */
-@ApiModel(value = "站点规则信息")
+@ApiModel(value = "站点规则")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -65,6 +66,11 @@ public class SiteRule implements Serializable {
 	 */
 	@ApiModelProperty("请求的cookie，默认为空")
 	private String cookieValue;
+	/**
+	 * 最大的请求深度，此值为0或负数时表示不进行深度限制，默认不进行深度限制
+	 */
+	@ApiModelProperty("最大的请求深度，此值为0或负数时表示不进行深度限制，默认不进行深度限制")
+	private long maxDepth=SiteConstant.MAX_REQUEST_DEPTH;
 
 	/**
 	 * 失败重试次数，请求失败时重新执行此请求的次数,默认为3
@@ -104,7 +110,7 @@ public class SiteRule implements Serializable {
 	 * <b>默认为false</b>
 	 * </pre>
 	 */
-	@ApiModelProperty(" 确定是否应拒绝相对重定向。 默认为false")
+	@ApiModelProperty("确定是否应拒绝相对重定向。 默认为false")
 	private boolean relativeRedirectsAllowed = false;
 	/**
 	 * <pre>
@@ -128,11 +134,11 @@ public class SiteRule implements Serializable {
 	 * 确定连接建立之前的超时时间（以毫秒为单位）。
 	 * 
 	 * 超时值零被解释为无限超时，负值被解释为未定义（如果适用，则为系统默认值）。
-	 * <b>默认为-1</b>
+	 * <b>默认为30秒(30000毫秒)</b>
 	 * </pre>
 	 */
-	@ApiModelProperty("确定连接建立之前的超时时间（以毫秒为单位），默认为-1")
-	private int connectTimeout = -1;
+	@ApiModelProperty("确定连接建立之前的超时时间（以毫秒为单位），默认为30秒")
+	private int connectTimeout = SiteConstant.CONNECTION_TIME_OUT;
 
 	/**
 	 * <pre>
@@ -187,8 +193,8 @@ public class SiteRule implements Serializable {
 	public Map<String, String> getAllHeaders() {
 		Map<String, String> map = new WeakHashMap<String, String>();
 		if (null != this.headers) {
-			this.headers.parallelStream().filter(t -> t != null).filter(t -> StringUtils.isNotBlank(t.getHeaderName()))
-					.forEach(t -> {
+			this.headers.stream().filter(Objects::nonNull)
+					.filter(t -> StringUtils.isNotBlank(t.getHeaderName())).forEach(t -> {
 						map.put(t.getHeaderName(), t.getHeaderValue());
 					});
 		}

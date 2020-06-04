@@ -24,13 +24,23 @@ public class RelativeLinkFilter extends BaseLinkFilter {
 	public String doFilter(BaseLinkFilter next, String path, String url) {
 
 		if (!StringUtils.startsWithAny(url, RuleConstant.ABSOLUTE_ADDR_LINK, RuleConstant.NETWORK_ADDR_LINK)) {
-
 			// 不是网络地址和绝对地址
-			StringBuffer sb = new StringBuffer(path);
-			if (!StringUtils.endsWith(path, RuleConstant.ABSOLUTE_ADDR_LINK)) {
-				sb.append(RuleConstant.ABSOLUTE_ADDR_LINK);
+			// 提取当前路径中?之前的部分
+			String urlWithNoQuery = StringUtils.substringBefore(path, RuleConstant.QUERY_SEPARATOR);
+			// 去除掉最后的那个/
+			if (StringUtils.endsWith(urlWithNoQuery, RuleConstant.LEFT_SLASH)) {
+				urlWithNoQuery = StringUtils.substringBeforeLast(urlWithNoQuery, RuleConstant.ABSOLUTE_ADDR_LINK);
 			}
-			return sb.append(url).toString();
+			if (StringUtils.countMatches(urlWithNoQuery,
+					RuleConstant.LEFT_SLASH) > RuleConstant.CHILD_PATH_FLAG_COUNT) {
+				// 提取出当前路径的父路径
+				urlWithNoQuery = StringUtils.substringBeforeLast(urlWithNoQuery, RuleConstant.ABSOLUTE_ADDR_LINK);
+			}
+
+			// 凭借出最终路径
+			StringBuffer sb = new StringBuffer(urlWithNoQuery).append(RuleConstant.ABSOLUTE_ADDR_LINK).append(url);
+
+			return sb.toString();
 
 		}
 		return next.doFilter(path, url);

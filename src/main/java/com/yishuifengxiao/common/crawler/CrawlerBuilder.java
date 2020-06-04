@@ -5,22 +5,24 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
-import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
+import com.yishuifengxiao.common.crawler.domain.eunm.Pattern;
 import com.yishuifengxiao.common.crawler.domain.eunm.Type;
-import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
-import com.yishuifengxiao.common.crawler.domain.model.ContentItem;
+import com.yishuifengxiao.common.crawler.domain.model.PageRule;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
-import com.yishuifengxiao.common.crawler.domain.model.FieldExtractRule;
+import com.yishuifengxiao.common.crawler.domain.model.ExtractFieldRule;
+import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
 import com.yishuifengxiao.common.crawler.domain.model.HeaderRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
+import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
 import com.yishuifengxiao.common.crawler.utils.LinkUtils;
 
@@ -35,7 +37,8 @@ public class CrawlerBuilder {
 
 	/**
 	 * 每次请求的间隔时间，单位为毫秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
-	 * 防止因频繁请求而导致服务器封杀
+	 * 防止因频繁请求而导致服务器封杀<br/>
+	 * 默认时间为10000毫秒(10秒)
 	 */
 	private Long interval = SiteConstant.REQUEST_INTERVAL_TIME;
 	/**
@@ -44,7 +47,8 @@ public class CrawlerBuilder {
 	private Long waitTime = SiteConstant.WAIT_TIME_FOR_CLOSE;
 
 	/**
-	 * 风铃虫解析时线程数
+	 * 风铃虫解析时线程数<br/>
+	 * 默认线程数为1
 	 */
 	private Integer threadNum = SiteConstant.DEFAULT_THREAD_NUM;
 
@@ -86,17 +90,21 @@ public class CrawlerBuilder {
 	 * 请求失败时重新执行此请求的次数,默认为3
 	 */
 	private int retryCount = SiteConstant.RETRY_COUNT;
+	/**
+	 * 最大的请求深度，此值为0或负数时表示不进行深度限制，默认不进行深度限制
+	 */
+	private long maxDepth = SiteConstant.MAX_REQUEST_DEPTH;
 
 	/**
 	 * <pre>
 	 * 
 	 * 确定连接建立之前的超时时间（以毫秒为单位）。
 	 * 
-	 * 超时值零被解释为无限超时，负值被解释为未定义（如果适用，则为系统默认值）。
-	 * <b>默认为-1</b>
+	 * 默认的连接超时时间，30000毫秒(30秒)
+	 * 
 	 * </pre>
 	 */
-	private int connectTimeout = -1;
+	private int connectTimeout = SiteConstant.CONNECTION_TIME_OUT;
 
 	/**
 	 * 确定是否应自动处理重定向。 <br/>
@@ -112,6 +120,22 @@ public class CrawlerBuilder {
 	 */
 	private boolean contentCompressionEnabled = true;
 	/**
+	 * 确定用于HTTP状态管理的cookie规范的名称
+	 */
+	private String cookieSpec;
+	/**
+	 * 确定是否应拒绝相对重定向。 默认为false
+	 */
+	private boolean relativeRedirectsAllowed = false;
+	/**
+	 * 确定是否应允许循环重定向，默认为false
+	 */
+	private boolean circularRedirectsAllowed = false;
+	/**
+	 * 确定客户端是否应规范请求中的URI。默认为true
+	 */
+	private boolean normalizeUri = true;
+	/**
 	 * 请求头参数
 	 */
 	private List<HeaderRule> headers = new ArrayList<>();
@@ -123,12 +147,12 @@ public class CrawlerBuilder {
 	/**
 	 * 链接提取规则
 	 */
-	private Set<String> linkRules = new HashSet<>();
+	private Set<MatcherRule> linkRules = new HashSet<>();
 
 	/**
-	 * 内容页规则，多个规则之间用半角逗号隔开
+	 * 内容页地址规则
 	 */
-	private String extractUrl;
+	private MatcherRule contentPageRule;
 
 	/**
 	 * 内容匹配类型
@@ -163,7 +187,7 @@ public class CrawlerBuilder {
 	/**
 	 * 内容提取规则
 	 */
-	private Map<String, ContentItem> extractItems = new HashMap<>();
+	private Map<String, ExtractRule> extractRules = new HashMap<>();
 
 	/**
 	 * 创建一个默认风铃虫规则构建器
@@ -194,17 +218,21 @@ public class CrawlerBuilder {
 		if (crawlerRule.getLink() == null) {
 			throw new IllegalArgumentException("起始链接不能为空");
 		}
+		if (crawlerRule.getRules() == null) {
+			crawlerRule.setRules(new ArrayList<>());
+		}
 
 		CrawlerBuilder crawlerBuilder = new CrawlerBuilder();
 		crawlerBuilder.link(crawlerRule.getLink()).site(crawlerRule.getSite()).content(crawlerRule.getContent())
-				.interval(crawlerRule.getInterval()).waitTime(crawlerRule.getWaitTime())
-				.threadNum(crawlerRule.getThreadNum());
+				.setExtractRules(crawlerRule.getRules()).interval(crawlerRule.getInterval())
+				.waitTime(crawlerRule.getWaitTime()).threadNum(crawlerRule.getThreadNum());
 		return crawlerBuilder;
 	}
 
 	/**
 	 * 获取每次请求的间隔时间，单位为毫秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
-	 * 防止因频繁请求而导致服务器封杀
+	 * 防止因频繁请求而导致服务器封杀<br/>
+	 * 默认时间为10000毫秒(10秒)
 	 * 
 	 * @return 每次请求的间隔时间，单位为毫秒
 	 */
@@ -214,21 +242,20 @@ public class CrawlerBuilder {
 
 	/**
 	 * 设置每次请求的间隔时间，单位为毫秒，间隔时间为0到该值得两倍之间的一个随机数<br/>
-	 * 防止因频繁请求而导致服务器封杀
+	 * 防止因频繁请求而导致服务器封杀,<br/>
+	 * 默认时间为10000毫秒(10秒)
 	 * 
 	 * @param intervalInSeconds 每次请求的间隔时间，单位为毫秒，必须不小于0
 	 * @return
 	 */
 	public CrawlerBuilder interval(long intervalInSeconds) {
-		if (intervalInSeconds < 0) {
-			intervalInSeconds = SiteConstant.REQUEST_INTERVAL_TIME;
-		}
 		this.interval = intervalInSeconds;
 		return this;
 	}
 
 	/**
-	 * 获取超时等待时间，单位为毫秒,默认为300000毫秒(300秒),连续间隔多长时间后没有新的请求任务表明此任务已经结束
+	 * 获取超时等待时间，单位为毫秒,默认为300000毫秒(300秒),连续间隔多长时间后没有新的请求任务表明此任务已经结束<br/>
+	 * 默认为300000毫秒(300秒)
 	 * 
 	 * @return 超时等待时间，单位为毫秒
 	 */
@@ -237,38 +264,34 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 设置超时等待时间，单位为毫秒,默认为300000毫秒(300秒),连续间隔多长时间后没有新的请求任务表明此任务已经结束
+	 * 设置超时等待时间，单位为毫秒,默认为300000毫秒(300秒),连续间隔多长时间后没有新的请求任务表明此任务已经结束<br/>
+	 * 默认为300000毫秒(300秒)
 	 * 
 	 * @param waitTimeInSeconds 超时等待时间，单位为毫秒，必须大于0
 	 * @return
 	 */
 	public CrawlerBuilder waitTime(long waitTimeInSeconds) {
-		if (waitTimeInSeconds <= 0) {
-			waitTimeInSeconds = SiteConstant.WAIT_TIME_FOR_CLOSE;
-		}
 		this.waitTime = waitTimeInSeconds;
 		return this;
 	}
 
 	/**
-	 * 风铃虫解析时线程数
+	 * 风铃虫解析时线程数<br/>
+	 * 默认线程数为1 <br/>
 	 * 
-	 * @return
+	 * @return 解析时线程数
 	 */
 	public int threadNum() {
 		return this.threadNum;
 	}
 
 	/**
-	 * 设置 风铃虫解析时线程数
+	 * 设置 风铃虫解析时线程数 默认线程数为1
 	 * 
 	 * @param threadNum 风铃虫解析时线程数，必须大于0
 	 * @return
 	 */
 	public CrawlerBuilder threadNum(int threadNum) {
-		if (threadNum <= 0) {
-			threadNum = SiteConstant.DEFAULT_THREAD_NUM;
-		}
 		this.threadNum = threadNum;
 		return this;
 	}
@@ -280,10 +303,13 @@ public class CrawlerBuilder {
 	 */
 	public SiteRule site() {
 		return new SiteRule().setUserAgent(this.userAgent).setReferrer(this.referrer).setCacheControl(this.cacheControl)
-				.setCookieValue(this.cookieValue).setFailureMark(this.failureMark).setRetryCount(this.retryCount)
-				.setRedirectsEnabled(this.redirectsEnabled).setConnectTimeout(this.connectTimeout)
-				.setContentCompressionEnabled(this.contentCompressionEnabled).setMaxRedirects(this.maxRedirects)
-				.setInterceptCount(this.interceptCount).setHeaders(this.headers);
+				.setCookieValue(this.cookieValue).setMaxDepth(this.maxDepth).setFailureMark(this.failureMark)
+				.setInterceptCount(this.interceptCount).setRetryCount(this.retryCount)
+				.setRedirectsEnabled(this.redirectsEnabled).setRelativeRedirectsAllowed(this.relativeRedirectsAllowed)
+				.setConnectTimeout(this.connectTimeout).setContentCompressionEnabled(this.contentCompressionEnabled)
+				.setMaxRedirects(this.maxRedirects).setHeaders(this.headers)
+				.setCircularRedirectsAllowed(this.circularRedirectsAllowed).setCookieSpec(this.cookieSpec)
+				.setNormalizeUri(this.normalizeUri);
 	}
 
 	/**
@@ -306,6 +332,97 @@ public class CrawlerBuilder {
 		this.redirectsEnabled(site.isRedirectsEnabled());
 		this.maxRedirects(site.getMaxRedirects());
 		this.contentCompressionEnabled(site.isContentCompressionEnabled());
+		this.maxDepth(site.getMaxDepth());
+		this.circularRedirectsAllowed(site.isCircularRedirectsAllowed());
+		this.cookieSpec(site.getCookieSpec());
+		this.normalizeUri(site.isNormalizeUri());
+		this.relativeRedirectsAllowed(site.isRelativeRedirectsAllowed());
+		return this;
+	}
+
+	/**
+	 * 获取浏览器标识 ，此值为空时表示每次请求都会随机从内置浏览器标识中选择一个
+	 * 
+	 * @return 浏览器标识
+	 */
+	public String userAgent() {
+		return this.userAgent;
+	}
+
+	/**
+	 * 设置浏览器标识
+	 * 
+	 * @param userAgent 浏览器标识，此值为空时表示每次请求都会随机从内置浏览器标识中选择一个
+	 * @return
+	 */
+	public CrawlerBuilder userAgent(String userAgent) {
+		this.userAgent = userAgent;
+		return this;
+	}
+
+	/**
+	 * 获取请求来源页<br/>
+	 * 此值为空时表示由内核智能处理
+	 * 
+	 * @return
+	 */
+	public String referrer() {
+		return this.referrer;
+	}
+
+	/**
+	 * 设置请求来源页<br/>
+	 * 
+	 * @param referrer 请求来源页，此值为空时表示由内核智能处理
+	 * @return
+	 */
+	public CrawlerBuilder referrer(String referrer) {
+		this.referrer = referrer;
+		return this;
+	}
+
+	/**
+	 * 获取请求时携带cookie信息 <br/>
+	 * 此值为空时表示由内核智能处理
+	 * 
+	 * @return 请求时携带cookie信息
+	 */
+	public String cookieValue() {
+		return this.cookieValue;
+	}
+
+	/**
+	 * 设置请求时携带cookie信息
+	 * 
+	 * @param cookieValue 请求时携带cookie信息，此值为空时表示由内核智能处理
+	 * @return
+	 */
+	public CrawlerBuilder cookieValue(String cookieValue) {
+		this.cookieValue = cookieValue;
+
+		return this;
+	}
+
+	/**
+	 * 获取网页缓存策略<br/>
+	 * 默认为 max-age=0
+	 * 
+	 * @return
+	 */
+	public String cacheControl() {
+		return this.cacheControl;
+	}
+
+	/**
+	 * 设置网页缓存策略<br/>
+	 * 默认为 max-age=0
+	 * 
+	 * @param cacheControl 网页缓存策略，默认为 max-age=0
+	 * @return
+	 */
+	public CrawlerBuilder cacheControl(String cacheControl) {
+		this.cacheControl = cacheControl;
+
 		return this;
 	}
 
@@ -393,7 +510,7 @@ public class CrawlerBuilder {
 	 * @return
 	 */
 	public CrawlerBuilder interceptCount(int interceptCount) {
-		this.interceptCount = interceptCount < 0 ? 0 : interceptCount;
+		this.interceptCount = interceptCount;
 		return this;
 	}
 
@@ -413,7 +530,27 @@ public class CrawlerBuilder {
 	 * @return
 	 */
 	public CrawlerBuilder retryCount(int retryCount) {
-		this.retryCount = interceptCount < 0 ? SiteConstant.INTERCEPT_RETRY_COUNT : interceptCount;
+		this.retryCount = interceptCount;
+		return this;
+	}
+
+	/**
+	 * 获取最大的请求深度
+	 * 
+	 * @return 最大的请求深度
+	 */
+	public long maxDepth() {
+		return maxDepth;
+	}
+
+	/**
+	 * 设置最大的请求深度
+	 * 
+	 * @param maxDepth 最大的请求深度，此值为0或负数时表示不进行深度限制
+	 * @return
+	 */
+	public CrawlerBuilder maxDepth(long maxDepth) {
+		this.maxDepth = maxDepth;
 		return this;
 	}
 
@@ -433,7 +570,7 @@ public class CrawlerBuilder {
 	 * @return
 	 */
 	public CrawlerBuilder connectTimeout(int connectTimeout) {
-		this.connectTimeout = connectTimeout < 0 ? -1 : connectTimeout;
+		this.connectTimeout = connectTimeout < 1 ? SiteConstant.CONNECTION_TIME_OUT : connectTimeout;
 		return this;
 	}
 
@@ -458,6 +595,87 @@ public class CrawlerBuilder {
 	}
 
 	/**
+	 * 获取确定用于HTTP状态管理的cookie规范的名称
+	 * 
+	 * @return 确定用于HTTP状态管理的cookie规范的名称
+	 * 
+	 */
+	public String cookieSpec() {
+		return this.cookieSpec;
+	}
+
+	/**
+	 * 设置 确定用于HTTP状态管理的cookie规范的名称
+	 * 
+	 * @param cookieSpec 确定用于HTTP状态管理的cookie规范的名称
+	 * @return
+	 */
+	public CrawlerBuilder cookieSpec(String cookieSpec) {
+		this.cookieSpec = cookieSpec;
+		return this;
+	}
+
+	/**
+	 * 获取确定是否应拒绝相对重定向
+	 * 
+	 * @return 确定是否应拒绝相对重定向
+	 */
+	public boolean relativeRedirectsAllowed() {
+		return this.relativeRedirectsAllowed;
+	}
+
+	/**
+	 * 设置确定是否应拒绝相对重定向
+	 * 
+	 * @param relativeRedirectsAllowed 确定是否应拒绝相对重定向
+	 * @return
+	 */
+	public CrawlerBuilder relativeRedirectsAllowed(boolean relativeRedirectsAllowed) {
+		this.relativeRedirectsAllowed = relativeRedirectsAllowed;
+		return this;
+	}
+
+	/**
+	 * 获取是否应允许循环重定向
+	 * 
+	 * @return 是否应允许循环重定向
+	 */
+	public boolean circularRedirectsAllowed() {
+		return this.circularRedirectsAllowed;
+	}
+
+	/**
+	 * 设置是否应允许循环重定向
+	 * 
+	 * @param circularRedirectsAllowed 是否应允许循环重定向
+	 * @return
+	 */
+	public CrawlerBuilder circularRedirectsAllowed(boolean circularRedirectsAllowed) {
+		this.circularRedirectsAllowed = circularRedirectsAllowed;
+		return this;
+	}
+
+	/**
+	 * 确定客户端是否应规范请求中的URI
+	 * 
+	 * @return 客户端是否应规范请求中的URI
+	 */
+	public boolean normalizeUri() {
+		return this.normalizeUri;
+	}
+
+	/**
+	 * 设置客户端是否应规范请求中的URI
+	 * 
+	 * @param normalizeUri 客户端是否应规范请求中的URI
+	 * @return
+	 */
+	public CrawlerBuilder normalizeUri(boolean normalizeUri) {
+		this.normalizeUri = normalizeUri;
+		return this;
+	}
+
+	/**
 	 * 获取要遵循的最大重定向数
 	 * 
 	 * @return
@@ -473,7 +691,7 @@ public class CrawlerBuilder {
 	 * @return
 	 */
 	public CrawlerBuilder maxRedirects(int maxRedirects) {
-		this.maxRedirects = maxRedirects <= 0 ? SiteConstant.MAX_REDIRECTS : maxRedirects;
+		this.maxRedirects = maxRedirects;
 		return this;
 	}
 
@@ -524,7 +742,7 @@ public class CrawlerBuilder {
 	 * 
 	 * @return 链接提取规则
 	 */
-	public Set<String> linkRules() {
+	public Set<MatcherRule> linkRules() {
 		return this.linkRules;
 	}
 
@@ -534,7 +752,7 @@ public class CrawlerBuilder {
 	 * @param linkRules 链接提取规则
 	 * @return
 	 */
-	public CrawlerBuilder setLinkRules(Set<String> linkRules) {
+	public CrawlerBuilder setLinkRules(Set<MatcherRule> linkRules) {
 		this.linkRules = null != linkRules ? linkRules : new HashSet<>();
 		return this;
 	}
@@ -545,7 +763,7 @@ public class CrawlerBuilder {
 	 * @param linkRules 链接提取规则
 	 * @return
 	 */
-	public CrawlerBuilder addLinkRules(Set<String> linkRules) {
+	public CrawlerBuilder addLinkRules(Set<MatcherRule> linkRules) {
 		if (null == linkRules) {
 			linkRules = new HashSet<>();
 		}
@@ -559,7 +777,7 @@ public class CrawlerBuilder {
 	 * @param linkRule 链接提取规则
 	 * @return
 	 */
-	public CrawlerBuilder addLinkRule(String linkRule) {
+	public CrawlerBuilder addLinkRule(MatcherRule linkRule) {
 		Assert.notNull(linkRule, "链接提取规则不能为空");
 		this.linkRules.add(linkRule);
 		return this;
@@ -589,40 +807,12 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 获取内容解析规则
+	 * 获取内容页地址规则
 	 * 
-	 * @return 设置内容解析规则
+	 * @return 内容页地址规则
 	 */
 	public ContentRule content() {
-		return new ContentRule().setExtractUrl(this.extractUrl).setMatcher(this.contentmatcher())
-				.setContents(this.extractItems());
-	}
-
-	/**
-	 * 获取内容匹配规则
-	 * 
-	 * @return 内容匹配规则
-	 */
-	public MatcherRule contentmatcher() {
-		return new MatcherRule(this.matcherType, this.matcherPattern, this.matcherTarget, this.matcherMode,
-				this.matcherCaseSensitive, this.matcherFuzzy);
-	}
-
-	/**
-	 * 设置内容匹配规则
-	 * 
-	 * @param contentmatcher 内容匹配规则
-	 * @return
-	 */
-	public CrawlerBuilder contentmatcher(MatcherRule contentmatcher) {
-		contentmatcher = null == contentmatcher ? new MatcherRule() : contentmatcher;
-		this.matcherType(contentmatcher.getType());
-		this.matcherPattern(contentmatcher.getPattern());
-		this.matcherTarget(contentmatcher.getTarget());
-		this.matcherMode(contentmatcher.getMode());
-		this.matcherCaseSensitive(contentmatcher.getCaseSensitive());
-		this.matcherFuzzy(contentmatcher.getFuzzy());
-		return this;
+		return new ContentRule().setContentPageRule(this.contentPageRule).setPageRule(this.pageRule());
 	}
 
 	/**
@@ -633,31 +823,57 @@ public class CrawlerBuilder {
 	 */
 	public CrawlerBuilder content(ContentRule content) {
 		Assert.notNull(content, "内容提取规则不能为空");
-		this.extractUrl(content.getExtractUrl());
-		this.contentmatcher(content.getMatcher());
-		this.setExtractItems(content.getContents());
+		this.contentPageRule(content.getContentPageRule());
+		this.pageRule(content.getPageRule());
 		return this;
 	}
 
 	/**
-	 * 获取内容页规则<br/>
-	 * 多个规则之间用半角逗号隔开
+	 * 获取内容匹配规则
 	 * 
-	 * @return 内容页规则
+	 * @return 内容匹配规则
 	 */
-	public String extractUrl() {
-		return this.extractUrl;
+	public PageRule pageRule() {
+		return new PageRule(this.matcherType, this.matcherPattern, this.matcherTarget, this.matcherMode,
+				this.matcherCaseSensitive, this.matcherFuzzy);
 	}
 
 	/**
-	 * 设置内容页规则<br/>
-	 * 多个规则之间用半角逗号隔开
+	 * 设置内容匹配规则
 	 * 
-	 * @param extractUrl 内容页规则 ，多个规则之间用半角逗号隔开
+	 * @param pageRule 内容匹配规则
 	 * @return
 	 */
-	public CrawlerBuilder extractUrl(String extractUrl) {
-		this.extractUrl = extractUrl;
+	public CrawlerBuilder pageRule(PageRule pageRule) {
+		pageRule = null == pageRule ? new PageRule() : pageRule;
+		this.matcherType(pageRule.getType());
+		this.matcherPattern(pageRule.getPattern());
+		this.matcherTarget(pageRule.getTarget());
+		this.matcherMode(pageRule.getMode());
+		this.matcherCaseSensitive(pageRule.getCaseSensitive());
+		this.matcherFuzzy(pageRule.getFuzzy());
+		return this;
+	}
+
+	/**
+	 * 获取内容页地址规则<br/>
+	 * 多个规则之间用半角逗号隔开
+	 * 
+	 * @return 内容页地址规则
+	 */
+	public MatcherRule contentPageRule() {
+		return this.contentPageRule;
+	}
+
+	/**
+	 * 设置内容页地址规则<br/>
+	 * 多个规则之间用半角逗号隔开
+	 * 
+	 * @param contentPageRules 内容页地址规则 ，多个规则之间用半角逗号隔开
+	 * @return
+	 */
+	public CrawlerBuilder contentPageRule(MatcherRule contentPageRule) {
+		this.contentPageRule = contentPageRule;
 		return this;
 	}
 
@@ -782,98 +998,12 @@ public class CrawlerBuilder {
 	}
 
 	/**
-	 * 获取浏览器标识 ，此值为空时表示每次请求都会随机从内置浏览器标识中选择一个
-	 * 
-	 * @return 浏览器标识
-	 */
-	public String userAgent() {
-		return this.userAgent;
-	}
-
-	/**
-	 * 设置浏览器标识
-	 * 
-	 * @param userAgent 浏览器标识，此值为空时表示每次请求都会随机从内置浏览器标识中选择一个
-	 * @return
-	 */
-	public CrawlerBuilder userAgent(String userAgent) {
-		this.userAgent = userAgent;
-		return this;
-	}
-
-	/**
-	 * 获取请求来源页<br/>
-	 * 此值为空时表示由内核智能处理
-	 * 
-	 * @return
-	 */
-	public String referrer() {
-		return this.referrer;
-	}
-
-	/**
-	 * 设置请求来源页<br/>
-	 * 
-	 * @param referrer 请求来源页，此值为空时表示由内核智能处理
-	 * @return
-	 */
-	public CrawlerBuilder referrer(String referrer) {
-		this.referrer = referrer;
-		return this;
-	}
-
-	/**
-	 * 获取请求时携带cookie信息 <br/>
-	 * 此值为空时表示由内核智能处理
-	 * 
-	 * @return 请求时携带cookie信息
-	 */
-	public String cookieValue() {
-		return this.cookieValue;
-	}
-
-	/**
-	 * 设置请求时携带cookie信息
-	 * 
-	 * @param cookieValue 请求时携带cookie信息，此值为空时表示由内核智能处理
-	 * @return
-	 */
-	public CrawlerBuilder cookieValue(String cookieValue) {
-		this.cookieValue = cookieValue;
-
-		return this;
-	}
-
-	/**
-	 * 获取网页缓存策略<br/>
-	 * 默认为 max-age=0
-	 * 
-	 * @return
-	 */
-	public String cacheControl() {
-		return this.cacheControl;
-	}
-
-	/**
-	 * 设置网页缓存策略<br/>
-	 * 默认为 max-age=0
-	 * 
-	 * @param cacheControl 网页缓存策略，默认为 max-age=0
-	 * @return
-	 */
-	public CrawlerBuilder cacheControl(String cacheControl) {
-		this.cacheControl = cacheControl;
-
-		return this;
-	}
-
-	/**
 	 * 获取所有的内容提取规则
 	 * 
 	 * @return 所有的内容提取规则
 	 */
-	public List<ContentItem> extractItems() {
-		return this.extractItems.values().stream().collect(Collectors.toList());
+	public List<ExtractRule> extractRules() {
+		return this.extractRules.values().stream().collect(Collectors.toList());
 	}
 
 	/**
@@ -882,10 +1012,10 @@ public class CrawlerBuilder {
 	 * @param list 内容提取规则
 	 * @return
 	 */
-	public CrawlerBuilder addExtractItems(List<ContentItem> list) {
+	public CrawlerBuilder addExtractRules(List<ExtractRule> list) {
 		if (null != list) {
-			list.parallelStream().filter(t -> null != t && StringUtils.isNotBlank(t.getFiledName()))
-					.forEach(this::addExtractItem);
+			list.stream().filter(Objects::nonNull).filter(t -> StringUtils.isNotBlank(t.getCode()))
+					.forEach(this::addExtractRule);
 		}
 
 		return this;
@@ -898,11 +1028,9 @@ public class CrawlerBuilder {
 	 * @param list 内容提取规则
 	 * @return
 	 */
-	public CrawlerBuilder setExtractItems(List<ContentItem> list) {
-		if (null != list) {
-			this.extractItems.clear();
-			this.addExtractItems(list);
-		}
+	public CrawlerBuilder setExtractRules(List<ExtractRule> list) {
+		this.extractRules.clear();
+		this.addExtractRules(list);
 		return this;
 	}
 
@@ -912,21 +1040,21 @@ public class CrawlerBuilder {
 	 * @param key 内容提取规则的编码获取
 	 * @return 内容提取规则
 	 */
-	public ContentItem extractItem(String key) {
+	public ExtractRule extractRule(String key) {
 		Assert.notNull(key, "内容提取规则的编码不能为空");
-		return this.extractItems.get(key);
+		return this.extractRules.get(key);
 	}
 
 	/**
 	 * 增加内容提取规则
 	 * 
-	 * @param contentItem 内容提取规则
+	 * @param extractRule 内容提取规则
 	 * @return
 	 */
-	public CrawlerBuilder addExtractItem(ContentItem contentItem) {
-		Assert.notNull(contentItem, "内容提取规则不能为空");
-		Assert.notNull(contentItem.getFiledName(), "内容提取规则的编码不能为空");
-		this.extractItems.put(contentItem.getFiledName(), contentItem);
+	public CrawlerBuilder addExtractRule(ExtractRule extractRule) {
+		Assert.notNull(extractRule, "内容提取规则不能为空");
+		Assert.notNull(extractRule.getCode(), "内容提取规则的编码不能为空");
+		this.extractRules.put(extractRule.getCode(), extractRule);
 		return this;
 	}
 
@@ -936,11 +1064,11 @@ public class CrawlerBuilder {
 	 * @param key 内容提取规则的编码
 	 * @return 该内容提取规则的提取规则
 	 */
-	public List<FieldExtractRule> extractRule(String key) {
+	public List<ExtractFieldRule> fieldExtractRule(String key) {
 		Assert.notNull(key, "内容提取规则的编码不能为空");
-		ContentItem contentItem = this.extractItem(key);
-		if (null != contentItem) {
-			return contentItem.getRules();
+		ExtractRule extractRule = this.extractRule(key);
+		if (null != extractRule) {
+			return extractRule.getRules();
 		}
 		return null;
 	}
@@ -952,14 +1080,14 @@ public class CrawlerBuilder {
 	 * @param list 该内容提取规则的提取规则
 	 * @return
 	 */
-	public CrawlerBuilder addExtractRules(String key, List<FieldExtractRule> list) {
+	public CrawlerBuilder addFieldExtractRules(String key, List<ExtractFieldRule> list) {
 		Assert.notNull(list, "内容提取规则的提取规则不能为空");
-		ContentItem contentItem = this.extractItem(key);
-		if (null != contentItem) {
-			List<FieldExtractRule> rules = contentItem.getRules();
+		ExtractRule extractRule = this.extractRule(key);
+		if (null != extractRule) {
+			List<ExtractFieldRule> rules = extractRule.getRules();
 			rules.addAll(list);
-			contentItem.setRules(rules);
-			this.addExtractItem(contentItem);
+			extractRule.setRules(rules);
+			this.addExtractRule(extractRule);
 		}
 		return this;
 	}
@@ -971,15 +1099,15 @@ public class CrawlerBuilder {
 	 * @param fieldExtractRule 该内容提取规则的提取规则
 	 * @return
 	 */
-	public CrawlerBuilder addExtractRule(String key, FieldExtractRule fieldExtractRule) {
+	public CrawlerBuilder addExtractRule(String key, ExtractFieldRule fieldExtractRule) {
 		Assert.notNull(fieldExtractRule, "内容提取规则的提取规则不能为空");
 
-		ContentItem contentItem = this.extractItem(key);
-		if (null != contentItem) {
-			List<FieldExtractRule> rules = contentItem.getRules();
+		ExtractRule extractRule = this.extractRule(key);
+		if (null != extractRule) {
+			List<ExtractFieldRule> rules = extractRule.getRules();
 			rules.add(fieldExtractRule);
-			contentItem.setRules(rules);
-			this.addExtractItem(contentItem);
+			extractRule.setRules(rules);
+			this.addExtractRule(extractRule);
 		}
 		return this;
 	}
@@ -991,30 +1119,13 @@ public class CrawlerBuilder {
 	 * @param list 该内容提取规则的提取规则
 	 * @return
 	 */
-	public CrawlerBuilder setExtractRules(String key, List<FieldExtractRule> list) {
-		ContentItem contentItem = this.extractItem(key);
-		if (null != contentItem) {
-			contentItem.setRules(list);
-			this.addExtractItem(contentItem);
+	public CrawlerBuilder setExtractRules(String key, List<ExtractFieldRule> list) {
+		ExtractRule extractRule = this.extractRule(key);
+		if (null != extractRule) {
+			extractRule.setRules(list);
+			this.addExtractRule(extractRule);
 		}
 		return this;
-	}
-
-	/**
-	 * 处理链接提取表达式<br/>
-	 * 
-	 * 将形如 /** 的表达式转换为 包含域名关键字的通配符形式
-	 * 
-	 * @param startUrl 起始链接
-	 * @param pattern  链接提取表达式
-	 * @return
-	 */
-	private String pattern(String startUrl, String pattern) {
-		if (StringUtils.equalsIgnoreCase(pattern, RuleConstant.ANT_MATCH_ALL)) {
-			String shortDomain = LinkUtils.extractShortDomain(startUrl);
-			pattern = new StringBuffer(".+").append(shortDomain).append(".+").toString();
-		}
-		return pattern;
 	}
 
 	/**
@@ -1023,7 +1134,51 @@ public class CrawlerBuilder {
 	 * @return
 	 */
 	public CrawlerRule build() {
+		Assert.notNull(this.startUrl, "起始链接不能为空");
+		// 检查数据，并对数据进行合法性处理
+		this.validate();
 
+		// 检查请求头规则
+		if (null == this.headers) {
+			this.headers = new ArrayList<>();
+		}
+		// 检查请求头规则
+		this.headers = this.headers.stream().filter(Objects::nonNull)
+				.filter(t -> StringUtils.isNotBlank(t.getHeaderName())).collect(Collectors.toList());
+
+		// 检查链接提取规则
+		if (null == this.linkRules) {
+			this.linkRules = new HashSet<>();
+		}
+
+		this.linkRules = this.linkRules.stream().filter(t -> null != t).filter(t -> t.getPattern() != null)
+				.collect(Collectors.toSet());
+
+		if (this.linkRules.size() == 0) {
+			this.addLinkRule(new MatcherRule(Pattern.KEYWORD, LinkUtils.keyword(this.startUrl)));
+		}
+
+		// 检查内容页地址规则
+		if (null == this.contentPageRule) {
+			this.contentPageRule = new MatcherRule(Pattern.KEYWORD, LinkUtils.keyword(this.startUrl));
+		}
+
+		// 检查提取项数据
+		List<ExtractRule> extractRules = this.extractRules().stream().filter(Objects::nonNull)
+				.filter(t -> StringUtils.isNotBlank(t.getCode()))
+				.filter(t -> null != t.getRules() && t.getRules().size() > 0).collect(Collectors.toList());
+
+		this.setExtractRules(extractRules);
+
+		CrawlerRule crawlerRule = new CrawlerRule(this.interval, this.waitTime, this.threadNum, this.site(),
+				this.link(), this.content(), extractRules);
+		return crawlerRule;
+	}
+
+	/**
+	 * 检查数据，并对数据进行合法性处理
+	 */
+	private void validate() {
 		if (null == this.interval || this.interval < 0) {
 			this.interval = SiteConstant.REQUEST_INTERVAL_TIME;
 		}
@@ -1035,38 +1190,25 @@ public class CrawlerBuilder {
 			this.threadNum = SiteConstant.DEFAULT_THREAD_NUM;
 		}
 
-		// 检查请求头规则
-		if (null == this.headers) {
-			this.headers = new ArrayList<>();
+		if (this.maxRedirects <= 0) {
+			this.maxRedirects = SiteConstant.MAX_REDIRECTS;
 		}
 
-		// 检查连接提取规则
-		if (null == this.linkRules) {
-			this.linkRules = new HashSet<>();
+		if (this.interceptCount <= 0) {
+			this.interceptCount = SiteConstant.INTERCEPT_RETRY_COUNT;
 		}
 
-		if (this.linkRules.size() == 0) {
-			this.addLinkRule(RuleConstant.ANT_MATCH_ALL);
-		} else {
-			this.linkRules = this.linkRules.parallelStream().filter(t -> null != t).map(t -> pattern(startUrl, t))
-					.collect(Collectors.toSet());
+		if (this.retryCount <= 0) {
+			this.retryCount = SiteConstant.RETRY_COUNT;
 		}
 
-		// 检查内容页规则
-		if (StringUtils.isBlank(this.extractUrl)) {
-			this.extractUrl = RuleConstant.ANT_MATCH_ALL;
+		if (this.maxDepth <= 0) {
+			this.maxDepth = SiteConstant.MAX_REQUEST_DEPTH;
 		}
 
-		// 检查提取项数据
-		List<ContentItem> contentItems = this.extractItems().parallelStream().filter(t -> null != t)
-				.filter(t -> StringUtils.isNotBlank(t.getFiledName()))
-				.filter(t -> null != t.getRules() && t.getRules().size() > 0).collect(Collectors.toList());
-
-		this.setExtractItems(contentItems);
-
-		CrawlerRule crawlerRule = new CrawlerRule(this.interval, this.waitTime, this.threadNum, this.site(),
-				this.link(), this.content());
-		return crawlerRule;
+		if (this.connectTimeout <= 0) {
+			this.connectTimeout = SiteConstant.CONNECTION_TIME_OUT;
+		}
 	}
 
 	/**
@@ -1080,4 +1222,5 @@ public class CrawlerBuilder {
 
 	private CrawlerBuilder() {
 	}
+
 }

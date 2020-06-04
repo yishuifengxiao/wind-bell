@@ -1,10 +1,16 @@
 package com.yishuifengxiao.common.crawler.cache;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
+
+import com.yishuifengxiao.common.crawler.Task;
+import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
+import com.yishuifengxiao.common.crawler.domain.entity.Request;
 
 /**
- * 基于内存实现的资源缓存器
+ * 基于内存实现的请求任务缓存器
  * 
  * @author yishui
  * @date 2019年11月28日
@@ -12,38 +18,57 @@ import java.util.Set;
  */
 public class InMemoryRequestCache implements RequestCache {
 
-	private final Set<String> cacheSet = new HashSet<>();
+	private final Map<String, Set<Request>> cacheMap = new WeakHashMap<>();
 
 	@Override
-	public synchronized void save(String cacheName, String value) {
-		if (null != value) {
-			cacheSet.add(value);
-		}
+	public synchronized void save(final Task task, Request request) {
+		String cacheName=this.getCacheName(task);
+		Set<Request> set = cacheMap.get(cacheName);
 
+		if (null == set) {
+			set = new HashSet<>();
+		}
+		set.add(request);
+		cacheMap.put(cacheName, set);
 	}
 
 	@Override
-	public boolean lookAndCache(String cacheName, String value) {
-
-		boolean extis = this.exist(cacheName, value);
-		this.save(cacheName, value);
+	public synchronized boolean lookAndCache(final Task task,  Request request) {
+		boolean extis = this.exist(task, request);
+		this.save(task, request);
 		return extis;
 	}
 
 	@Override
-	public boolean exist(String cacheName, String value) {
-		return this.cacheSet.contains(value);
+	public synchronized boolean exist(final Task task, Request request) {
+		String cacheName=this.getCacheName(task);
+		Set<Request> set = cacheMap.get(cacheName);
+		if (null == set) {
+			return false;
+		}
+		return set.contains(request);
 	}
 
 	@Override
-	public synchronized void remove(String cacheName) {
-
-		this.cacheSet.clear();
+	public synchronized void remove(final Task task) {
+		String cacheName=this.getCacheName(task);
+		this.cacheMap.put(cacheName, new HashSet<>());
 	}
 
 	@Override
-	public long getCount(String cacheName) {
-		return this.cacheSet.size();
+	public long getCount(final Task task) {
+		String cacheName=this.getCacheName(task);
+		Set<Request> set = cacheMap.get(cacheName);
+		if (null == set) {
+			return 0;
+		}
+		return set.size();
+	}
+	
+	
+	private String getCacheName(final Task task) {
+		String cacheName = CrawlerConstant.REQUEST_HOSTORY + task.getName();
+		return cacheName;
 	}
 
 }

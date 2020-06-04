@@ -15,14 +15,14 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
+import org.jsoup.Jsoup;
 import org.springframework.util.Assert;
 
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
-import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
+import com.yishuifengxiao.common.crawler.domain.entity.Request;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
@@ -45,36 +45,37 @@ public class SimpleDownloader implements Downloader {
 	private Map<String, String> cookies = null;
 
 	@Override
-	public Page down(final SiteRule siteRule, final String url) throws ServiceException {
-		Page page = new Page(url);
-		Response response = null;
-		try {
-			response = execute(siteRule, url);
-			// 设置真实的请求地址
-			page.setRedirectUrl(response.url().toString());
-			page.setCode(response.statusCode());
-			page.setRawTxt(response.body());
-		} catch (IOException e) {
-			log.info("An error occurred while downloading the page {}, the problem is {}", url, e.getMessage());
-			page.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-			page.setRawTxt(e.getMessage());
+	public Page down(final Request request) throws ServiceException {
+		synchronized (SimpleDownloader.class) {
+			Page page = new Page(request);
+			Response response = null;
+			try {
+				response = execute(request);
+				// 设置真实的请求地址
+				page.setRedirectUrl(response.url().toString());
+				page.setCode(response.statusCode());
+				page.setRawTxt(response.body());
+			} catch (IOException e) {
+				log.info("An error occurred while downloading the page {}, the problem is {}", request, e.getMessage());
+				page.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+				page.setRawTxt(e.getMessage());
+			}
+			return page;
 		}
-		return page;
+
 	}
 
 	/**
 	 * 执行下载请求
 	 * 
-	 * @param siteRule
-	 * @param url
+	 * @param request 当前的下载请求
 	 * @return
 	 * @throws IOException
 	 */
-	private Response execute(SiteRule siteRule, String url) throws IOException {
-		Connection connection = this.connection(url, "get",
-				siteRule.getConnectTimeout() < 0 ? 0 : siteRule.getConnectTimeout(), siteRule.getAutoUserAgent(),
-				StringUtils.isNotBlank(siteRule.getReferrer()) ? siteRule.getReferrer() : url, siteRule.getAllHeaders(),
-				this.cookies);
+	private Response execute(final Request request) throws IOException {
+		Connection connection = this.connection(request.getUrl(), request.getMethod(), request.getConnectTimeout(),
+				request.getUserAgent(), request.getReferrer(), request.getHeaders(),
+				this.cookies == null ? request.getCookies() : this.cookies);
 		Response response = connection.execute();
 		// 替换cookie信息
 		this.cookies = response.cookies();

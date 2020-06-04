@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class ResultData implements Serializable {
+public class CrawlerData implements Serializable {
 	/**
 	 * 
 	 */
@@ -36,22 +36,22 @@ public class ResultData implements Serializable {
 	 */
 	private Map<String, Object> data = new WeakHashMap<>();
 	/**
+	 * 抓取的网页原始文本
+	 */
+	private String rawTxt;
+	/**
 	 * 当前输出数据所属的任务的信息
 	 */
 	private Task task;
 	/**
-	 * 请求网页的地址
+	 * 当前的请求任务信息
 	 */
-	private String url;
+	private Request request;
 
 	/**
 	 * 具备重定向功能的下载器在请求时重定向之后的地址,可能会为空
 	 */
 	private String redirectUrl;
-	/**
-	 * 是否为正常结果，如果为正常解析结果则为true,默认为true
-	 */
-	private boolean normal = true;
 
 	/**
 	 * 获取字符串类型的数据
@@ -136,15 +136,6 @@ public class ResultData implements Serializable {
 	}
 
 	/**
-	 * 获取全部的数据
-	 * 
-	 * @return
-	 */
-	public Map<String, Object> getAllData() {
-		return data;
-	}
-
-	/**
 	 * 判断是否存在某个键的数据
 	 * 
 	 * @param key
@@ -178,7 +169,7 @@ public class ResultData implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	public ResultData addData(Map<String, Object> data) {
+	public CrawlerData addData(Map<String, Object> data) {
 		Assert.notNull(data, "添加的数据不能为空");
 		this.data.putAll(data);
 		return this;
@@ -191,7 +182,7 @@ public class ResultData implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	public ResultData addData(String key, Object data) {
+	public CrawlerData addData(String key, Object data) {
 		this.data.put(key, data);
 		return this;
 	}
@@ -201,14 +192,21 @@ public class ResultData implements Serializable {
 	 * 
 	 * @return
 	 */
-	public ResultData clear() {
+	public CrawlerData clear() {
 		this.data.clear();
 		return this;
 	}
+	
+	/**
+	 * 获取所有的数据
+	 * @return
+	 */
+	public Map<String, Object> getAllData(){
+		return this.data;
+	}
 
-	public ResultData(String url, boolean normal) {
-		this.url = url;
-		this.normal = normal;
+	public CrawlerData(Request request) {
+		this.request = request;
 	}
 
 }

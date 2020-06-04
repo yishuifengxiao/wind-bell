@@ -67,4 +67,17 @@ public final class RuleConstant {
 	 * 哈希链接地址的标志
 	 */
 	public final static String HASH_ADDR = "#";
+
+	/**
+	 * 问号分隔符
+	 */
+	public final static String QUERY_SEPARATOR = "?";
+	/**
+	 * 左斜杠
+	 */
+	public final static String LEFT_SLASH = "/";
+	/**
+	 * 带有子路径的标志
+	 */
+	public final static int CHILD_PATH_FLAG_COUNT = 2;
 }

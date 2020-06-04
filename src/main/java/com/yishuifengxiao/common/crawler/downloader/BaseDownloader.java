@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
-import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
+import com.yishuifengxiao.common.crawler.domain.entity.Request;
 import com.yishuifengxiao.common.tool.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,39 +40,34 @@ public abstract class BaseDownloader implements Downloader {
 	 * 正式下载前的前置操作<br/>
 	 * 可以在此操作中修改 Web浏览器对象，进行属性设置
 	 * 
-	 * @param siteRule 站点规则信息
-	 * @param driver   Web浏览器对象
-	 * @param siteRule 站点规则信息
+	 * @param request 当前的下载请求任务
+	 * @param driver  Web浏览器对象
 	 */
-	protected abstract void preHandle(final SiteRule siteRule, final WebDriver driver);
+	protected abstract void preHandle(final Request request, final WebDriver driver);
 
 	/**
 	 * 执行真正的下载操作
 	 * 
-	 * @param driver Web浏览器对象
-	 * @param url    需要下载的目标网页的网址
+	 * @param driver  Web浏览器对象
+	 * @param request 当前的下载请求任务
 	 * @return
 	 * @throws ServiceException
 	 */
-	protected abstract Page down(WebDriver driver, String url) throws ServiceException;
+	protected abstract Page down(WebDriver driver, final Request request) throws ServiceException;
 
 	@Override
-	public Page down(final SiteRule siteRule, final String url) throws ServiceException {
+	public synchronized Page down(final Request request) throws ServiceException {
 
 		this.initData(SiteConstant.IMPLICITLY_WAIT_MILLIS, SiteConstant.SCRIPT_TIME_OUT_MILLIS,
 				SiteConstant.PAGE_LOAD_SCRIPT_TIME_OUT_MILLIS);
 		// 进行前置操作
-		this.preHandle(siteRule, this.driver);
+		this.preHandle(request, this.driver);
 
-		return this.down(this.driver, url);
+		return this.down(this.driver, request);
 	}
 
 	@Override
 	public void close() {
-
-		if (null != this.driver) {
-			this.driver.close();
-		}
 
 	}
 

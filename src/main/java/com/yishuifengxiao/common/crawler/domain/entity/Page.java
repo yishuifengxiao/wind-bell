@@ -32,9 +32,9 @@ public class Page implements Serializable {
 	private int code;
 
 	/**
-	 * 对应页面的请求信息
+	 * 对应页面的请求任务
 	 */
-	private String url;
+	private Request request;
 	/**
 	 * 具备重定向功能的下载器在请求时重定向之后的地址
 	 */
@@ -50,7 +50,7 @@ public class Page implements Serializable {
 	/**
 	 * 是否跳过该页面的解析
 	 */
-	private boolean isSkip = true;
+	private boolean isSkip = false;
 
 	public int getCode() {
 		return code;
@@ -59,14 +59,6 @@ public class Page implements Serializable {
 	public Page setCode(int code) {
 		this.code = code;
 		return this;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
 	}
 
 	public String getRawTxt() {
@@ -115,7 +107,7 @@ public class Page implements Serializable {
 		if (this.links == null) {
 			this.links = new ArrayList<>();
 		}
-		this.links.addAll(links.parallelStream().filter(t -> StringUtils.isNotBlank(t)).collect(Collectors.toSet()));
+		this.links.addAll(links.stream().filter(t -> StringUtils.isNotBlank(t)).collect(Collectors.toSet()));
 		return this;
 	}
 
@@ -136,10 +128,10 @@ public class Page implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	public Page setResultItem(Map<String, Object> data) {
+	public Page setData(Map<String, Object> data) {
 		Assert.notNull(data, "设置的数据不能为空");
 		this.outData.clear();
-		this.addResultItem(data);
+		this.addData(data);
 		return this;
 	}
 
@@ -149,7 +141,7 @@ public class Page implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	public Page addResultItem(Map<String, Object> data) {
+	public Page addData(Map<String, Object> data) {
 		Assert.notNull(data, "设置的数据不能为空");
 		this.outData.putAll(data);
 		return this;
@@ -180,7 +172,7 @@ public class Page implements Serializable {
 	 * @param value
 	 * @return
 	 */
-	public Page addResultItem(String key, Object value) {
+	public Page addData(String key, Object value) {
 		Assert.notNull(key, "输出结果的键值不能为空");
 		this.outData.put(key, value);
 		return this;
@@ -192,7 +184,7 @@ public class Page implements Serializable {
 	 * @param key 键值
 	 * @return 对应的解析出来的值
 	 */
-	public Object getResultItem(String key) {
+	public Object getData(String key) {
 		Assert.notNull(key, "输出结果的键值不能为空");
 		return this.outData.get(key);
 	}
@@ -203,7 +195,7 @@ public class Page implements Serializable {
 	 * @param key 键值
 	 * @return 包含返回为true,否则为false
 	 */
-	public boolean containResultItem(String key) {
+	public boolean contain(String key) {
 		Assert.notNull(key, "输出结果的键值不能为空");
 		return this.outData.containsKey(key);
 	}
@@ -213,16 +205,24 @@ public class Page implements Serializable {
 	 * 
 	 * @return 该页面里所有提取出来的数据
 	 */
-	public Map<String, Object> getAllResultItem() {
+	public Map<String, Object> getData() {
 		return this.outData;
 	}
 
-	public Page(String url) {
-		this.url = url;
+	public Page(Request request) {
+		this.request = request;
 	}
 
 	public Page() {
 
+	}
+
+	public Request getRequest() {
+		return request;
+	}
+
+	public void setRequest(Request request) {
+		this.request = request;
 	}
 
 }

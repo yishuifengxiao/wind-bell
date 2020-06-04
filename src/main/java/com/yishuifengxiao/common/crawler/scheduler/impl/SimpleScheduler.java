@@ -1,9 +1,10 @@
 package com.yishuifengxiao.common.crawler.scheduler.impl;
 
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.yishuifengxiao.common.crawler.Task;
+import com.yishuifengxiao.common.crawler.domain.entity.Request;
 import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
 
 /**
@@ -14,33 +15,24 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  * @version 1.0.0
  */
 public class SimpleScheduler implements Scheduler {
-	private Queue<String> queue = new ConcurrentLinkedQueue<>();
+	private Queue<Request> queue = new ConcurrentLinkedQueue<>();
 
 	@Override
-	public synchronized void push(String... urls) {
-		if (null != urls) {
-			for (String url : urls) {
-				queue.add(url);
-			}
-		}
+	public synchronized void push(final Task task,Request request) {
+
+		this.queue.add(request);
 
 	}
 
 	@Override
-	public synchronized void clear() {
+	public synchronized void clear(final Task task) {
 		this.queue.clear();
 
 	}
 
 	@Override
-	public synchronized String poll() {
+	public synchronized Request poll(final Task task) {
 		return queue.poll();
-	}
-
-	@Override
-	public String getName() {
-
-		return UUID.randomUUID().toString();
 	}
 
 }
