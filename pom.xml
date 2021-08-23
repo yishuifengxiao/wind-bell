@@ -60,7 +60,7 @@
 		<junit.version>4.12</junit.version>
 		<swagger.v3.version>1.5.22</swagger.v3.version>
 		<fastjson.version>1.2.62</fastjson.version>
-		<jsoup.version>1.13.1</jsoup.version>
+		<jsoup.version>1.14.2</jsoup.version>
 		<common-tool.version>3.0.0</common-tool.version>
 		<selenium-java.version>3.141.59</selenium-java.version>
 		<htmlcleaner.version>2.24</htmlcleaner.version>
