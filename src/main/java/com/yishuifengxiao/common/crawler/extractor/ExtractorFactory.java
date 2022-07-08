@@ -12,14 +12,12 @@ import com.yishuifengxiao.common.crawler.extractor.links.impl.SimpleLinkExtracto
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-6
  */
 public class ExtractorFactory extends AbstractExtractorFactory {
 
 	/**
-	 * 生成链接提取器
+	 * 获取链接提取器
 	 * 
-	 * @param regex 链接的提取规则，正则表达式
 	 * @return 链接提取器
 	 */
 	@Override

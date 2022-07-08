@@ -13,7 +13,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Request;
  * 基于内存实现的请求任务缓存器
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 public class InMemoryRequestCache implements RequestCache {

@@ -10,7 +10,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-5
  */
 public interface LinkExtractor {
 

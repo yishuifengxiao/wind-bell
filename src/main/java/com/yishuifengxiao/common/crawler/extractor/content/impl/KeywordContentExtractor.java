@@ -12,7 +12,6 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFact
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-14
  */
 public class KeywordContentExtractor implements ContentExtractor {
 

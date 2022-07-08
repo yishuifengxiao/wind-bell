@@ -23,15 +23,14 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.impl.XpathSt
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-7
  */
 public class StrategyFactory {
 
 	/**
 	 * 根据规则生成提取策略
 	 * 
-	 * @param rule
-	 * @return
+	 * @param rule 提取类型
+	 * @return 提取策略
 	 */
 	public static Strategy get(Rule rule) {
 		Strategy strategy = null;

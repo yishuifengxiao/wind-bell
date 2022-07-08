@@ -18,7 +18,6 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
  * 此模式下只会包含内部的数据，不会包含外部html
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 public class CssTextStrategy implements Strategy {

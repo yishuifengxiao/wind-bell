@@ -10,7 +10,6 @@ import com.yishuifengxiao.common.crawler.macther.impl.SimplePathMatcher;
  * 匹配器工厂
  * 
  * @author qingteng
- * @date 2020年5月23日
  * @version 1.0.0
  */
 public class MatcherFactory {
@@ -22,7 +21,7 @@ public class MatcherFactory {
 	/**
 	 * 根据链接匹配规则生成对应的匹配器
 	 * 
-	 * @param pattern 链接匹配规则
+	 * @param matcherRule 链接匹配规则
 	 * @return 匹配器
 	 */
 	public PathMatcher getMatcher(MatcherRule matcherRule) {

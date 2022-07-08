@@ -6,7 +6,6 @@ import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
  * 系统占位符替换策略<br/>
  * 将输入数据中的系统占位符<code>[@&#60;yishui>@]</code>替换为指定的字符
  * @author yishui
- * @date 2019年12月11日
  * @version 1.0.0
  */
 public class SystemStrategy extends ReplaceStrategy {

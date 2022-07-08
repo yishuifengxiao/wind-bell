@@ -11,7 +11,7 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
 import com.yishuifengxiao.common.crawler.extractor.content.ContentExtractor;
-import com.yishuifengxiao.common.tool.exception.ServiceException;
+import com.yishuifengxiao.common.tool.exception.CustomException;
 
 /**
  * 默认实现的简单内容解析器<br/>
@@ -19,7 +19,6 @@ import com.yishuifengxiao.common.tool.exception.ServiceException;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-15
  */
 public class SimpleContentExtract implements ContentExtract {
 
@@ -27,7 +26,7 @@ public class SimpleContentExtract implements ContentExtract {
 
 	@Override
 	public void extract(final ContentRule contentRule, final List<ExtractRule> rules, final Page page)
-			throws ServiceException {
+			throws CustomException {
 
 		// 调用内容抽取器进行抽取
 		Map<String, Object> data = this.contentExtractors.stream().filter(Objects::nonNull).collect(

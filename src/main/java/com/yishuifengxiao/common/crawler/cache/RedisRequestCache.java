@@ -7,13 +7,15 @@ import com.yishuifengxiao.common.crawler.Task;
 import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Request;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 基于redis实现的请求记录器
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
+@Slf4j
 public class RedisRequestCache implements RequestCache {
 
 	private RedisTemplate<String, Object> redisTemplate;
@@ -28,8 +30,14 @@ public class RedisRequestCache implements RequestCache {
 
 	@Override
 	public boolean exist(final Task task, Request request) {
-
-		return this.getOps(task).isMember(request);
+		try {
+			return this.getOps(task).isMember(request);
+		} catch (Exception e) {
+			log.debug(
+					"【id:{} , name:{} 】  Determine whether the task request has been executed out of date. The cause of the problem is {}. The request being executed is {}",
+					task.getUuid(), task.getName(), e.getMessage(), request);
+		}
+		return false;
 	}
 
 	@Override

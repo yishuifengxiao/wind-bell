@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.http.HttpStatus;
-
 import com.yishuifengxiao.common.crawler.content.impl.SimpleContentExtract;
 import com.yishuifengxiao.common.crawler.content.matcher.ContentMatcher;
 import com.yishuifengxiao.common.crawler.content.matcher.SimpleContentMatcher;
+import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
@@ -23,7 +22,7 @@ import com.yishuifengxiao.common.crawler.extractor.content.impl.TitleContentExtr
 import com.yishuifengxiao.common.crawler.macther.MatcherFactory;
 import com.yishuifengxiao.common.crawler.macther.PathMatcher;
 import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
-import com.yishuifengxiao.common.tool.exception.ServiceException;
+import com.yishuifengxiao.common.tool.exception.CustomException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
  * 2. 调用真正的内容解析器进行内容解析
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 @Slf4j
@@ -60,17 +58,18 @@ public class ContentExtractDecorator implements ContentExtract {
 	protected ContentExtract contentExtract;
 
 	@Override
-	public void extract(final ContentRule contentRule, final List<ExtractRule> rules, final Page page)
-			throws ServiceException {
+	public synchronized void extract(final ContentRule contentRule, final List<ExtractRule> rules, final Page page)
+			throws CustomException {
 		if (null == page) {
 			return;
 		}
 
-		if (HttpStatus.SC_OK != page.getCode()) {
+		if (CrawlerConstant.SC_OK != page.getCode()) {
 			page.setSkip(true);
 			log.debug(
 					"【id:{} , name:{} 】 The actual address of the page corresponding to request {} is 【 {} 】,and it has a response code of {} and will not extract data from it",
-					LocalCrawler.get().getUuid(), LocalCrawler.get().getName(), page.getRequest().getUrl(),
+					LocalCrawler.get() != null ? LocalCrawler.get().getUuid() : "test",
+					LocalCrawler.get() != null ? LocalCrawler.get().getName() : "test", page.getRequest().getUrl(),
 					page.getCode());
 			return;
 		}
@@ -88,7 +87,8 @@ public class ContentExtractDecorator implements ContentExtract {
 
 		log.debug(
 				"【id:{} , name:{} 】 The actual address of the page corresponding to request {} is 【 {} 】, and the matching result of whether the content page address is satisfied is {}",
-				LocalCrawler.get().getUuid(), LocalCrawler.get().getName(), page.getRequest().getUrl(),
+				LocalCrawler.get() != null ? LocalCrawler.get().getUuid() : "test",
+				LocalCrawler.get() != null ? LocalCrawler.get().getName() : "test", page.getRequest().getUrl(),
 				page.getRedirectUrl(), match);
 
 		page.setSkip(!match);
@@ -98,7 +98,8 @@ public class ContentExtractDecorator implements ContentExtract {
 		}
 
 		log.debug("【id:{} , name:{} 】 The actual address of request {} is 【{}】, and the extracted data is {}",
-				LocalCrawler.get().getUuid(), LocalCrawler.get().getName(), page.getRequest().getUrl(),
+				LocalCrawler.get() != null ? LocalCrawler.get().getUuid() : "test",
+				LocalCrawler.get() != null ? LocalCrawler.get().getName() : "test", page.getRequest().getUrl(),
 				page.getRedirectUrl(), page.getData());
 
 	}
@@ -109,17 +110,19 @@ public class ContentExtractDecorator implements ContentExtract {
 	 * @param rules       内容提取规则
 	 * @param contentRule 内容解析规则
 	 * @param page        网页对象
-	 * @throws ServiceException 解析和提取时可能出现的异常
+	 * @throws CustomException 解析和提取时可能出现的异常
 	 */
 	private void extract(final List<ExtractRule> rules, final ContentRule contentRule, final Page page)
-			throws ServiceException {
+			throws CustomException {
 		// 构造出默认的内容解析器
 		ContentExtract simpleContentExtract = new SimpleContentExtract(this.createContentExtractors(rules));
 		// 内容解析与提取
 		simpleContentExtract.extract(contentRule, rules, page);
 		// 调用用户自定义内容解析器
 		if (null != this.contentExtract) {
-			this.contentExtract.extract(contentRule, rules, page);
+			synchronized (ContentExtractDecorator.class) {
+				this.contentExtract.extract(contentRule, rules, page);
+			}
 		}
 	}
 

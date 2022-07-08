@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
  * 解析结果输出数据
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 @ApiModel(value = "解析结果输出数据")
@@ -56,8 +55,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 获取字符串类型的数据
 	 * 
-	 * @param key
-	 * @return
+	 * @param key 数据的key
+	 * @return 字符串类型的数据
 	 */
 	public String getString(String key) {
 		Assert.notNull(key, "键值不能为空");
@@ -67,8 +66,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 获取int类型的数据
 	 * 
-	 * @param key
-	 * @return
+	 * @param key 数据的key
+	 * @return int类型的数据
 	 */
 	public Integer getInt(String key) {
 		Assert.notNull(key, "键值不能为空");
@@ -82,8 +81,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 获取Float的数据
 	 * 
-	 * @param key
-	 * @return
+	 * @param key 数据的key
+	 * @return Float的数据
 	 */
 	public Float getFloat(String key) {
 		Assert.notNull(key, "键值不能为空");
@@ -97,8 +96,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 获取Double类型的数据
 	 * 
-	 * @param key
-	 * @return
+	 * @param key 数据的key
+	 * @return Double类型的数据
 	 */
 	public Double getDouble(String key) {
 		Assert.notNull(key, "键值不能为空");
@@ -112,8 +111,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 获取Boolean类型的数据
 	 * 
-	 * @param key
-	 * @return
+	 * @param key 数据的key
+	 * @return Boolean类型的数据
 	 */
 	public Object getBoolean(String key) {
 		Assert.notNull(key, "键值不能为空");
@@ -127,8 +126,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 获取Object类型的数据
 	 * 
-	 * @param key
-	 * @return
+	 * @param key 数据的key
+	 * @return Object类型的数据
 	 */
 	public Object getObject(String key) {
 		Assert.notNull(key, "键值不能为空");
@@ -138,8 +137,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 判断是否存在某个键的数据
 	 * 
-	 * @param key
-	 * @return
+	 * @param key 数据的key
+	 * @return 存在返回为true,否则为false
 	 */
 	public boolean extis(String key) {
 		return data.containsKey(key);
@@ -148,7 +147,7 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 数据是否为空
 	 * 
-	 * @return
+	 * @return 若数据为空则返回为true,否则为false
 	 */
 	public boolean isEmpty() {
 		return data == null || data.isEmpty();
@@ -157,7 +156,7 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 数据是否不为空
 	 * 
-	 * @return
+	 * @return 若数据不为空则返回为true,否则为false
 	 */
 	public boolean notEmpty() {
 		return !this.isEmpty();
@@ -166,8 +165,8 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 增加数据
 	 * 
-	 * @param data
-	 * @return
+	 * @param data 待增加的数据
+	 * @return 解析结果输出数据实例
 	 */
 	public CrawlerData addData(Map<String, Object> data) {
 		Assert.notNull(data, "添加的数据不能为空");
@@ -178,9 +177,9 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 增加数据
 	 * 
-	 * @param key
-	 * @param data
-	 * @return
+	 * @param key 待增加的数据的key
+	 * @param data 待增加的数据的值
+	 * @return 解析结果输出数据实例
 	 */
 	public CrawlerData addData(String key, Object data) {
 		this.data.put(key, data);
@@ -190,7 +189,7 @@ public class CrawlerData implements Serializable {
 	/**
 	 * 清空数据
 	 * 
-	 * @return
+	 * @return 解析结果输出数据实例
 	 */
 	public CrawlerData clear() {
 		this.data.clear();
@@ -199,7 +198,7 @@ public class CrawlerData implements Serializable {
 	
 	/**
 	 * 获取所有的数据
-	 * @return
+	 * @return 所有的数据
 	 */
 	public Map<String, Object> getAllData(){
 		return this.data;

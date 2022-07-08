@@ -1,6 +1,7 @@
 package com.yishuifengxiao.common.crawler;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import com.yishuifengxiao.common.crawler.domain.entity.CrawlerRule;
 import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
@@ -9,7 +10,6 @@ import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
  * 风铃虫任务
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 public interface Task {
@@ -40,21 +40,28 @@ public interface Task {
 	/**
 	 * 获取任务的状态
 	 * 
-	 * @return
+	 * @return 任务的状态
 	 */
 	Statu getStatu();
 
 	/**
 	 * 获取任务的定义规则
 	 * 
-	 * @return
+	 * @return 定义规则
 	 */
 	CrawlerRule getCrawlerRule();
 
 	/**
+	 * 获取创建风铃虫实例时传递的额外数据信息
+	 * 
+	 * @return 附带的额外数据信息
+	 */
+	Map<String, Object> getExtra();
+
+	/**
 	 * 获取任务的启动时间
 	 * 
-	 * @return
+	 * @return 任务的启动时间
 	 */
 	LocalDateTime getStartTime();
 
@@ -62,7 +69,7 @@ public interface Task {
 	 * 获取所有的任务总数<br/>
 	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
-	 * @return
+	 * @return 所有的任务总数
 	 */
 	long getAllTaskCount();
 
@@ -70,7 +77,7 @@ public interface Task {
 	 * 获取本实例已经解析成功的网页的数量<br/>
 	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
-	 * @return
+	 * @return 本实例已经解析成功的网页的数量
 	 */
 	long getExtractedTaskCount();
 
@@ -78,7 +85,7 @@ public interface Task {
 	 * 获取本实例已经解析失败的网页的数量<br/>
 	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
-	 * @return
+	 * @return 本实例已经解析失败的网页的数量
 	 */
 	long getFailTaskCount();
 

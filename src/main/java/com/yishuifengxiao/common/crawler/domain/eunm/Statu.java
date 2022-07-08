@@ -4,7 +4,6 @@ package com.yishuifengxiao.common.crawler.domain.eunm;
  * 风铃虫状态
  * 
  * @author yishui
- * @date 2019年11月20日
  * @version 1.0.0
  */
 public enum Statu {

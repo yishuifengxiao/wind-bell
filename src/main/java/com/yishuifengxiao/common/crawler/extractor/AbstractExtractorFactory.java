@@ -9,7 +9,6 @@ import com.yishuifengxiao.common.crawler.extractor.links.LinkExtractor;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-6
  */
 public abstract class AbstractExtractorFactory {
 	/**

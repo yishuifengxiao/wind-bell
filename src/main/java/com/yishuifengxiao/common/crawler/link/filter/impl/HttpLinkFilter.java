@@ -1,7 +1,7 @@
 package com.yishuifengxiao.common.crawler.link.filter.impl;
 
 import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
+import com.yishuifengxiao.common.tool.utils.LinkUtils;
 
 /**
  * 
@@ -10,7 +10,6 @@ import com.yishuifengxiao.common.crawler.utils.LinkUtils;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019/11/20
  */
 public class HttpLinkFilter extends BaseLinkFilter {
 

@@ -4,7 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
-import com.yishuifengxiao.common.crawler.utils.RegexFactory;
+import com.yishuifengxiao.common.tool.utils.RegexUtil;
+
 
 /**
  * 
@@ -14,7 +15,6 @@ import com.yishuifengxiao.common.crawler.utils.RegexFactory;
  * 例如过滤掉空链接、 图片、css、js、字体文件链接等不需要下载的链接
  * 
  * @author yishui
- * @date 2019年12月26日
  * @version 1.0.0
  */
 public class IllegalLinkFilter extends BaseLinkFilter {
@@ -35,7 +35,7 @@ public class IllegalLinkFilter extends BaseLinkFilter {
 		}
 
 		// 图片、css、js、字体文件链接不予处理
-		if (RegexFactory.match(RuleConstant.ILLEGAL_LINKS_SUFFIX, url)) {
+		if (RegexUtil.match(RuleConstant.ILLEGAL_LINKS_SUFFIX, url)) {
 			return null;
 		}
 		return next.doFilter(path, url);

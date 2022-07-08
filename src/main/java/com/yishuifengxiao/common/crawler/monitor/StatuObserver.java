@@ -8,7 +8,6 @@ import com.yishuifengxiao.common.crawler.domain.eunm.Statu;
  * 监控风铃虫状态的变化
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 public interface StatuObserver {

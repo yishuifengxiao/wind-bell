@@ -7,7 +7,6 @@ package com.yishuifengxiao.common.crawler.domain.eunm;
  * 链接匹配模式
  * 
  * @author qingteng
- * @date 2020年5月23日
  * @version 1.0.0
  */
 public enum Pattern {

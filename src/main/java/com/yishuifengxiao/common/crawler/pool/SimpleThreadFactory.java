@@ -8,7 +8,6 @@ import org.apache.commons.lang3.RandomUtils;
  * 线程工厂
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 public class SimpleThreadFactory implements ThreadFactory {

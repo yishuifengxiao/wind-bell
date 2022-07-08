@@ -5,7 +5,7 @@ import java.util.List;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
 import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
-import com.yishuifengxiao.common.tool.exception.ServiceException;
+import com.yishuifengxiao.common.tool.exception.CustomException;
 
 /**
  * 内容解析器<br/>
@@ -22,7 +22,6 @@ import com.yishuifengxiao.common.tool.exception.ServiceException;
  * </pre>
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 public interface ContentExtract {
@@ -33,7 +32,7 @@ public interface ContentExtract {
 	 * @param contentRule 内容解析规则
 	 * @param rules       内容提取规则
 	 * @param page        网页对象
-	 * @throws ServiceException 解析时遇到的异常
+	 * @throws CustomException 解析时遇到的异常
 	 */
-	void extract(final ContentRule contentRule, final List<ExtractRule> rules, final Page page) throws ServiceException;
+	void extract(final ContentRule contentRule, final List<ExtractRule> rules, final Page page) throws CustomException;
 }

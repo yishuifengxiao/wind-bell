@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * 默认实现的风铃虫状态监视器
  * 
  * @author yishui
- * @date 2019年11月29日
  * @version 1.0.0
  */
 @Slf4j

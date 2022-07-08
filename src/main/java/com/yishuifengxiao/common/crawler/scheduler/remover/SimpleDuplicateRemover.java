@@ -10,7 +10,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Request;
  * 简单实现的请求去重器
  * 
  * @author qingteng
- * @date 2020年5月14日
  * @version 1.0.0
  */
 public class SimpleDuplicateRemover implements DuplicateRemover {

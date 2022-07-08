@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
  * 3. 判断资源是否需要存储<br/>
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 @Slf4j
@@ -54,17 +53,23 @@ public class SchedulerDecorator implements Scheduler {
 			return;
 		}
 
-		if (this.duplicateRemover.noDuplicate(task, requestCache, request)) {
+		try {
+			if (this.duplicateRemover.noDuplicate(task, requestCache, request)) {
 
-			// 补全请求信息
-			requestCreater.create(siteRule, request);
-			// 存储到待抓取集合中
-			this.scheduler.push(task, request);
-			
-			log.debug("【id:{} , name:{} 】   Request task {} of instance has been submitted", task.getUuid(),
-					task.getName(), request);
-			
-			this.duplicateRemover.doWhenNoDuplicate(task, requestCache, request);
+				// 补全请求信息
+				requestCreater.create(siteRule, request);
+				// 存储到待抓取集合中
+				this.scheduler.push(task, request);
+
+				log.debug("【id:{} , name:{} 】   Request task {} of instance has been submitted", task.getUuid(),
+						task.getName(), request);
+
+				this.duplicateRemover.doWhenNoDuplicate(task, requestCache, request);
+			}
+		} catch (Exception e) {
+			log.debug(
+					"【id:{} , name:{} 】   Scheduler encountered a problem while processing the load scheduling task of request {}. The cause of the problem is {}",
+					task.getUuid(), task.getName(), request, e.getMessage());
 		}
 
 	}

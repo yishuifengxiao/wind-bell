@@ -23,7 +23,6 @@ import com.yishuifengxiao.common.crawler.pool.SimpleThreadFactory;
  * 负责调用线程池使用多线程进行风铃虫任务处理
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 public class CrawlerProcessor extends Thread {
@@ -60,6 +59,11 @@ public class CrawlerProcessor extends Thread {
 	final Crawler crawler;
 
 	/**
+	 * 风铃虫的状态：运行中、停止、暂停
+	 */
+	private Statu statu = Statu.STOP;
+
+	/**
 	 * 执行任务的线程池
 	 */
 	private ThreadPoolExecutor threadPool;
@@ -93,27 +97,31 @@ public class CrawlerProcessor extends Thread {
 
 	@Override
 	public void run() {
+
+		// 更新运行状态
+		this.update(Statu.RUNNING);
+
 		log.debug("【id:{} , name:{} 】  The instance is started successfully. Start to grab data",
 				this.crawler.getUuid(), this.crawler.getName());
-		
+
 		// 运行状态监控检查
 		this.monitor.setDaemon(true);
 		this.monitor.start();
-		
+
 		// 开始任务
 		while (true) {
-
-			if (this.checkStat()) {
-				// 检测到任务已经完成
-				break;
-			}
 
 			// 先休眠一段时间
 			long sleepSeconds = this.sleep();
 
-			if (this.crawler.getStatu() == Statu.STOP) {
+			if (this.getStatu() == Statu.STOP) {
 				// 风铃虫处于停止状态
-				// 如果风铃虫被手动停止就中断线程
+				break;
+			}
+
+			if (this.checkStat()) {
+				// 爬取任务是否已经完成
+				this.kill();
 				break;
 			}
 
@@ -231,9 +239,38 @@ public class CrawlerProcessor extends Thread {
 	}
 
 	/**
+	 * 设置实例的状态
+	 * 
+	 * @param statu 实例的状态
+	 */
+	private synchronized void update(Statu statu) {
+		this.statu = statu;
+		// 通知状态发生变化了
+		this.crawler.statuObserver.update(this.crawler, statu);
+	}
+
+	/**
+	 * 停止实例的运行
+	 */
+	synchronized void kill() {
+		this.statu = Statu.STOP;
+		// 如果风铃虫被手动停止就中断线程
+		this.threadPool.shutdown();
+	}
+
+	/**
+	 * 获取实例的状态
+	 * 
+	 * @return 实例的状态
+	 */
+	protected synchronized Statu getStatu() {
+		return this.statu;
+	}
+
+	/**
 	 * 获取到风铃虫线程池里最大活跃的线程数
 	 * 
-	 * @return
+	 * @return 风铃虫线程池里最大活跃的线程数
 	 */
 	protected int getActiveCount() {
 		return this.threadPool == null ? 0 : this.threadPool.getActiveCount();
@@ -245,13 +282,18 @@ public class CrawlerProcessor extends Thread {
 	 * @return 当处理器线程为活着且线程池里的活跃线程数大于0时才认为任务没有处理完
 	 */
 	protected boolean isActive() {
-		return this.isAlive() && !this.threadPool.isShutdown() && !this.threadPool.isTerminated();
+
+		if (this.getStatu() == Statu.RUNNING) {
+			return true;
+		}
+
+		return !this.threadPool.isTerminated();
 	}
 
 	/**
 	 * 获取线程池
 	 * 
-	 * @return
+	 * @return 线程池实例
 	 */
 	public ThreadPoolExecutor getThreadPool() {
 		return threadPool;
@@ -293,23 +335,26 @@ public class CrawlerProcessor extends Thread {
 		public void run() {
 
 			while (true) {
+
+				try {
+					Thread.sleep(1000 * 30);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
 				/*
 				 * <pre> 两种情况下认为风铃虫任务已经完成 <br/> 1. 任务处理器中线程池中的活跃线程数为0且任务管理器线程处于非活跃状态 <br/> 2.
 				 * 风铃虫的状态为停止状态 </pre>
 				 */
 				if ((!CrawlerProcessor.this.isActive())) {
-					CrawlerProcessor.this.crawler.statuObserver.update(CrawlerProcessor.this.crawler, Statu.STOP);
+
 					log.info("【id:{} , name:{} 】 The running state of the instance changes to {}",
 							CrawlerProcessor.this.crawler.getUuid(), CrawlerProcessor.this.crawler.getName(),
 							Statu.STOP);
+					CrawlerProcessor.this.update(Statu.STOP);
 					break;
 				}
 
-				try {
-					Thread.sleep(1000 * 60);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 
 		}

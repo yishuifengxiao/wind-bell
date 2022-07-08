@@ -11,7 +11,6 @@ import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
  * 该过滤器最好作用在相对链接过滤器的前面
  * 
  * @author yishui
- * @date 2019年12月27日
  * @version 1.0.0
  */
 public class HashLinkFilter extends BaseLinkFilter {

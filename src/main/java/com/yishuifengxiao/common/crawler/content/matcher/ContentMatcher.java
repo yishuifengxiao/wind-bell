@@ -8,7 +8,6 @@ import com.yishuifengxiao.common.crawler.domain.model.PageRule;
  * 即网页地址和网页内容均符合此匹配规则才会进行接下来的内容提取工作
  * 
  * @author yishui
- * @date 2020年01月09日
  * @version 1.0.0
  */
 public interface ContentMatcher {

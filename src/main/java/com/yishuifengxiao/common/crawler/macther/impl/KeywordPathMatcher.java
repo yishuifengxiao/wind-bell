@@ -9,7 +9,6 @@ import com.yishuifengxiao.common.crawler.macther.PathMatcher;
  * 被匹配的目标里必须包含指定的关键词
  * 
  * @author qingteng
- * @date 2020年5月23日
  * @version 1.0.0
  */
 public class KeywordPathMatcher implements PathMatcher {

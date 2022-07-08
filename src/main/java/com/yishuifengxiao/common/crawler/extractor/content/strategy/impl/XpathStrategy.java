@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-7
  */
 @Slf4j
 public class XpathStrategy implements Strategy {

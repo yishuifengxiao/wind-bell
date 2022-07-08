@@ -28,7 +28,6 @@ import lombok.experimental.Accessors;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-5
  */
 @ApiModel(value = "站点规则")
 @AllArgsConstructor
@@ -207,7 +206,7 @@ public class SiteRule implements Serializable {
 	/**
 	 * 获取浏览器标识符
 	 * 
-	 * @return
+	 * @return 浏览器标志
 	 */
 	@ApiModelProperty(hidden = true)
 	@JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)

@@ -12,7 +12,6 @@ import com.yishuifengxiao.common.crawler.downloader.Downloader;
  * 用于测试风铃虫规则是否配置正确，请勿将此作为正式的批量抓取工具
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 public interface Simulator {

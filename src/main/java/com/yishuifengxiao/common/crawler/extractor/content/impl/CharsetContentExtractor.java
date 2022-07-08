@@ -11,7 +11,6 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFact
  * 提取网页中meta 区域中的keywords信息
  * 
  * @author yishui
- * @date 2019年12月26日
  * @version 1.0.0
  */
 public class CharsetContentExtractor implements ContentExtractor {

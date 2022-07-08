@@ -12,7 +12,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Request;
  * 去除URL上所有的查询参数的简单去重器
  * 
  * @author qingteng
- * @date 2020年5月15日
  * @version 1.0.0
  */
 public class HostDuplicateRemover implements DuplicateRemover {

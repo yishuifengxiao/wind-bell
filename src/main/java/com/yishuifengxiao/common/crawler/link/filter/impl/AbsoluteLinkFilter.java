@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
 import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
+import com.yishuifengxiao.common.tool.utils.LinkUtils;
 
 /**
  * 绝对地址链接过滤器<br/>
@@ -12,7 +12,6 @@ import com.yishuifengxiao.common.crawler.utils.LinkUtils;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019/11/20
  */
 public class AbsoluteLinkFilter extends BaseLinkFilter {
 

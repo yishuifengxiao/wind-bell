@@ -13,7 +13,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Request;
  * 4 查询指定请求任务缓存集合里的请求任务数量
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 public interface RequestCache {

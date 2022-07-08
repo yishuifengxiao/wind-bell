@@ -10,7 +10,6 @@ import com.yishuifengxiao.common.crawler.link.filter.impl.NothingLinkFilter;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019/11/20
  */
 public abstract class BaseLinkFilter {
 	/**
@@ -23,7 +22,7 @@ public abstract class BaseLinkFilter {
 	 * 
 	 * @param path 当前正在解析的网页的地址
 	 * @param url  当前网页中提取出来的需要处理的网页地址
-	 * @return
+	 * @return 网络地址形式的链接地址
 	 */
 	public String doFilter(String path, String url) {
 		if (!StringUtils.isNoneBlank(path, url)) {
@@ -38,7 +37,7 @@ public abstract class BaseLinkFilter {
 	 * @param next 下一个过滤器
 	 * @param path 当前正在解析的网页的地址
 	 * @param url  当前网页中提取出来的需要处理的网页地址
-	 * @return
+	 * @return 网络地址形式的链接地址
 	 */
 	protected abstract String doFilter(BaseLinkFilter next, String path, String url);
 

@@ -5,7 +5,6 @@ package com.yishuifengxiao.common.crawler.macther;
  * 判断路径于给定的模式是否匹配
  * 
  * @author yishui
- * @date 2019年11月20日
  * @version 1.0.0
  */
 public interface PathMatcher {

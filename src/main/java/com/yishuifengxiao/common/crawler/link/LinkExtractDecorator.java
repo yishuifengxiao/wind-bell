@@ -20,7 +20,7 @@ import com.yishuifengxiao.common.crawler.link.filter.impl.ShortLinkFilter;
 import com.yishuifengxiao.common.crawler.macther.MatcherFactory;
 import com.yishuifengxiao.common.crawler.macther.PathMatcher;
 import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
-import com.yishuifengxiao.common.tool.exception.ServiceException;
+import com.yishuifengxiao.common.tool.exception.CustomException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
  * 2 从转换后的地址里提取出所有符合要求的链接
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 @Slf4j
@@ -53,7 +52,7 @@ public class LinkExtractDecorator implements LinkExtract {
 	private LinkExtract linkExtract;
 
 	@Override
-	public void extract(final LinkRule linkRule, final Page page) throws ServiceException {
+	public synchronized void extract(final LinkRule linkRule, final Page page) throws CustomException {
 
 		// 调用实际处理类对信息进行处理
 		List<String> links = this.factory.getLinkExtractor().extract(page);
@@ -62,7 +61,11 @@ public class LinkExtractDecorator implements LinkExtract {
 
 		// 自定义解析数据
 		if (this.linkExtract != null) {
-			this.linkExtract.extract(linkRule, page);
+
+			synchronized (LinkExtractDecorator.class) {
+				this.linkExtract.extract(linkRule, page);
+			}
+
 		}
 		// 当前请求的真实路径
 		String path = StringUtils.isNotBlank(page.getRedirectUrl()) ? page.getRedirectUrl()
@@ -76,7 +79,8 @@ public class LinkExtractDecorator implements LinkExtract {
 		page.setLinks(links);
 
 		log.debug("【id:{} , name:{} 】 The actual address of request {} is [ {} ], and the extracted link is {}",
-				LocalCrawler.get().getUuid(), LocalCrawler.get().getName(), page.getRequest().getUrl(),
+				LocalCrawler.get() != null ? LocalCrawler.get().getUuid() : "test",
+				LocalCrawler.get() != null ? LocalCrawler.get().getName() : "test", page.getRequest().getUrl(),
 				page.getRedirectUrl(), page.getLinks());
 		// @formatter:off
 		// @formatter:on

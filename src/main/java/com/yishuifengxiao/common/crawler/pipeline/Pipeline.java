@@ -7,7 +7,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.CrawlerData;
  * 输出解析出来的数据
  * 
  * @author yishui
- * @date 2019年11月20日
  * @version 1.0.0
  */
 public interface Pipeline {

@@ -24,13 +24,13 @@ import com.yishuifengxiao.common.crawler.domain.model.HeaderRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
 import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
+import com.yishuifengxiao.common.tool.utils.LinkUtils;
+
 
 /**
  * 风铃虫规则构建器
  * 
  * @author yishui
- * @date 2019年12月13日
  * @version 1.0.0
  */
 public class CrawlerBuilder {
@@ -246,7 +246,7 @@ public class CrawlerBuilder {
 	 * 默认时间为10000毫秒(10秒)
 	 * 
 	 * @param intervalInSeconds 每次请求的间隔时间，单位为毫秒，必须不小于0
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder interval(long intervalInSeconds) {
 		this.interval = intervalInSeconds;
@@ -268,7 +268,7 @@ public class CrawlerBuilder {
 	 * 默认为300000毫秒(300秒)
 	 * 
 	 * @param waitTimeInSeconds 超时等待时间，单位为毫秒，必须大于0
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder waitTime(long waitTimeInSeconds) {
 		this.waitTime = waitTimeInSeconds;
@@ -289,7 +289,7 @@ public class CrawlerBuilder {
 	 * 设置 风铃虫解析时线程数 默认线程数为1
 	 * 
 	 * @param threadNum 风铃虫解析时线程数，必须大于0
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder threadNum(int threadNum) {
 		this.threadNum = threadNum;
@@ -316,7 +316,7 @@ public class CrawlerBuilder {
 	 * 设置站点配置规则数据
 	 * 
 	 * @param site 站点配置规则数据
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder site(SiteRule site) {
 		Assert.notNull(site, "站点配置规则数据不能为空");
@@ -353,7 +353,7 @@ public class CrawlerBuilder {
 	 * 设置浏览器标识
 	 * 
 	 * @param userAgent 浏览器标识，此值为空时表示每次请求都会随机从内置浏览器标识中选择一个
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder userAgent(String userAgent) {
 		this.userAgent = userAgent;
@@ -364,7 +364,7 @@ public class CrawlerBuilder {
 	 * 获取请求来源页<br/>
 	 * 此值为空时表示由内核智能处理
 	 * 
-	 * @return
+	 * @return 请求来源页
 	 */
 	public String referrer() {
 		return this.referrer;
@@ -374,7 +374,7 @@ public class CrawlerBuilder {
 	 * 设置请求来源页<br/>
 	 * 
 	 * @param referrer 请求来源页，此值为空时表示由内核智能处理
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder referrer(String referrer) {
 		this.referrer = referrer;
@@ -395,7 +395,7 @@ public class CrawlerBuilder {
 	 * 设置请求时携带cookie信息
 	 * 
 	 * @param cookieValue 请求时携带cookie信息，此值为空时表示由内核智能处理
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder cookieValue(String cookieValue) {
 		this.cookieValue = cookieValue;
@@ -407,7 +407,7 @@ public class CrawlerBuilder {
 	 * 获取网页缓存策略<br/>
 	 * 默认为 max-age=0
 	 * 
-	 * @return
+	 * @return 网页缓存策略
 	 */
 	public String cacheControl() {
 		return this.cacheControl;
@@ -418,7 +418,7 @@ public class CrawlerBuilder {
 	 * 默认为 max-age=0
 	 * 
 	 * @param cacheControl 网页缓存策略，默认为 max-age=0
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder cacheControl(String cacheControl) {
 		this.cacheControl = cacheControl;
@@ -439,7 +439,7 @@ public class CrawlerBuilder {
 	 * 增加一组请求头参数
 	 * 
 	 * @param headerRule 请求头参数
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addHeader(HeaderRule headerRule) {
 		Assert.notNull(headerRule, "请求头参数对不能为空");
@@ -451,7 +451,7 @@ public class CrawlerBuilder {
 	 * 增加一组请求头参数
 	 * 
 	 * @param list 请求头参数
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addHeaders(List<HeaderRule> list) {
 		this.headers.addAll(null != list ? list : new ArrayList<>());
@@ -462,7 +462,7 @@ public class CrawlerBuilder {
 	 * 清空原始值后再设置请求头参数
 	 * 
 	 * @param list 请求头参数
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder setHeaders(List<HeaderRule> list) {
 		this.headers = null != list ? list : new ArrayList<>();
@@ -484,7 +484,7 @@ public class CrawlerBuilder {
 	 * 下载内容里包含此值时表示被服务器拦截，使用正则表达式，如果为空则不进行此校验
 	 * 
 	 * @param failureMark 失败标志，此值为空时表示不开启此功能
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder failureMark(String failureMark) {
 		this.failureMark = failureMark;
@@ -507,7 +507,7 @@ public class CrawlerBuilder {
 	 * 连续多次在下载内容中获取到失败标识时的重试此次，超过此次数会关闭该风铃虫实例，默认为5
 	 * 
 	 * @param interceptCount 拦截次数阀域值，此值小于1时表示不开启此功能
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder interceptCount(int interceptCount) {
 		this.interceptCount = interceptCount;
@@ -527,7 +527,7 @@ public class CrawlerBuilder {
 	 * 设置请求失败时的重试次数
 	 * 
 	 * @param retryCount 请求失败时的重试次数,连续多次在下载内容中获取到失败标识时的重试此次，默认为5
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder retryCount(int retryCount) {
 		this.retryCount = interceptCount;
@@ -547,7 +547,7 @@ public class CrawlerBuilder {
 	 * 设置最大的请求深度
 	 * 
 	 * @param maxDepth 最大的请求深度，此值为0或负数时表示不进行深度限制
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder maxDepth(long maxDepth) {
 		this.maxDepth = maxDepth;
@@ -567,7 +567,7 @@ public class CrawlerBuilder {
 	 * 设置确定连接建立之前的超时时间（以毫秒为单位）
 	 * 
 	 * @param connectTimeout 确定连接建立之前的超时时间（以毫秒为单位）,非正数时表示不开启此功能
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder connectTimeout(int connectTimeout) {
 		this.connectTimeout = connectTimeout < 1 ? SiteConstant.CONNECTION_TIME_OUT : connectTimeout;
@@ -587,7 +587,7 @@ public class CrawlerBuilder {
 	 * 设置是否应自动处理重定向
 	 * 
 	 * @param redirectsEnabled 是否应自动处理重定向，默认为true
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder redirectsEnabled(boolean redirectsEnabled) {
 		this.redirectsEnabled = redirectsEnabled;
@@ -608,7 +608,7 @@ public class CrawlerBuilder {
 	 * 设置 确定用于HTTP状态管理的cookie规范的名称
 	 * 
 	 * @param cookieSpec 确定用于HTTP状态管理的cookie规范的名称
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder cookieSpec(String cookieSpec) {
 		this.cookieSpec = cookieSpec;
@@ -628,7 +628,7 @@ public class CrawlerBuilder {
 	 * 设置确定是否应拒绝相对重定向
 	 * 
 	 * @param relativeRedirectsAllowed 确定是否应拒绝相对重定向
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder relativeRedirectsAllowed(boolean relativeRedirectsAllowed) {
 		this.relativeRedirectsAllowed = relativeRedirectsAllowed;
@@ -648,7 +648,7 @@ public class CrawlerBuilder {
 	 * 设置是否应允许循环重定向
 	 * 
 	 * @param circularRedirectsAllowed 是否应允许循环重定向
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder circularRedirectsAllowed(boolean circularRedirectsAllowed) {
 		this.circularRedirectsAllowed = circularRedirectsAllowed;
@@ -668,7 +668,7 @@ public class CrawlerBuilder {
 	 * 设置客户端是否应规范请求中的URI
 	 * 
 	 * @param normalizeUri 客户端是否应规范请求中的URI
-	 * @return
+	 * @return  规则构建器实例
 	 */
 	public CrawlerBuilder normalizeUri(boolean normalizeUri) {
 		this.normalizeUri = normalizeUri;
@@ -678,7 +678,7 @@ public class CrawlerBuilder {
 	/**
 	 * 获取要遵循的最大重定向数
 	 * 
-	 * @return
+	 * @return 要遵循的最大重定向数
 	 */
 	public int maxRedirects() {
 		return this.maxRedirects;
@@ -688,7 +688,7 @@ public class CrawlerBuilder {
 	 * 设置要遵循的最大重定向数
 	 * 
 	 * @param maxRedirects 要遵循的最大重定向数
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder maxRedirects(int maxRedirects) {
 		this.maxRedirects = maxRedirects;
@@ -708,7 +708,7 @@ public class CrawlerBuilder {
 	 * 设置是否请求目标服务器压缩内容
 	 * 
 	 * @param contentCompressionEnabled 是否请求目标服务器压缩内容
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder contentCompressionEnabled(boolean contentCompressionEnabled) {
 		this.contentCompressionEnabled = contentCompressionEnabled;
@@ -728,7 +728,7 @@ public class CrawlerBuilder {
 	 * 设置链接解析规则
 	 * 
 	 * @param link 链接解析规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder link(LinkRule link) {
 		Assert.notNull(link, "链接解析规则不能为空");
@@ -750,7 +750,7 @@ public class CrawlerBuilder {
 	 * 清空原始链接提取规则后设置链接提取规则
 	 * 
 	 * @param linkRules 链接提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder setLinkRules(Set<MatcherRule> linkRules) {
 		this.linkRules = null != linkRules ? linkRules : new HashSet<>();
@@ -761,7 +761,7 @@ public class CrawlerBuilder {
 	 * 增加链接提取规则
 	 * 
 	 * @param linkRules 链接提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addLinkRules(Set<MatcherRule> linkRules) {
 		if (null == linkRules) {
@@ -775,7 +775,7 @@ public class CrawlerBuilder {
 	 * 增加链接提取规则
 	 * 
 	 * @param linkRule 链接提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addLinkRule(MatcherRule linkRule) {
 		Assert.notNull(linkRule, "链接提取规则不能为空");
@@ -798,7 +798,7 @@ public class CrawlerBuilder {
 	 * 多个起始链接之间用半角逗号隔开
 	 * 
 	 * @param startUrl 起始链接地址
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder startUrl(String startUrl) {
 		Assert.notNull(startUrl, "起始链接不能为空");
@@ -819,7 +819,7 @@ public class CrawlerBuilder {
 	 * 设置内容解析规则
 	 * 
 	 * @param content 内容解析规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder content(ContentRule content) {
 		Assert.notNull(content, "内容提取规则不能为空");
@@ -842,7 +842,7 @@ public class CrawlerBuilder {
 	 * 设置内容匹配规则
 	 * 
 	 * @param pageRule 内容匹配规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder pageRule(PageRule pageRule) {
 		pageRule = null == pageRule ? new PageRule() : pageRule;
@@ -869,8 +869,8 @@ public class CrawlerBuilder {
 	 * 设置内容页地址规则<br/>
 	 * 多个规则之间用半角逗号隔开
 	 * 
-	 * @param contentPageRules 内容页地址规则 ，多个规则之间用半角逗号隔开
-	 * @return
+	 * @param contentPageRule 链接过滤规则
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder contentPageRule(MatcherRule contentPageRule) {
 		this.contentPageRule = contentPageRule;
@@ -890,7 +890,7 @@ public class CrawlerBuilder {
 	 * 设置内容匹配类型
 	 * 
 	 * @param matcherType
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder matcherType(Type matcherType) {
 		this.matcherType = matcherType;
@@ -910,7 +910,7 @@ public class CrawlerBuilder {
 	 * 设置内容匹配参数
 	 * 
 	 * @param matcherPattern 内容匹配参数
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder matcherPattern(String matcherPattern) {
 		this.matcherPattern = matcherPattern;
@@ -930,7 +930,7 @@ public class CrawlerBuilder {
 	 * 设置 期待匹配值
 	 * 
 	 * @param matcherTarget 期待匹配值
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder matcherTarget(String matcherTarget) {
 		this.matcherTarget = matcherTarget;
@@ -950,7 +950,7 @@ public class CrawlerBuilder {
 	 * 设置匹配模式
 	 * 
 	 * @param matcherMode true表示必须包含期待匹配参数，false标识不能包含期待匹配参数
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder matcherMode(Boolean matcherMode) {
 		this.matcherMode = matcherMode;
@@ -970,7 +970,7 @@ public class CrawlerBuilder {
 	 * 设置匹配时是否大小写敏感
 	 * 
 	 * @param matcherCaseSensitive 是否大小写敏感，true表示敏感
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder matcherCaseSensitive(Boolean matcherCaseSensitive) {
 		this.matcherCaseSensitive = matcherCaseSensitive;
@@ -990,7 +990,7 @@ public class CrawlerBuilder {
 	 * 设置匹配时是否为模糊匹配
 	 * 
 	 * @param matcherFuzzy true表示为模糊匹配
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder matcherFuzzy(Boolean matcherFuzzy) {
 		this.matcherFuzzy = matcherFuzzy;
@@ -1010,7 +1010,7 @@ public class CrawlerBuilder {
 	 * 增加内容提取规则
 	 * 
 	 * @param list 内容提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addExtractRules(List<ExtractRule> list) {
 		if (null != list) {
@@ -1026,7 +1026,7 @@ public class CrawlerBuilder {
 	 * 会清空原始的内容提取规则
 	 * 
 	 * @param list 内容提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder setExtractRules(List<ExtractRule> list) {
 		this.extractRules.clear();
@@ -1049,7 +1049,7 @@ public class CrawlerBuilder {
 	 * 增加内容提取规则
 	 * 
 	 * @param extractRule 内容提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addExtractRule(ExtractRule extractRule) {
 		Assert.notNull(extractRule, "内容提取规则不能为空");
@@ -1078,7 +1078,7 @@ public class CrawlerBuilder {
 	 * 
 	 * @param key  内容提取规则的编码
 	 * @param list 该内容提取规则的提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addFieldExtractRules(String key, List<ExtractFieldRule> list) {
 		Assert.notNull(list, "内容提取规则的提取规则不能为空");
@@ -1097,7 +1097,7 @@ public class CrawlerBuilder {
 	 * 
 	 * @param key              内容提取规则的编码
 	 * @param fieldExtractRule 该内容提取规则的提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder addExtractRule(String key, ExtractFieldRule fieldExtractRule) {
 		Assert.notNull(fieldExtractRule, "内容提取规则的提取规则不能为空");
@@ -1117,7 +1117,7 @@ public class CrawlerBuilder {
 	 * 
 	 * @param key  内容提取规则的编码
 	 * @param list 该内容提取规则的提取规则
-	 * @return
+	 * @return 规则构建器实例
 	 */
 	public CrawlerBuilder setExtractRules(String key, List<ExtractFieldRule> list) {
 		ExtractRule extractRule = this.extractRule(key);
@@ -1131,7 +1131,7 @@ public class CrawlerBuilder {
 	/**
 	 * 构建一个风铃虫规则
 	 * 
-	 * @return
+	 * @return 风铃虫规则
 	 */
 	public CrawlerRule build() {
 		Assert.notNull(this.startUrl, "起始链接不能为空");

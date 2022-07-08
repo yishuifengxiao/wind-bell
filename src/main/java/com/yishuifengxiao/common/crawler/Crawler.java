@@ -1,6 +1,8 @@
 package com.yishuifengxiao.common.crawler;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -39,10 +41,9 @@ import com.yishuifengxiao.common.crawler.simulator.SimpleSimulator;
  * 风铃虫
  * 
  * @author yishui
- * @date 2019年11月20日
  * @version 1.0.0
  */
-public class Crawler implements Task, StatuObserver {
+public class Crawler implements Task {
 	private final static Logger log = LoggerFactory.getLogger(Crawler.class);
 	/**
 	 * 该实例的唯一ID
@@ -58,10 +59,6 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	private LocalDateTime startTime;
 
-	/**
-	 * 风铃虫的状态：运行中、停止、暂停
-	 */
-	protected Statu statu;
 	/**
 	 * 风铃虫的定义
 	 */
@@ -113,6 +110,10 @@ public class Crawler implements Task, StatuObserver {
 	 * 风铃虫状态观察者
 	 */
 	StatuObserver statuObserver;
+	/**
+	 * 风铃虫实例携带的额外信息
+	 */
+	private Map<String, Object> extras = new HashMap<>();
 
 	/**
 	 * 异步启动一个一个风铃虫实例
@@ -121,11 +122,9 @@ public class Crawler implements Task, StatuObserver {
 	public void start() {
 		// 组件初始化
 		this.initComponents();
-		if (statu != Statu.RUNNING) {
-			this.statu = Statu.RUNNING;
+		if (this.processor.getStatu() != Statu.RUNNING) {
 			this.startTime = LocalDateTime.now();
 			this.processor.start();
-			this.statuChange();
 		}
 
 	};
@@ -137,7 +136,7 @@ public class Crawler implements Task, StatuObserver {
 	public void run() {
 		// 组件初始化
 		this.start();
-		while (this.statu == Statu.RUNNING) {
+		while (this.processor.getStatu() == Statu.RUNNING) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -153,10 +152,9 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	@Override
 	public void stop() {
-		statu = Statu.STOP;
+		this.processor.kill();
 		log.info("【id:{} , name:{} 】   The crawler instance  has been manually stopped", this.getUuid(),
 				this.getName());
-		this.statuChange();
 	};
 
 	/**
@@ -308,19 +306,10 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 风铃虫是否正在运行状态
 	 * 
-	 * @return
+	 * @return 是否正在运行状态
 	 */
 	public boolean isRun() {
-		return this.statu == Statu.RUNNING;
-	}
-
-	/**
-	 * 通知观察着状态已经发生变化
-	 */
-	private void statuChange() {
-		if (this.statuObserver != null) {
-			this.statuObserver.update(this, this.statu);
-		}
+		return this.processor.getStatu() == Statu.RUNNING;
 	}
 
 	/**
@@ -384,7 +373,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置网页下载器
 	 * 
 	 * @param downloader 网页下载器
-	 * @return
+	 * @return 风铃虫实例
 	 */
 	public Crawler setDownloader(Downloader downloader) {
 		Assert.notNull(downloader, "下载器不能为空");
@@ -395,7 +384,7 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 获取资源调度器
 	 * 
-	 * @return
+	 * @return 资源调度器
 	 */
 	public Scheduler getScheduler() {
 		return this.scheduler;
@@ -403,8 +392,9 @@ public class Crawler implements Task, StatuObserver {
 
 	/**
 	 * 获取事件监听器
+	 * 
+	 * @return 事件监听器
 	 */
-
 	public CrawlerListener getCrawlerListener() {
 		return this.crawlerListener;
 	}
@@ -413,7 +403,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置事件监听器
 	 * 
 	 * @param crawlerListener 事件监听器
-	 * @return
+	 * @return 事件监听器
 	 */
 	public Crawler setCrawlerListener(CrawlerListener crawlerListener) {
 		Assert.notNull(crawlerListener, "事件监听器不能为空");
@@ -424,7 +414,7 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 设置链接解析器
 	 * 
-	 * @return
+	 * @return 链接解析器
 	 */
 	public LinkExtract getLinkExtract() {
 		return linkExtract;
@@ -434,7 +424,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置链接解析器
 	 * 
 	 * @param linkExtract 链接解析器
-	 * @return
+	 * @return 风铃虫实例
 	 */
 	public Crawler setLinkExtract(LinkExtract linkExtract) {
 		Assert.notNull(linkExtract, "链接解析器不能为空");
@@ -445,7 +435,7 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 获取内容解析器
 	 * 
-	 * @return
+	 * @return 内容解析器
 	 */
 	public ContentExtract getContentExtract() {
 		return this.contentExtract;
@@ -455,7 +445,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置内容解析器
 	 * 
 	 * @param contentExtract
-	 * @return
+	 * @return 风铃虫实例
 	 */
 	public Crawler setContentExtract(ContentExtract contentExtract) {
 		Assert.notNull(contentExtract, "内容解析器不能为空");
@@ -466,7 +456,7 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 获取信息输出器
 	 * 
-	 * @return
+	 * @return 信息输出器
 	 */
 	public Pipeline getPipeline() {
 		return this.pipeline;
@@ -475,8 +465,8 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 设置信息输出器
 	 * 
-	 * @param pipeline
-	 * @return
+	 * @param pipeline 信息输出器
+	 * @return 风铃虫实例
 	 */
 	public Crawler setPipeline(Pipeline pipeline) {
 		Assert.notNull(pipeline, "信息输出器不能为空");
@@ -497,7 +487,7 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 设置资源缓存器
 	 * 
-	 * @return
+	 * @return 资源缓存器
 	 */
 	public RequestCache getRequestCache() {
 		return requestCache;
@@ -507,7 +497,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置资源缓存器
 	 * 
 	 * @param requestCache 资源缓存器
-	 * @return
+	 * @return 风铃虫实例
 	 */
 	public Crawler setRequestCache(RequestCache requestCache) {
 		Assert.notNull(requestCache, "资源缓存器不能为空");
@@ -518,7 +508,7 @@ public class Crawler implements Task, StatuObserver {
 	/**
 	 * 获取状态监听器
 	 * 
-	 * @return
+	 * @return 状态监听器
 	 */
 	public StatuObserver getStatuObserver() {
 		return this.statuObserver;
@@ -528,7 +518,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置状态监听器
 	 * 
 	 * @param statuObserver 状态监听器
-	 * @return
+	 * @return 风铃虫实例
 	 */
 	public Crawler setStatuObserver(StatuObserver statuObserver) {
 		Assert.notNull(statuObserver, "状态观察者不能为空");
@@ -540,7 +530,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置资源调度器
 	 * 
 	 * @param scheduler 资源调度器
-	 * @return
+	 * @return 风铃虫实例
 	 */
 	public Crawler setScheduler(Scheduler scheduler) {
 		Assert.notNull(scheduler, "资源调度器不能为空");
@@ -552,7 +542,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 获取所有的任务总数<br/>
 	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
-	 * @return
+	 * @return 任务总数
 	 */
 	@Override
 	public long getAllTaskCount() {
@@ -563,7 +553,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 获取本实例已经解析成功的网页的数量<br/>
 	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
-	 * @return
+	 * @return 已经解析成功的网页的数量
 	 */
 	@Override
 	public long getExtractedTaskCount() {
@@ -574,7 +564,7 @@ public class Crawler implements Task, StatuObserver {
 	 * 获取本实例已经解析失败的网页的数量<br/>
 	 * 注意此数量是在变化的，且应该在任务启动后调用
 	 * 
-	 * @return
+	 * @return 已经解析失败的网页的数量
 	 */
 	@Override
 	public long getFailTaskCount() {
@@ -627,17 +617,7 @@ public class Crawler implements Task, StatuObserver {
 	 */
 	@Override
 	public Statu getStatu() {
-		return this.statu;
-	}
-
-	@Override
-	public void update(Task task, Statu statu) {
-		this.statu = statu;
-		this.statuChange();
-		// 实例停止运行时关闭下载器，释放资源
-		if (Statu.STOP == statu) {
-			this.downloader.close();
-		}
+		return this.processor.getStatu();
 	}
 
 	/**
@@ -653,11 +633,65 @@ public class Crawler implements Task, StatuObserver {
 	 * 设置请求去重器
 	 * 
 	 * @param duplicateRemover 请求去重器
-	 * @return
+	 * @return 风铃虫实例
 	 */
 	public Crawler setDuplicateRemover(DuplicateRemover duplicateRemover) {
 		this.duplicateRemover = duplicateRemover;
 		return this;
+	}
+
+	/**
+	 * 设置风铃虫携带的额外信息<br/>
+	 * 此设置会清空原始的额外信息
+	 * 
+	 * @param map 额外信息 <br/>
+	 *            风铃虫不会对这些额外信息进行处理
+	 * @return 风铃虫实例
+	 */
+	public Crawler setExtra(Map<String, Object> map) {
+		this.extras.clear();
+		this.addExtra(map);
+		return this;
+	}
+
+	/**
+	 * 设置风铃虫携带的额外信息<br/>
+	 * 此设置不会清空原始的额外信息，而是将新的数据追加到原始的数据上
+	 * 
+	 * @param map 额外信息 <br/>
+	 *            风铃虫不会对这些额外信息进行处理
+	 * @return 风铃虫实例
+	 */
+	public Crawler addExtra(Map<String, Object> map) {
+		if (null != map) {
+			this.extras.putAll(map);
+		}
+		return this;
+	}
+
+	/***
+	 * 设置风铃虫额外信息
+	 * 
+	 * @param key   额外信息的键 <br/>
+	 *              该键不能为空，否则会设置不成功
+	 * @param value 额外信息的值
+	 * @return  风铃虫实例
+	 */
+	public Crawler setExtra(String key, Object value) {
+		if (StringUtils.isNotBlank(key)) {
+			this.extras.put(key, value);
+		}
+		return this;
+	}
+
+	/**
+	 * 获取创建风铃虫实例时传递的额外数据信息
+	 * 
+	 * @return 附带的额外数据信息
+	 */
+	@Override
+	public Map<String, Object> getExtra() {
+		return this.extras;
 	}
 
 	@Override

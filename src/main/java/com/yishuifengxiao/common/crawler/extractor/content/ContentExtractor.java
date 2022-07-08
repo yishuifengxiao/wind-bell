@@ -8,13 +8,12 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-14
  */
 public interface ContentExtractor {
 	/**
 	 * 获取内容提取器的名字
 	 * 
-	 * @return
+	 * @return 内容提取器的名字
 	 */
 	String getName();
 

@@ -4,7 +4,6 @@ package com.yishuifengxiao.common.crawler.domain.constant;
  * 内置的一些常见属性常量定义
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 public final class NestConstant {

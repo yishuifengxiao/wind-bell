@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * 输出信息到日志
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 @Slf4j

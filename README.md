@@ -15,7 +15,7 @@
 <dependency>
     <groupId>com.yishuifengxiao.common</groupId>
     <artifactId>crawler</artifactId>
-    <version>2.1.0</version>
+    <version>2.3.0</version>
 </dependency>
 ```
 

@@ -4,7 +4,6 @@ package com.yishuifengxiao.common.crawler.domain.constant;
  * 规则常量类
  * 
  * @author yishui
- * @date 2019年11月27日
  * @version 1.0.0
  */
 public final class RuleConstant {

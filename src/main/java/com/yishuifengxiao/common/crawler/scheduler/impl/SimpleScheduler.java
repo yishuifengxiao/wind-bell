@@ -11,7 +11,6 @@ import com.yishuifengxiao.common.crawler.scheduler.Scheduler;
  * 简单资源调度器
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 public class SimpleScheduler implements Scheduler {

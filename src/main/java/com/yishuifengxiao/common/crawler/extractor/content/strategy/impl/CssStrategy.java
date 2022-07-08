@@ -19,7 +19,6 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-7
  */
 public class CssStrategy implements Strategy {
 	private final static Logger log = LoggerFactory.getLogger(CssStrategy.class);

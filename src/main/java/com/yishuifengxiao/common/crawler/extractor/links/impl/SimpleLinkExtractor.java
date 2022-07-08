@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-5
  */
 @Slf4j
 public class SimpleLinkExtractor implements LinkExtractor {

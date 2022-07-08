@@ -5,7 +5,6 @@ package com.yishuifengxiao.common.crawler.domain.eunm;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-5
  */
 public enum Rule {
 	/**

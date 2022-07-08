@@ -9,8 +9,9 @@ import com.yishuifengxiao.common.crawler.downloader.Downloader;
 import com.yishuifengxiao.common.crawler.link.LinkExtract;
 import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
 import com.yishuifengxiao.common.crawler.utils.LocalCrawler;
-import com.yishuifengxiao.common.crawler.utils.RegexFactory;
-import com.yishuifengxiao.common.tool.exception.ServiceException;
+
+import com.yishuifengxiao.common.tool.exception.CustomException;
+import com.yishuifengxiao.common.tool.utils.RegexUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
  * 风铃虫处理核心
  * 
  * @author yishui
- * @date 2020年6月2日
  * @version 1.0.0
  */
 @Slf4j
@@ -63,9 +63,12 @@ public class CrawlerWorker implements Runnable {
 
 			// 处理请求
 			// 下载下载后的page信息里包含request信息
-			page = this.downloader.down(this.request);
+			synchronized (CrawlerWorker.class) {
+				page = this.downloader.down(this.request);
+			}
+
 			if (page == null) {
-				throw new ServiceException(new StringBuffer("Web page (").append(this.request.getUrl())
+				throw new CustomException(new StringBuffer("Web page (").append(this.request.getUrl())
 						.append(" ) download results are empty").toString());
 			}
 
@@ -111,7 +114,7 @@ public class CrawlerWorker implements Runnable {
 		boolean match = false;
 		if (this.crawlerProcessor.crawler.getCrawlerRule().getSite().statCheck()) {
 			// 开启失败校验时才启用
-			match = RegexFactory.find(this.crawlerProcessor.crawler.getCrawlerRule().getSite().getFailureMark(),
+			match = RegexUtil.find(this.crawlerProcessor.crawler.getCrawlerRule().getSite().getFailureMark(),
 					page.getRawTxt());
 			if (match) {
 				long interceptCount = this.crawlerProcessor.incrementAndGet();
@@ -137,7 +140,7 @@ public class CrawlerWorker implements Runnable {
 			// 进行真正的网页内容解析操作
 			// 解析链接数据
 			linkExtract.extract(this.crawlerProcessor.crawler.getCrawlerRule().getLink(), page);
-			
+
 			// 存储链接
 			page.getLinks().stream()
 					.map(t -> new Request(t, page.getRequest().getUrl(), page.getRequest().getDepth() + 1L))
@@ -169,9 +172,9 @@ public class CrawlerWorker implements Runnable {
 	 * 输出解析后的数据
 	 * 
 	 * @param page 解析后的数据信息
-	 * @throws ServiceException
+	 * @throws CustomException
 	 */
-	private void output(final Page page) throws ServiceException {
+	private void output(final Page page) throws CustomException {
 
 		// 输出数据
 		if (!page.isSkip()) {

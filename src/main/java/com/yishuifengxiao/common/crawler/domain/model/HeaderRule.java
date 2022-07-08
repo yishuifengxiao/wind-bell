@@ -17,7 +17,6 @@ import javax.validation.constraints.Pattern;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-11
  */
 @ApiModel(value = "请求头配置信息")
 @AllArgsConstructor

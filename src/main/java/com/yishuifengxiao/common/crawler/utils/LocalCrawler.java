@@ -6,7 +6,6 @@ import com.yishuifengxiao.common.crawler.Task;
  * 风铃虫任务信息线程缓存类
  * 
  * @author yishui
- * @date 2019年12月2日
  * @version 1.0.0
  */
 public final class LocalCrawler {
@@ -16,7 +15,7 @@ public final class LocalCrawler {
 	/**
 	 * 放置一个风铃虫任务信息
 	 * 
-	 * @param crawler
+	 * @param crawler 风铃虫任务
 	 */
 	public synchronized static void put(Task crawler) {
 		LOCAL.set(crawler);

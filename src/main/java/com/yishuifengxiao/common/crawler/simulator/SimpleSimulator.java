@@ -6,18 +6,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 
 import com.yishuifengxiao.common.crawler.content.ContentExtract;
 import com.yishuifengxiao.common.crawler.content.ContentExtractDecorator;
 import com.yishuifengxiao.common.crawler.content.matcher.ContentMatcher;
 import com.yishuifengxiao.common.crawler.content.matcher.SimpleContentMatcher;
+import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.entity.Request;
 import com.yishuifengxiao.common.crawler.domain.entity.SimulatorData;
 import com.yishuifengxiao.common.crawler.domain.model.ContentRule;
-import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
 import com.yishuifengxiao.common.crawler.domain.model.ExtractFieldRule;
+import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
 import com.yishuifengxiao.common.crawler.domain.model.LinkRule;
 import com.yishuifengxiao.common.crawler.domain.model.MatcherRule;
 import com.yishuifengxiao.common.crawler.domain.model.PageRule;
@@ -29,14 +29,14 @@ import com.yishuifengxiao.common.crawler.link.LinkExtractDecorator;
 import com.yishuifengxiao.common.crawler.macther.MatcherFactory;
 import com.yishuifengxiao.common.crawler.scheduler.request.RequestCreater;
 import com.yishuifengxiao.common.crawler.scheduler.request.SimpleRequestCreater;
-import com.yishuifengxiao.common.crawler.utils.LinkUtils;
+
 import com.yishuifengxiao.common.tool.exception.CustomException;
+import com.yishuifengxiao.common.tool.utils.LinkUtils;
 
 /**
  * 简单的模拟提取器
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 public class SimpleSimulator implements Simulator {
@@ -162,7 +162,7 @@ public class SimpleSimulator implements Simulator {
 		if (null == page) {
 			throw new Exception("下载失败");
 		}
-		if (HttpStatus.SC_OK != page.getCode()) {
+		if (CrawlerConstant.SC_OK != page.getCode()) {
 			throw new Exception(page.getRawTxt());
 		}
 		return page;

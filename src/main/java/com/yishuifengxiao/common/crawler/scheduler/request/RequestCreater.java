@@ -8,7 +8,6 @@ import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
  * 根据站点规则和请求任务生成一个完整的请求任务
  * 
  * @author qingteng
- * @date 2020年5月17日
  * @version 1.0.0
  */
 public interface RequestCreater {

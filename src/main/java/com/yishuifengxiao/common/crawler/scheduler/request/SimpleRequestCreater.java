@@ -12,7 +12,6 @@ import com.yishuifengxiao.common.crawler.domain.model.SiteRule;
  * 简单请求生成器
  * 
  * @author qingteng
- * @date 2020年5月17日
  * @version 1.0.0
  */
 public class SimpleRequestCreater implements RequestCreater {

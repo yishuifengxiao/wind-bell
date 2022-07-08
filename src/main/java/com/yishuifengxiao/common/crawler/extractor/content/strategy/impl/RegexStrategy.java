@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
-import com.yishuifengxiao.common.crawler.utils.RegexFactory;
+import com.yishuifengxiao.common.tool.utils.RegexUtil;
+
 
 /**
  * 正则提取策略<br/>
@@ -16,7 +17,6 @@ import com.yishuifengxiao.common.crawler.utils.RegexFactory;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-7
  */
 public class RegexStrategy implements Strategy {
 	private final static Logger log = LoggerFactory.getLogger(RegexStrategy.class);
@@ -36,7 +36,7 @@ public class RegexStrategy implements Strategy {
 		}
 		try {
 
-			List<String> list = RegexFactory.extractAll(param1, input);
+			List<String> list = RegexUtil.extractAll(param1, input);
 			if (list != null) {
 				return String.join(CrawlerConstant.SEPARATOR, list);
 			}

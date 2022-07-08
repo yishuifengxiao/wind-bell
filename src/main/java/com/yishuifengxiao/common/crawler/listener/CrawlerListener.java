@@ -9,7 +9,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Page;
  * 注意此监听器是同步的，请勿在此进行任务可能会导致风铃虫阻塞的操作
  * 
  * @author yishui
- * @date 2019年11月28日
  * @version 1.0.0
  */
 public interface CrawlerListener {

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.yishuifengxiao.common.crawler.utils.RegexFactory;
+import com.yishuifengxiao.common.tool.utils.RegexUtil;
 
 /**
  * 测试正则提取工具
@@ -20,7 +20,7 @@ public class RegexTest {
 
 		String regex = "[0-9]+";
 		String content = "阅读数 30";
-		List<String> str = RegexFactory.extractAll(regex, content);
+		List<String> str = RegexUtil.extractAll(regex, content);
 		System.out.println(str);
 	}
 	
@@ -29,7 +29,7 @@ public class RegexTest {
 
 		String regex = "[0-9]+";
 		String content = " 阅读数 30";
-		String str = RegexFactory.extract(regex, content);
+		String str = RegexUtil.extract(regex, content);
 		System.out.println(str);
 	}
 }

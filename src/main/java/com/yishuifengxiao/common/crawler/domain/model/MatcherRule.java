@@ -22,7 +22,6 @@ import lombok.experimental.Accessors;
  * 链接过滤规则
  * 
  * @author qingteng
- * @date 2020年5月23日
  * @version 1.0.0
  */
 @ApiModel(value = "链接匹配规则")

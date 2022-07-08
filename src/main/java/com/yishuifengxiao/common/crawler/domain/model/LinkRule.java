@@ -21,7 +21,6 @@ import lombok.experimental.Accessors;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-5
  */
 @ApiModel(value = "链接解析规则")
 @AllArgsConstructor

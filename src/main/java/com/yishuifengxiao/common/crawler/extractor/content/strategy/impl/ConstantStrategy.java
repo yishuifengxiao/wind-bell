@@ -8,7 +8,6 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-7
  */
 public class ConstantStrategy implements Strategy {
 

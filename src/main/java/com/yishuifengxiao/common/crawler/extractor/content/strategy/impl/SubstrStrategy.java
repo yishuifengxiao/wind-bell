@@ -11,7 +11,6 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.Strategy;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-8
  */
 public class SubstrStrategy implements Strategy {
 

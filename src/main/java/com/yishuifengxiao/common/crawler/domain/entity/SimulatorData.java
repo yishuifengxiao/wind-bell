@@ -16,7 +16,6 @@ import lombok.experimental.Accessors;
  * 模拟结果数据
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 @ApiModel(value = " 模拟结果数据")

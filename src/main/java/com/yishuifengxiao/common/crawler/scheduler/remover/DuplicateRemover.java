@@ -9,7 +9,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Request;
  * 用于在调度器存储任务之前进行重复任务判断，判断该任务是否已经存在过
  * 
  * @author qingteng
- * @date 2020年5月14日
  * @version 1.0.0
  */
 public interface DuplicateRemover {

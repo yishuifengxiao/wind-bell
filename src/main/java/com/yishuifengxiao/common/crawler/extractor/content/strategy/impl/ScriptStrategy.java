@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
  * 脚本中必须包含一个名字为 extractor的函数
  * 
  * @author yishui
- * @date 2019年12月30日
  * @version 1.0.0
  */
 @Slf4j

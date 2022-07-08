@@ -12,7 +12,6 @@ import com.yishuifengxiao.common.crawler.domain.entity.Request;
  * 3. 清空资源调度器中所有储存的资源信息<br/>
  * 
  * @author yishui
- * @date 2019年11月26日
  * @version 1.0.0
  */
 public interface Scheduler {
@@ -20,7 +19,7 @@ public interface Scheduler {
 	 * 接收所有的请求任并存储起来
 	 * 
 	 * @param task     当前任务的任务信息
-	 * @param requests 未过滤的请求任务，可能会存在重复和已爬取等情况
+	 * @param request 未过滤的请求任务，可能会存在重复和已爬取等情况
 	 */
 	void push(final Task task, final Request request);
 

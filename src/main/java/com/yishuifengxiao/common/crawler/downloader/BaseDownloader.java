@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.entity.Request;
-import com.yishuifengxiao.common.tool.exception.ServiceException;
+import com.yishuifengxiao.common.tool.exception.CustomException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
  * 所有基于selenium的下载器最好根据此基类完成
  * 
  * @author yishui
- * @date 2019年12月25日
  * @version 1.0.0
  */
 @Slf4j
@@ -50,13 +49,13 @@ public abstract class BaseDownloader implements Downloader {
 	 * 
 	 * @param driver  Web浏览器对象
 	 * @param request 当前的下载请求任务
-	 * @return
-	 * @throws ServiceException
+	 * @return 页面对象
+	 * @throws CustomException
 	 */
-	protected abstract Page down(WebDriver driver, final Request request) throws ServiceException;
+	protected abstract Page down(WebDriver driver, final Request request) throws CustomException;
 
 	@Override
-	public synchronized Page down(final Request request) throws ServiceException {
+	public synchronized Page down(final Request request) throws CustomException {
 
 		this.initData(SiteConstant.IMPLICITLY_WAIT_MILLIS, SiteConstant.SCRIPT_TIME_OUT_MILLIS,
 				SiteConstant.PAGE_LOAD_SCRIPT_TIME_OUT_MILLIS);
@@ -68,7 +67,8 @@ public abstract class BaseDownloader implements Downloader {
 
 	@Override
 	public void close() {
-
+		//关闭浏览器，释放所有窗口
+		driver.quit();
 	}
 
 	/**
@@ -97,13 +97,13 @@ public abstract class BaseDownloader implements Downloader {
 	 * 请根据运行环境的信息配置好此参数
 	 * 
 	 * @param driverPath 浏览器驱动文件geckodriver的地址
-	 * @throws ServiceException 创建浏览器对象时出现的问题
+	 * @throws CustomException 创建浏览器对象时出现的问题
 	 * 
 	 */
-	public BaseDownloader(String driverPath) throws ServiceException {
+	public BaseDownloader(String driverPath) throws CustomException {
 		Assert.notNull(driverPath, "Web浏览器驱动不能为空");
 		if (!new File(driverPath).exists()) {
-			throw new ServiceException("Web浏览器驱动文件不存在");
+			throw new CustomException("Web浏览器驱动文件不存在");
 		}
 		// 初始化浏览器对象
 		this.initDriver(driverPath);
@@ -113,9 +113,9 @@ public abstract class BaseDownloader implements Downloader {
 	 * 初始化浏览器对象
 	 * 
 	 * @param driverPath 浏览器驱动文件geckodriver的地址
-	 * @throws ServiceException
+	 * @throws CustomException
 	 */
-	private void initDriver(String driverPath) throws ServiceException {
+	private void initDriver(String driverPath) throws CustomException {
 		log.debug("===》 Web浏览器对象的驱动的路径为 {}", driverPath);
 		System.setProperty(GECKO_DRIVER, driverPath);
 		FirefoxOptions options = new FirefoxOptions();
@@ -125,7 +125,7 @@ public abstract class BaseDownloader implements Downloader {
 			this.driver = new FirefoxDriver(options);
 		} catch (Exception e) {
 			log.info("根据路径 {} 构建浏览器对象时出现问题，出现问题的原因为 {}", driverPath, e.getMessage());
-			throw new ServiceException(
+			throw new CustomException(
 					MessageFormat.format("根据路径 {0} 构建浏览器对象时出现问题，出现问题的原因为 {1}", driverPath, e.getMessage()));
 		}
 	}

@@ -11,7 +11,6 @@ import com.yishuifengxiao.common.crawler.link.filter.BaseLinkFilter;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019/11/20
  */
 public class RelativeLinkFilter extends BaseLinkFilter {
 

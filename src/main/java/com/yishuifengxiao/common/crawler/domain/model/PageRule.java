@@ -22,7 +22,6 @@ import lombok.experimental.Accessors;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-5
  */
 @ApiModel(value = "内容页内容匹配规则")
 @AllArgsConstructor

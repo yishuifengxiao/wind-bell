@@ -7,7 +7,6 @@ import com.yishuifengxiao.common.crawler.domain.constant.RuleConstant;
  * 从输入数据里提取出所有的url
  * 
  * @author yishui
- * @date 2019年12月11日
  * @version 1.0.0
  */
 public class UrlStrategy extends RegexStrategy {

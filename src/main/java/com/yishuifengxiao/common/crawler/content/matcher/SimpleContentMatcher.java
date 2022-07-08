@@ -12,7 +12,6 @@ import com.yishuifengxiao.common.crawler.extractor.content.strategy.StrategyFact
  * 默认实现的内容匹配器<br/>
  * 
  * @author yishui
- * @date 2020年01月09日
  * @version 1.0.0
  */
 public class SimpleContentMatcher implements ContentMatcher {

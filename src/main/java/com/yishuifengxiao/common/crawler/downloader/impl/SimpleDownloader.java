@@ -13,18 +13,18 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.springframework.util.Assert;
 
+import com.yishuifengxiao.common.crawler.domain.constant.CrawlerConstant;
 import com.yishuifengxiao.common.crawler.domain.constant.SiteConstant;
 import com.yishuifengxiao.common.crawler.domain.entity.Page;
 import com.yishuifengxiao.common.crawler.domain.entity.Request;
 import com.yishuifengxiao.common.crawler.downloader.Downloader;
-import com.yishuifengxiao.common.tool.exception.ServiceException;
+import com.yishuifengxiao.common.tool.exception.CustomException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
  * 3. 支持设置user-agent<br/>
  * 
  * @author yishui
- * @date 2019年12月2日
  * @version 1.0.0
  */
 @Slf4j
@@ -45,23 +44,23 @@ public class SimpleDownloader implements Downloader {
 	private Map<String, String> cookies = null;
 
 	@Override
-	public Page down(final Request request) throws ServiceException {
-		synchronized (SimpleDownloader.class) {
-			Page page = new Page(request);
-			Response response = null;
-			try {
-				response = execute(request);
-				// 设置真实的请求地址
-				page.setRedirectUrl(response.url().toString());
-				page.setCode(response.statusCode());
-				page.setRawTxt(response.body());
-			} catch (IOException e) {
-				log.info("An error occurred while downloading the page {}, the problem is {}", request, e.getMessage());
-				page.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-				page.setRawTxt(e.getMessage());
-			}
-			return page;
+	public Page down(final Request request) throws CustomException {
+
+		Page page = new Page(request);
+		Response response = null;
+		try {
+			response = execute(request);
+			// 设置真实的请求地址
+			page.setRedirectUrl(response.url().toString());
+			page.setCode(response.statusCode());
+			page.setRawTxt(response.body());
+		} catch (IOException e) {
+			log.info("An error occurred while downloading the page {}, the problem is {}", request, e.getMessage());
+			page.setCode(CrawlerConstant.SC_INTERNAL_SERVER_ERROR);
+			page.setRawTxt(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
+		return page;
 
 	}
 

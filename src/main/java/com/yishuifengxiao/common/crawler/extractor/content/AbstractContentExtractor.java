@@ -13,7 +13,6 @@ import com.yishuifengxiao.common.crawler.domain.model.ExtractRule;
  * 
  * @author yishui
  * @version 1.0.0
- * @date 2019-11-14
  */
 public abstract class AbstractContentExtractor implements ContentExtractor {
 

@@ -2,7 +2,6 @@ package com.yishuifengxiao.common.crawler.domain.constant;
 /**
  * 浏览器标识常量类
  * @author yishui
- * @date 2019年12月2日
  * @version 1.0.0
  */
 public final class UserAgentConstant {

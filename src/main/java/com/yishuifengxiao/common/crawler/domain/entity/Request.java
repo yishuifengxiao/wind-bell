@@ -16,7 +16,6 @@ import lombok.experimental.Accessors;
  * 当前请求对象
  * 
  * @author qingteng
- * @date 2020年4月22日
  * @version 1.0.0
  */
 @ApiModel(value = "当前请求的请求信息")
