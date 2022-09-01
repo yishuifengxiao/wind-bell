@@ -58,7 +58,7 @@
 		<logback.version>1.2.10</logback.version>
 		<junit.version>4.12</junit.version>
 		<swagger.v3.version>1.5.22</swagger.v3.version>
-		<jsoup.version>1.14.3</jsoup.version>
+		<jsoup.version>1.15.3</jsoup.version>
 		<common-tool.version>3.10.0</common-tool.version>
 		<selenium-java.version>4.1.2</selenium-java.version>
 		<htmlcleaner.version>2.24</htmlcleaner.version>
